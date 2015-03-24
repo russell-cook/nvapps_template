@@ -1,0 +1,168 @@
+﻿@model AdminApps.ViewModels.BillReviewApprovalViewModel
+
+@{
+    ViewBag.Title = "Approve";
+    ViewBag.ModuleName = "Bill Tracking";
+}
+
+<h3>Approve Review for <strong>@Html.DisplayFor(model => model.ReviewToApprove.Bill.CompositeBillNumber): @Html.DisplayFor(model => model.ReviewToApprove.Bill.Title)</strong></h3>
+
+<h4>Submit as approved review for @ViewBag.ApprovedReviewAgency?</h4>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Reviewed by
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.CreatedByUser.FullName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewToApprove.CreatedByUserInDiv.CompositeDivName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.CreatedByUserInDiv.CompositeDivName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewToApprove.Recommendation.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.Recommendation.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewToApprove.Comments)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.Comments)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewToApprove.RequiresTestimony)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.RequiresTestimony)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewToApprove.InformationToBeProvided)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.InformationToBeProvided)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactYr1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactYr1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactYr2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactYr2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactFuture)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactFuture)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactTotal)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactTotal)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalNoteSubmitted)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReviewToApprove.FiscalNoteSubmitted)
+        </dd>
+
+    </dl>
+
+    @if (Model.ApprovedReview == null)
+    {
+        using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Confirm Approval" class="btn btn-success" />
+                @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.ReviewToApprove.Bill.ID }, new { @class = "btn btn-default" })
+            </div>
+        }
+    }
+    else
+    {
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h4 class="panel-title"><strong>WARNING:</strong> approved review exists for @ViewBag.ApprovedReviewAgency</h4>
+            </div>
+            <div class="panel-body">
+                <p>Approved by @Html.DisplayFor(model => model.ApprovedByUser.FullName) on @Html.DisplayFor(model => model.ApprovedAt)</p>
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ApprovedReview.CreatedByName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ApprovedReview.CreatedByUserInDiv)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ApprovedReview.Recommendation)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.ApprovedReview.FiscalImpactTotal)
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => model.ApprovedReview.CreatedByUser.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.ApprovedReview.CreatedByUserInDiv.CompositeDivName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.ApprovedReview.Recommendation.Description)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => model.ApprovedReview.FiscalImpactTotal)
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Replace Existing Approved Review" class="btn btn-danger" /> |
+                @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.ReviewToApprove.Bill.ID }, null)
+            </div>
+        }
+    }
+</div>

@@ -1,0 +1,54 @@
+﻿@model List<AdminApps.ViewModels.BillReviewRequestViewModel>
+
+    @{
+        ViewBag.Title = "Bill Review Requests";
+        ViewBag.ModuleName = "Bill Tracking";
+    }
+
+<h2>Bill Review Requests</h2>
+<p>The following table lists all Bill Review Requests that have been issued to you. @if (Request.IsAuthenticated && User.IsInRole("BillsDiv")){<text>To view the status of Bill Review Requests that you have issued to other users please locate the Bill on the @Html.ActionLink("List All Bills", "index") page and click the 'View' button.</text>}</p>
+    <table class="table table-striped table-condensed">
+    <tr>
+        <th>
+            Bill
+        </th>
+        <th>
+            Requested by
+        </th>
+        <th>
+            Requested at
+        </th>
+        <th>
+            Status
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.CompositeBillName, "Details", "Bills", new { id = item.BillID }, null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestedByUserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestedAt)
+            </td>
+            <td>
+                @if (item.Status == "Pending")
+                {
+                    @Html.ActionLink("Add Review", "Create", "BillReviews", new { id = item.BillID }, null)
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.Status)
+                }
+            </td>
+
+
+
+        </tr>
+    }
+</table>
+

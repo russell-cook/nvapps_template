@@ -1,0 +1,109 @@
+﻿@model List<AdminApps.ViewModels.BillRecordRequestViewModel>
+
+@{
+    ViewBag.Title = "Bill Record Requests";
+    ViewBag.ModuleName = "Bill Tracking";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.ActionLink("Request New Bill Record", "RequestRecord", null, new { @class = "btn btn-default" })
+</p>
+
+<p>The following table lists your previous Bill Record requests:</p>
+@if (Request.IsAuthenticated && User.IsInRole("BillsClerc"))
+{
+    <table class="table table-striped table-condensed">
+        <tr>
+            <th>
+                Requested by
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().RequestedByUser.Div.CompositeDivName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().CompositeBillNumber)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr class="@(item.Fulfilled ? "success" : "")">
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestedByUser.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestedByUser.Div.CompositeDivName)
+                </td>
+                <td>
+                    @if (item.Fulfilled)
+                    {
+                        @Html.ActionLink(item.CompositeBillNumber, "Details", new { id = item.BillID })
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.CompositeBillNumber)
+                    }
+                </td>
+                <td>
+                    @if (!item.Fulfilled)
+                    {
+                        @Html.ActionLink("Fulfill", "Create", new { billRecordRequestId = item.ID }, new { @class = "btn btn-success btn-sm" })
+                    }
+                    else
+                    {
+                        <text>Fulfilled at </text>@Html.DisplayFor(modelItem => item.FulfilledAt)
+                    }
+                </td>
+            </tr>
+        }
+
+    </table>
+}
+else if (Request.IsAuthenticated && (User.IsInRole("BillsDiv") || User.IsInRole("BillsAgency")))
+{
+    <table class="table table-striped table-condensed">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().CompositeBillNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().RequestedAt)
+            </th>
+            <th>Status</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr class="@(item.Fulfilled ? "success" : "")">
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompositeBillNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestedAt)
+                </td>
+                <td>
+                    @if (item.Fulfilled)
+                    {
+                        if (item.UserReviewed)
+                        {
+                            <text>Review submitted </text>@Html.ActionLink("View Bill Review", "Details", "BillReviews", new { id = item.BillReviewID }, new { @class = "btn btn-default btn-sm" })
+                        }
+                        else
+                        {
+                            <text>Request fulfilled </text>@Html.ActionLink("Create Bill Review", "Create", "BillReviews", new { id = item.BillID }, new { @class = "btn btn-default btn-sm" })
+                        }
+                    }
+                    else
+                    {
+                        <text>Request pending</text>
+                    }
+                </td>
+
+            </tr>
+        }
+
+    </table>
+}

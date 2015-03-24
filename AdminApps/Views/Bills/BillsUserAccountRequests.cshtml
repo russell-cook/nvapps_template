@@ -1,0 +1,54 @@
+﻿@model ICollection<AdminApps.ViewModels.BillsUserAccountRequestViewModel>
+@{
+    ViewBag.Title = "User Account Requests";
+    ViewBag.ModuleName = "Bill Tracking";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.ActionLink("Request New User Account", "RequestBillsUserAccount", null, new { @class = "btn btn-default" })
+</p>
+
+<p>The following table lists your previous user account requests:</p>
+<table class="table table-striped table-condensed">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().FullName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().RoleName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().RequestedAt)
+        </th>
+        <th>Status</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="@(item.Fulfilled ? "success" : "")">
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoleName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RequestedAt)
+            </td>
+            <td>
+                @if (item.Fulfilled)
+                {
+                    <text>Fulfilled </text>@Html.DisplayFor(modelItem => item.FullfilledAt)
+                }
+                else
+                {
+                    <text>Request pending</text>
+                }
+            </td>
+
+        </tr>
+    }
+
+</table>

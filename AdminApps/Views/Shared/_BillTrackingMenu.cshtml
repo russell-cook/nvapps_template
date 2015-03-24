@@ -1,0 +1,41 @@
+﻿<li role="presentation" @{if (ViewBag.Title == "Home") { <text> class="active" </text>    } }>@Html.ActionLink("Home", "Home", "Bills")</li>
+<li role="presentation" @{if (ViewBag.Title == "List All Bills") { <text> class="active" </text>     } }>@Html.ActionLink("List All Bills", "Index", "Bills")</li>
+
+@if (Request.IsAuthenticated && !User.IsInRole("BillsClerc"))
+{
+    <li role="presentation" @{if (ViewBag.Title == "My Bill Reviews") { <text> class="active" </text>     } }>@Html.ActionLink("My Bill Reviews", "Index", "BillReviews")</li>
+}
+
+@if (Request.IsAuthenticated && (User.IsInRole("BillsDept") || User.IsInRole("BillsDiv")))
+{
+    <li role="presentation" @{if (ViewBag.Title == "Unread Bill Reviews") { <text> class="active" </text>          } }>@Html.ActionLink("Unread Bill Reviews", "Unread", "BillReviews")</li>
+}
+
+@if (Request.IsAuthenticated && (User.IsInRole("BillsDiv") || User.IsInRole("BillsAgency")))
+{
+    <li role="presentation" @{if (ViewBag.Title == "Bill Review Requests") { <text> class="active" </text>          } }>@Html.ActionLink("Bill Review Requests", "BillReviewRequests", "Bills")</li>
+}
+
+@if (Request.IsAuthenticated && (User.IsInRole("BillsClerc") || User.IsInRole("BillsDept")))
+{
+    @*<li role="presentation" @{if (ViewBag.Title == "My Bills") { <text> class="active" </text>        } }>@Html.ActionLink("My Bills", "BillsOfInterest", "Bills")</li>*@
+    <li role="presentation" @{if (ViewBag.Title == "List NEBS Transmitted BDRs") { <text> class="active" </text>         } }>@Html.ActionLink("NEBS BDRs", "NEBS_BDRs", "Bills")</li>
+    <li role="presentation" @{if (ViewBag.Title == "Reports") { <text> class="active" </text>       } }>@Html.ActionLink("Reports", "Index", "BillReports")</li>
+}
+
+@if (Request.IsAuthenticated && (User.IsInRole("BillsClerc") || User.IsInRole("BillsDiv") || User.IsInRole("BillsAgency")))
+{
+    <li role="presentation" @{if (ViewBag.Title == "Bill Record Requests") { <text> class="active" </text>            } }>@Html.ActionLink("Bill Record Requests", "BillRecordRequests", "Bills")</li>
+}
+
+@if (Request.IsAuthenticated && (User.IsInRole("BillsDiv") || User.IsInRole("BillsAgency")))
+{
+    <li role="presentation" @{if (ViewBag.Title == "User Account Requests") { <text> class="active" </text>             } }>@Html.ActionLink("User Account Requests", "BillsUserAccountRequests", "Bills")</li>
+}
+
+@if (Request.IsAuthenticated && User.IsInRole("GlobalAdmin"))
+{
+    <li role="presentation" @{if (ViewBag.Title == "Pending User Account Requests") { <text> class="active" </text>             } }>@Html.ActionLink("Pending User Account Requests", "PendingBillsUserAccountRequests", "Bills")</li>
+}
+
+<li role="presentation" @{if (ViewBag.Title == "Help") { <text> class="active" </text>     } }>@Html.ActionLink("Help", "Help", "Bills")</li>

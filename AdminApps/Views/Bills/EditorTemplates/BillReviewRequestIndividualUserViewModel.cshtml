@@ -1,0 +1,62 @@
+﻿@model AdminApps.ViewModels.BillReviewRequestIndividualUserViewModel
+
+
+
+@if (!Model.PreviouslyRequested)
+{
+    if (Model.Fulfilled)
+    {
+        <text><tr class="success"></text>
+    }
+    else
+    {
+        <text><tr></text>
+    }
+}
+else
+{ 
+    if (Model.Fulfilled)
+    {
+        <text><tr class="success"></text>
+    }
+    else
+    {
+        <text><tr class="warning"></text>
+    }
+}
+
+
+    <td>
+        @if (!Model.PreviouslyRequested)
+        {
+            if (Model.Fulfilled)
+            {
+                <text>Review has been submitted</text>
+            }
+            else
+            {
+                @Html.CheckBoxFor(model => model.Selected)
+            }
+        }
+        else
+        {
+            if (Model.Fulfilled)
+            {
+                <text>Request fulfilled </text>@Html.DisplayFor(model => model.FulfilledAt)
+            }
+            else
+            {
+                <text>Request sent </text>@Html.DisplayFor(model => model.RequestedAt)
+            }
+        }
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.FullName)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.CompositeDivName)
+    </td>
+    <td>
+        @Html.HiddenFor(model => model.ApplicationUserID)
+    </td>
+</tr>

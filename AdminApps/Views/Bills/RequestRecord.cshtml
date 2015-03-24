@@ -1,0 +1,86 @@
+﻿@model AdminApps.ViewModels.BillRecordRequestViewModel
+
+@{
+    ViewBag.Title = "Request Bill Record";
+    ViewBag.ModuleName = "Bill Tracking";
+}
+
+<h2>Request Bill Record</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <p>If you would like to provide a Review for a Bill that is not listed on the 'List All Bills' page please complete the form below and submit your request. When your request has been fulfilled you will receive an email notification, and the Bill/BDR will be available for review.</p>
+        <p>To request the addition of a Bill please submit the Bill Prefix (AB, SB, etc.) and Suffix (the Bill number). To request the addition of a BDR that has not yet been assigned a Bill number please submit the BDR Prefix (letter or number, if provided) and the BDR Suffix (number).</p>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.BillPrefixID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.BillPrefixID, Model.BillPrefixesList, "--Select Prefix--", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.BillPrefixID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Suffix, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Suffix, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Suffix, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.BdrPrefix, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.BdrPrefix, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.BdrPrefix, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.BdrSuffix, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.BdrSuffix, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.BdrSuffix, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.Summary, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Summary, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Summary, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
+
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.NelisHyperlink, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.NelisHyperlink, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.NelisHyperlink, "", new { @class = "text-danger" })
+                    <p class="help-block">If the Bill you are requesting is listed in the NELIS application (<a href="https://www.leg.state.nv.us/App/NELIS/REL/78th2015/Bills/List" target="_blank">https://www.leg.state.nv.us/App/NELIS/REL/78th2015/Bills/List</a>) please locate the Bill and copy/paste its link into the field above. This information helps us to ensure accuracy and avoid duplication of our entries.</p>
+                </div>
+            </div>*@
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Submit Request" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<AdminApps.Models.BillReview>
+
+@{
+    ViewBag.Title = "My Bill Reviews";
+    ViewBag.ModuleName = "Bill Tracking";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>The following table lists your previously submitted Bill Reviews:</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Bill.CompositeBillNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Bill.Summary)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Recommendation.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FiscalImpactBiennium)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink(item.Bill.CompositeBillNumber, "Details", "Bills", new { id = item.BillID }, null)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Bill.Summary)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Recommendation.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FiscalImpactBiennium)
+        </td>
+        <td>
+            @Html.ActionLink("View Bill Review", "Details", new { id = item.ID }, new { @class = "btn btn-default" })
+            @*@Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })*@
+        </td>
+    </tr>
+}
+
+</table>

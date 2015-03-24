@@ -1,0 +1,71 @@
+﻿@model AdminApps.ViewModels.AttachBillRecordRequestViewModel
+
+@{
+    ViewBag.Title = "AttachBillRecordRequest";
+    ViewBag.ModuleName = "Bill Tracking";
+}
+
+<h2>Attach Bill Record Request to Existing Bill Record</h2>
+<hr />
+
+<h4>Attach this request:</h4>
+<dl class="dl-horizontal">
+    <dt>
+        Requested by
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.RequestedByUserName)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.RequestID)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.RequestID)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.BillID)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.BillID)
+    </dd>
+
+</dl>
+<hr />
+
+<h4>To this Bill record?</h4>
+<dl class="dl-horizontal">
+    <dt>
+        @Html.DisplayNameFor(model => model.CompositeBillNumber)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.CompositeBillNumber)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Summary)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Summary)
+    </dd>
+
+</dl>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.RequestID)
+    @Html.HiddenFor(model => model.BillID)
+
+    <div class="form-actions no-color">
+        <input type="submit" value="Attach Bill Record Request" class="btn btn-default" /> |
+        @Html.ActionLink("Back to list of Bill Record Requests", "BillRecordRequests")
+    </div>
+}

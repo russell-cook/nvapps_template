@@ -1,0 +1,176 @@
+﻿@model AdminApps.ViewModels.BillReviewViewModel
+
+@{
+    ViewBag.Title = "Details";
+    ViewBag.ModuleName = "Bill Tracking";
+}
+
+<h3>
+    Bill Review Details
+    @if (Model.DisplayAsRead == false)
+    {
+        @Html.Encode(" (Unread)");
+    }
+</h3>
+
+@if (Model.DisplayAsRead == false)
+{
+    @Html.ActionLink("Mark As Read", "MarkAsRead", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-default" })
+}
+
+<p>@Html.DisplayFor(model => model.ApprovedReviewMessage)</p>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h4 class="panel-title">@Html.DisplayFor(model => model.Bill.CompositeBillName)</h4>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>
+                Reviewed by
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CreatedByUser.FullName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedByUser.Div.CompositeDivName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CreatedByUser.Div.CompositeDivName)
+            </dd>
+
+            <hr />
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Recommendation.Description)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Recommendation.Description)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Comments)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Comments)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.RequiresTestimony)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.RequiresTestimony)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.InformationToBeProvided)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.InformationToBeProvided)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ActivelyTracking)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ActivelyTracking)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PolicyImpact)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PolicyImpact)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalImpactYr1)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FiscalImpactYr1)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalImpactYr2)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FiscalImpactYr2)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalImpactFuture)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FiscalImpactFuture)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalNoteSubmitted)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FiscalNoteSubmitted)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Notes)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Notes)
+            </dd>
+
+        </dl>
+
+        <dl class="dl-horizontal">
+
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalImpactBiennium)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FiscalImpactBiennium)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalImpactTotal)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FiscalImpactTotal)
+            </dd>
+
+        </dl>
+
+    </div>
+
+</div>
+
+@if (Model.UserCanApprove == true)
+{
+    <p>
+        @Html.ActionLink("Approve Bill Review", "Approve", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-success btn-sm" })
+    </p>
+}
+
+<p>
+    @if (Model.UserCanEdit == true)
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-default" });
+    }
+    else
+    {
+    <p class="danger">@ViewBag.EditMessage</p>
+    }
+    @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.BillID }, new { @class = "btn btn-default" })
+</p>
