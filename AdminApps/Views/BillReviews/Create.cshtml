@@ -10,7 +10,7 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h2>Add Review for: @ViewBag.ParentID</h2>
+        <h2>Create Review for: @ViewBag.ParentID</h2>
         <h4>Current Bill Version: @Html.DisplayFor(model => model.BillVersion.VersionDescription)</h4>
         <h6>NELIS Link: <a href="@ViewBag.ParentNelisLink" target="_blank">@ViewBag.ParentNelisLink</a></h6>
         <hr />

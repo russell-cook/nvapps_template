@@ -307,13 +307,13 @@ namespace AdminApps.ViewModels
         public bool? PolicyImpact { get; set; }
         [Display(Name = "Fiscal Impact Yr 1")]
         [DataType(DataType.Currency)]
-        public Decimal? FiscalImpactYr1 { get; set; }
+        public int FiscalImpactYr1 { get; set; }
         [Display(Name = "Fiscal Impact Yr 2")]
         [DataType(DataType.Currency)]
-        public Decimal? FiscalImpactYr2 { get; set; }
+        public int FiscalImpactYr2 { get; set; }
         [Display(Name = "Future Impact")]
         [DataType(DataType.Currency)]
-        public Decimal? FiscalImpactFuture { get; set; }
+        public int FiscalImpactFuture { get; set; }
         [UIHint("BooleanButton")]
         [Display(Name = "Fiscal Note submitted?")]
         public bool FiscalNoteSubmitted { get; set; }
@@ -354,26 +354,21 @@ namespace AdminApps.ViewModels
         }
 
         [Display(Name = "Biennium Fiscal Impact")]
-        [DisplayFormat(DataFormatString = "{0:c}")]
-        public decimal? FiscalImpactBiennium
+        [DataType(DataType.Currency)]
+        public int? FiscalImpactBiennium
         {
             get
             {
-                if (!FiscalImpactYr1.HasValue) { FiscalImpactYr1 = 0; }
-                if (!FiscalImpactYr2.HasValue) { FiscalImpactYr2 = 0; }
                 return FiscalImpactYr1 + FiscalImpactYr2;
             }
         }
 
-        [Display(Name = "Total Impact")]
-        [DisplayFormat(DataFormatString = "{0:c}")]
-        public decimal? FiscalImpactTotal
+        [Display(Name = "Total Fiscal Impact")]
+        [DataType(DataType.Currency)]
+        public int? FiscalImpactTotal
         {
             get
             {
-                if (!FiscalImpactYr1.HasValue) { FiscalImpactYr1 = 0; }
-                if (!FiscalImpactYr2.HasValue) { FiscalImpactYr2 = 0; }
-                if (!FiscalImpactFuture.HasValue) { FiscalImpactFuture = 0; }
                 return FiscalImpactYr1 + FiscalImpactYr2 + FiscalImpactFuture;
             }
         }

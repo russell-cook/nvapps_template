@@ -35,6 +35,7 @@ namespace AdminApps.Models
         public virtual ICollection<Bill> Bills { get; set; }
         public virtual BudgetPeriod BudgetPeriod { get; set; }
         public virtual ICollection<Div> Divs { get; set; }
+        public virtual ICollection<BillsAlsrReport> BillsAlsrReports { get; set; }
 
         // Identity navigation properties
         public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; }
@@ -70,6 +71,7 @@ namespace AdminApps.Models
         public virtual ICollection<Bill> Bills { get; set; }
         public virtual BudgetPeriod BudgetPeriod { get; set; }
         public virtual Dept Dept { get; set; }
+        public virtual ICollection<BillsAlsrReport> BillsAlsrReports { get; set; }
 
         public virtual ICollection<ApplicationUser> ApplicationUsers { get; set; }
 

@@ -147,7 +147,7 @@
                     <div class="panel-body">
                         @if (Model.UserCanReview == true)
                         {
-                            <p>@Html.ActionLink("Submit Bill Review", "Create", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-default btn-sm" })</p>
+                            <p>@Html.ActionLink("Create Bill Review", "Create", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-default btn-sm" })</p>
                         }
                         else
                         {

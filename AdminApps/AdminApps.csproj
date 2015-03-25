@@ -500,6 +500,10 @@
     <Compile Include="Migrations\201503200219217_AddSponsorToBillVersion.Designer.cs">
       <DependentUpon>201503200219217_AddSponsorToBillVersion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201503242225305_AddExemptBoolToBill.cs" />
+    <Compile Include="Migrations\201503242225305_AddExemptBoolToBill.Designer.cs">
+      <DependentUpon>201503242225305_AddExemptBoolToBill.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
@@ -549,6 +553,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201503200219217_AddSponsorToBillVersion.resx">
       <DependentUpon>201503200219217_AddSponsorToBillVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201503242225305_AddExemptBoolToBill.resx">
+      <DependentUpon>201503242225305_AddExemptBoolToBill.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

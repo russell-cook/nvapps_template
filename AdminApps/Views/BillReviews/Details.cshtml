@@ -25,6 +25,8 @@
         <h4 class="panel-title">@Html.DisplayFor(model => model.Bill.CompositeBillName)</h4>
     </div>
     <div class="panel-body">
+
+
         <dl class="dl-horizontal">
             <dt>
                 Reviewed by
@@ -39,9 +41,9 @@
             <dd>
                 @Html.DisplayFor(model => model.CreatedByUser.Div.CompositeDivName)
             </dd>
+        </dl>
 
-            <hr />
-
+        <dl class="dl-horizontal">
             <dt>
                 @Html.DisplayNameFor(model => model.Recommendation.Description)
             </dt>
@@ -75,19 +77,23 @@
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.ActivelyTracking)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.ActivelyTracking)
-            </dd>
-
-            <dt>
                 @Html.DisplayNameFor(model => model.PolicyImpact)
             </dt>
 
             <dd>
                 @Html.DisplayFor(model => model.PolicyImpact)
+            </dd>
+
+        </dl>
+
+
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalNoteSubmitted)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FiscalNoteSubmitted)
             </dd>
 
             <dt>
@@ -115,11 +121,23 @@
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.FiscalNoteSubmitted)
+                @Html.DisplayNameFor(model => model.FiscalImpactTotal)
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.FiscalNoteSubmitted)
+                @Html.DisplayFor(model => model.FiscalImpactTotal)
+            </dd>
+
+        </dl>
+
+        <dl class="dl-horizontal">
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ActivelyTracking)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ActivelyTracking)
             </dd>
 
             <dt>
@@ -131,29 +149,7 @@
             </dd>
 
         </dl>
-
-        <dl class="dl-horizontal">
-
-            <dt>
-                @Html.DisplayNameFor(model => model.FiscalImpactBiennium)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.FiscalImpactBiennium)
-            </dd>
-
-            <dt>
-                @Html.DisplayNameFor(model => model.FiscalImpactTotal)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.FiscalImpactTotal)
-            </dd>
-
-        </dl>
-
     </div>
-
 </div>
 
 @if (Model.UserCanApprove == true)
@@ -173,4 +169,4 @@
     <p class="danger">@ViewBag.EditMessage</p>
     }
     @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.BillID }, new { @class = "btn btn-default" })
-</p>
+    </p>

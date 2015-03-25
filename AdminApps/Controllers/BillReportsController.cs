@@ -140,7 +140,7 @@ namespace AdminApps.Controllers
                 var reportService = new BillsAlsrReportsService();
                 var readReport = reportService.GetById(report.ID);
                 readReport.Pdf = await CreateAlsrPdf(report.ID);
-                readReport.Filename = string.Format("ALSR_Dept of Administration_{0}.pdf", readReport.CreatedAt);
+                readReport.Filename = string.Format("ALSR_{0}_{1}.pdf", readReport.Dept.Description, readReport.CreatedAt);
                 reportService.Update(readReport);
                 //await db.SaveChangesAsync();
 

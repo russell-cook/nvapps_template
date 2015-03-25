@@ -31,3 +31,10 @@
 .list-group-item-text {
     margin-bottom: 10px;
 }
+
+
+/*! override line wrap from <dt> components*/
+.dl-horizontal dt 
+{
+    white-space: normal;
+}

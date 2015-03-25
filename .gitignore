@@ -5,7 +5,7 @@
 PrivateSettings.config
 
 # NEBS Context
-DAL/NebsContext.cs
+/AdminApps/DAL/NebsContext.cs
 
 # packages
 [Pp]ackages*/
@@ -197,4 +197,4 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
-/AdminApps/DAL/NebsContext.cs
+

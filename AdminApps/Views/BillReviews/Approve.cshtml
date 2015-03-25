@@ -5,101 +5,145 @@
     ViewBag.ModuleName = "Bill Tracking";
 }
 
-<h3>Approve Review for <strong>@Html.DisplayFor(model => model.ReviewToApprove.Bill.CompositeBillNumber): @Html.DisplayFor(model => model.ReviewToApprove.Bill.Title)</strong></h3>
+<h3>Submit as 'Approved Review' for @ViewBag.ApprovedReviewAgency?</h3>
 
-<h4>Submit as approved review for @ViewBag.ApprovedReviewAgency?</h4>
-<div>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            Reviewed by
-        </dt>
+@if (Request.IsAuthenticated && User.IsInRole("BillsDiv"))
+{
+    <p><strong>Please Note: </strong>approving this Bill Review will send a notification to Department-level users and will make the Review available for possible inclusion in the Department's weekly 'Agency Legislative Status Report' for the Governor's Office.</p>
+}
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.CreatedByUser.FullName)
-        </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewToApprove.CreatedByUserInDiv.CompositeDivName)
-        </dt>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h4 class="panel-title">@Html.DisplayFor(model => model.ReviewToApprove.Bill.CompositeBillName)</h4>
+    </div>
+    <div class="panel-body">
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.CreatedByUserInDiv.CompositeDivName)
-        </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewToApprove.Recommendation.Description)
-        </dt>
+        <dl class="dl-horizontal">
+            <dt>
+                Reviewed by
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.CreatedByUser.FullName)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.Recommendation.Description)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.CreatedByUser.Div.CompositeDivName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.CreatedByUser.Div.CompositeDivName)
+            </dd>
+        </dl>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewToApprove.Comments)
-        </dt>
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.Recommendation.Description)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.Comments)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.Recommendation.Description)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewToApprove.RequiresTestimony)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.Comments)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.RequiresTestimony)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.Comments)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewToApprove.InformationToBeProvided)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.RequiresTestimony)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.InformationToBeProvided)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.RequiresTestimony)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactYr1)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.InformationToBeProvided)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactYr1)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.InformationToBeProvided)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactYr2)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.PolicyImpact)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactYr2)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.PolicyImpact)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactFuture)
-        </dt>
+        </dl>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactFuture)
-        </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactTotal)
-        </dt>
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalNoteSubmitted)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactTotal)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.FiscalNoteSubmitted)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalNoteSubmitted)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactYr1)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ReviewToApprove.FiscalNoteSubmitted)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactYr1)
+            </dd>
 
-    </dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactYr2)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactYr2)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactFuture)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactFuture)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.FiscalImpactTotal)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.FiscalImpactTotal)
+            </dd>
+
+        </dl>
+
+        <dl class="dl-horizontal">
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.ActivelyTracking)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.ActivelyTracking)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ReviewToApprove.Notes)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ReviewToApprove.Notes)
+            </dd>
+
+        </dl>
+    </div>
+</div>
 
     @if (Model.ApprovedReview == null)
     {
@@ -117,7 +161,7 @@
     {
         <div class="panel panel-danger">
             <div class="panel-heading">
-                <h4 class="panel-title"><strong>WARNING:</strong> approved review exists for @ViewBag.ApprovedReviewAgency</h4>
+                <h4 class="panel-title"><strong>WARNING:</strong> Approved review exists for @ViewBag.ApprovedReviewAgency</h4>
             </div>
             <div class="panel-body">
                 <p>Approved by @Html.DisplayFor(model => model.ApprovedByUser.FullName) on @Html.DisplayFor(model => model.ApprovedAt)</p>
@@ -160,9 +204,9 @@
             @Html.AntiForgeryToken()
 
             <div class="form-actions no-color">
-                <input type="submit" value="Replace Existing Approved Review" class="btn btn-danger" /> |
+                <input type="submit" value="Confirm: Replace Approved Review?" class="btn btn-danger" /> |
                 @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.ReviewToApprove.Bill.ID }, null)
             </div>
         }
     }
-</div>
+

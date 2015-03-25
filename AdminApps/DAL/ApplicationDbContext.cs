@@ -97,6 +97,8 @@ namespace AdminApps.DAL
             modelBuilder.Entity<Bill>().Property(p => p.NebsDeptID).HasPrecision(18, 0);
             modelBuilder.Entity<Bill>().Property(p => p.NebsDivID).HasPrecision(18, 0);
             modelBuilder.Entity<BillVersion>().HasRequired(f => f.Bill).WithMany(f => f.BillVersions).WillCascadeOnDelete(false);
+            modelBuilder.Entity<BillsAlsrReport>().HasRequired(r => r.Dept).WithMany(r => r.BillsAlsrReports).WillCascadeOnDelete(false);
+            modelBuilder.Entity<BillsAlsrReport>().HasRequired(r => r.Div).WithMany(r => r.BillsAlsrReports).WillCascadeOnDelete(false);
         }
 
 

@@ -74,8 +74,9 @@ namespace AdminApps.Models
         public DateTime? DateGovAction { get; set; }
         [Display(Name = "Chapter Number")]
         public int? ChapterNum { get; set; }
-        [DataType(DataType.Url)]
-        public string NelisHyperlink { get; set; }
+        public bool Exempt { get; set; }
+        //[DataType(DataType.Url)]
+        //public string NelisHyperlink { get; set; }
 
         [Timestamp]
         public byte[] RowVersion { get; set; }
@@ -258,14 +259,14 @@ namespace AdminApps.Models
         public bool? PolicyImpact { get; set; }
         [Display(Name = "Fiscal Impact Yr 1")]
         [Required]
-        //[DataType(DataType.Currency)]
+        [DataType(DataType.Currency)]
         public int FiscalImpactYr1 { get; set; }
         [Display(Name = "Fiscal Impact Yr 2")]
-        //[DataType(DataType.Currency)]
+        [DataType(DataType.Currency)]
         [Required]
         public int FiscalImpactYr2 { get; set; }
-        [Display(Name = "Future Impact")]
-        //[DataType(DataType.Currency)]
+        [Display(Name = "Impact on Future Biennia")]
+        [DataType(DataType.Currency)]
         [Required]
         public int FiscalImpactFuture { get; set; }
         [UIHint("BooleanButton")]
@@ -303,7 +304,7 @@ namespace AdminApps.Models
         }
 
         [Display(Name = "Biennium Fiscal Impact")]
-        //[DisplayFormat(DataFormatString = "{0:c}")]
+        [DataType(DataType.Currency)]
         public int? FiscalImpactBiennium
         {
             get
@@ -312,8 +313,8 @@ namespace AdminApps.Models
             }
         }
 
-        [Display(Name = "Total Impact")]
-        //[DisplayFormat(DataFormatString = "{0:c}")]
+        [Display(Name = "Total Fiscal Impact")]
+        [DataType(DataType.Currency)]
         public int? FiscalImpactTotal
         {
             get
@@ -345,8 +346,8 @@ namespace AdminApps.Models
         public int ID { get; set; }
         public decimal BudgetPeriodID { get; set; }
         public decimal BudgetSessionID { get; set; }
-        public decimal? DeptID { get; set; }
-        public decimal? DivID { get; set; }
+        public decimal DeptID { get; set; }
+        public decimal DivID { get; set; }
         public byte[] Pdf { get; set; }
         public string Filename { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -357,6 +358,8 @@ namespace AdminApps.Models
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }
 
+        public virtual Dept Dept { get; set; }
+        public virtual Div Div { get; set; }
         public virtual ApplicationUser CreatedByUser { get; set; }
         public virtual List<AlsrBillReviewSnapshot> AlsrBillReviewSnapshots { get; set; }
     }

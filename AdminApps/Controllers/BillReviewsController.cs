@@ -496,6 +496,7 @@ namespace AdminApps.Controllers
                 {
                     r.Fulfilled = true;
                     r.FulfilledAt = DateTime.Now;
+                    r.BillReviewID = review.ID;
                 }
             }
 
@@ -521,7 +522,7 @@ namespace AdminApps.Controllers
                 var targetUsers = GetUsersInRoleAndDept("BillsDept", review.DeptID);
                 foreach (ApplicationUser u in targetUsers)
                 {
-                    string messageBody = string.Format(body, u.FirstName, review.Bill.NelisHyperlink, review.Bill.CompositeBillNumber, review.CreatedByName, review.CreatedByUserInDiv.CompositeDivName, viewReviewUrl);
+                    string messageBody = string.Format(body, u.FirstName, review.Bill.calculatedHyperlink, review.Bill.CompositeBillNumber, review.CreatedByName, review.CreatedByUserInDiv.CompositeDivName, viewReviewUrl);
                     await UserManager.SendEmailAsync(u.Id, messageSubject, messageBody);
                 }
             }
