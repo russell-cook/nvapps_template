@@ -935,12 +935,48 @@ namespace AdminApps.Controllers
         {
             if (ModelState.IsValid)
             {
+                // identify users who submitted a BillReview for a previous BillVersion
+                var store = new UserStore<ApplicationUser>(new ApplicationDbContext());
+                var userManager = new UserManager<ApplicationUser>(store);
+                var targetUsers = await userManager.Users.Where(u => u.CreatedBillReviews.Where(r => r.BillID == model.BillID).Any()).ToListAsync();
+
+
+                // create new BillVersion
                 var previousVersion = await db.BillVersions.Where(v => v.BillID == model.BillID).OrderByDescending(v => v.VersionNum).FirstOrDefaultAsync();
                 var newVersion = new BillVersion();
                 newVersion.InjectFrom(model);
                 newVersion.VersionNum = previousVersion.VersionNum + 1;
                 db.BillVersions.Add(newVersion);
                 await db.SaveChangesAsync();
+
+
+                // notify users of new version
+                if (targetUsers != null && newVersion.IsReprint && newVersion.ReprintDate != null)
+                {
+                    var newVersionRead = await db.BillVersions
+                                            .Where(v => v.ID == newVersion.ID)
+                                            .Include(v => v.Bill)
+                                            .FirstOrDefaultAsync();
+                    string body = "";
+                    using (var sr = new StreamReader(Server.MapPath("\\Templates\\") + "NewBillVersionNotification.html"))
+                    {
+                        body = await sr.ReadToEndAsync();
+                    }
+                    string messageSubject = string.Format("AdminApps Bill Tracking: Notification of Reprint for {0}", newVersionRead.Bill.CompositeBillNumber);
+                    string domain = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
+                    foreach (ApplicationUser u in targetUsers)
+                    {
+                        // compose email notification
+                        int userBillReviewId = u.CreatedBillReviews.Where(r => r.BillID == newVersionRead.BillID).OrderByDescending(r => r.BillVersion.VersionNum).FirstOrDefault().ID;
+                        string confirmReviseBillReviewUrl = string.Format("{0}/BillReviews/ConfirmRevise/{1}", domain, userBillReviewId);
+                        string messageBody = string.Format(body, newVersionRead.Bill.CompositeBillNumber, u.FirstName, newVersionRead.ReprintDate.Value.ToShortDateString(), newVersionRead.Bill.calculatedHyperlink, confirmReviseBillReviewUrl, newVersionRead.VersionDescription);
+                        await UserManager.SendEmailAsync(u.Id, messageSubject, messageBody);
+
+                        // create notification record
+                    }
+
+
+                }
                 Success("Bill version added successfully");
                 return RedirectToAction("Details", new { id = model.BillID });
             }

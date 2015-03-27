@@ -306,10 +306,11 @@
                 </dd>
             </dl>
 
-            @if (Request.IsAuthenticated && (User.IsInRole("BillsClerc") || User.IsInRole("BillsDept")))
+            @if (Request.IsAuthenticated && User.IsInRole("BillsClerc"))
             {
                 <p>
                     @Html.ActionLink("Edit Bill Tracking Details", "Edit", new { id = Model.ID }, new { @class = "btn btn-default btn-sm" })
+                    @Html.ActionLink("Add New Bill Version", "AddVersion", new { id = Model.ID }, new { @class = "btn btn-default btn-sm" })
                 </p>
             }
 

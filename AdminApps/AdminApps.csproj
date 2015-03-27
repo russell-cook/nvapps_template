@@ -216,6 +216,7 @@
     <Content Include="Templates\BillReviewRequestNotificationAgency.html" />
     <Content Include="Templates\BillReviewRequestNotificationDiv.html" />
     <Content Include="Templates\BillsUserAccountRequestFulfilledConfirmation.html" />
+    <Content Include="Templates\NewBillVersionNotification.html" />
     <Content Include="Templates\RegisterAccountEmailTemplate.html" />
     <Content Include="Views\NebsConcurrency\Index.cshtml" />
     <Content Include="Views\Bills\Create.cshtml" />
@@ -356,6 +357,7 @@
     <Content Include="Views\Bills\DisplayTemplates\BillReviewViewModel.cshtml" />
     <Content Include="Views\Bills\AddVersion.cshtml" />
     <Content Include="Views\Bills\AddVersionTemplate.cshtml" />
+    <Content Include="Views\BillReviews\Dept.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -504,6 +506,10 @@
     <Compile Include="Migrations\201503242225305_AddExemptBoolToBill.Designer.cs">
       <DependentUpon>201503242225305_AddExemptBoolToBill.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201503270213385_AddRevisionStatusBoolsToBillReview.cs" />
+    <Compile Include="Migrations\201503270213385_AddRevisionStatusBoolsToBillReview.Designer.cs">
+      <DependentUpon>201503270213385_AddRevisionStatusBoolsToBillReview.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
@@ -556,6 +562,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201503242225305_AddExemptBoolToBill.resx">
       <DependentUpon>201503242225305_AddExemptBoolToBill.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201503270213385_AddRevisionStatusBoolsToBillReview.resx">
+      <DependentUpon>201503270213385_AddRevisionStatusBoolsToBillReview.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

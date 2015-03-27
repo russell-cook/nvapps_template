@@ -4,6 +4,7 @@ using AdminApps.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Omu.ValueInjecter;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,50 +25,231 @@ namespace AdminApps.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: BillReviews
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string sortOrder, string currentFilter, string searchString, int? page, int pageSize = 10)
         {
+            // configure column sort parameters
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.BillSortParm = String.IsNullOrEmpty(sortOrder) ? "billNum_desc" : "";
+            //ViewBag.CreatedBySortParm = sortOrder == "CreatedBy" ? "createdBy_desc" : "CreatedBy";
+            //ViewBag.DivisionSortParm = sortOrder == "Division" ? "division_desc" : "Division";
+            ViewBag.RecommendationSortParm = sortOrder == "Recommendation" ? "recommendation_desc" : "Recommendation";
+            ViewBag.CreatedAtSortParm = sortOrder == "CreatedAt" ? "createdAt_desc" : "CreatedAt";
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewBag.CurrentFilter = searchString;
+
+            // initialize query
             ApplicationUser user = await ReturnCurrentUserAsync();
-            var billReviews = db.BillReviews.
-                Where(b => b.ApplicationUserID == user.Id).
-                Include(b => b.Bill).
-                Include(b => b.Recommendation);
-            return View(await billReviews.ToListAsync());
+            var billReviewsQry = db.BillReviews
+                                .Where(r => r.ApplicationUserID == user.Id)
+                                .Include(r => r.Bill)
+                                .Include(r => r.CreatedByUser)
+                                .Include(r => r.CreatedByUserInDiv)
+                                .Include(r => r.Recommendation);
+
+            // apply pre-query sort order
+            switch (sortOrder)
+            {
+                case "billNum_desc":
+                    billReviewsQry = billReviewsQry.OrderByDescending(r => r.Bill.BillPrefixID).ThenByDescending(r => r.Bill.Suffix);
+                    break;
+                case "CreatedAt":
+                    billReviewsQry = billReviewsQry.OrderBy(r => r.CreatedAt);
+                    break;
+                case "createdAt_desc":
+                    billReviewsQry = billReviewsQry.OrderByDescending(r => r.CreatedAt);
+                    break;
+                default:
+                    billReviewsQry = billReviewsQry.OrderBy(r => r.Bill.BillPrefixID).ThenBy(r => r.Bill.Suffix);
+                    break;
+            }
+
+            // execute query. The following filter/sort operations are performed on calculated properties 
+            // in the result set and cannot be included in the LINQ query above
+            var billReviewsList = await billReviewsQry.ToListAsync();
+
+            // apply search string (if exists)
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                string capSearchString = searchString.ToUpper();
+                foreach (BillReview r in billReviewsList.ToList())
+                {
+                    if (!r.Bill.CompositeBillNumber.Contains(capSearchString))
+                    {
+                        billReviewsList.Remove(r);
+                    }
+                }
+            }
+
+            // apply post-query sort order
+            switch (sortOrder)
+            {
+                case "Division":
+                    billReviewsList = billReviewsQry.OrderBy(r => r.CreatedByUserInDiv.Description).ToList();
+                    break;
+                case "division_desc":
+                    billReviewsList = billReviewsQry.OrderByDescending(r => r.CreatedByUserInDiv.Description).ToList();
+                    break;
+                default:
+                    break;
+            }
+
+
+            int pageNumber = (page ?? 1);
+            PagedList<BillReview> viewModel = new PagedList<BillReview>(billReviewsList, pageNumber, pageSize);
+
+            return View(viewModel);
+        }
+
+        // GET: BillReviews/Dept
+        [Authorize(Roles = "BillsDept, BillsClerc")]
+        public async Task<ActionResult> Dept(string sortOrder, string currentFilter, string searchString, int? page, int pageSize = 10)
+        {
+            // configure column sort parameters
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.BillSortParm = String.IsNullOrEmpty(sortOrder) ? "billNum_desc" : "";
+            ViewBag.CreatedBySortParm = sortOrder == "CreatedBy" ? "createdBy_desc" : "CreatedBy";
+            ViewBag.DivisionSortParm = sortOrder == "Division" ? "division_desc" : "Division";
+            ViewBag.RecommendationSortParm = sortOrder == "Recommendation" ? "recommendation_desc" : "Recommendation";
+            ViewBag.CreatedAtSortParm = sortOrder == "CreatedAt" ? "createdAt_desc" : "CreatedAt";
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewBag.CurrentFilter = searchString;
+
+
+            // initialize query
+            ApplicationUser user = await ReturnCurrentUserAsync();
+            var billReviewsQry = db.BillReviews
+                                .Where(r => r.DeptID == user.DeptID && r.Approvals.Where(a => a.ApprovalLevel == 2).Any())
+                                .Include(r => r.Bill)
+                                .Include(r => r.Recommendation);
+
+            // apply pre-query sort order
+            switch (sortOrder)
+            {
+                case "billNum_desc":
+                    billReviewsQry = billReviewsQry.OrderByDescending(r => r.Bill.BillPrefixID).ThenByDescending(r => r.Bill.Suffix);
+                    break;
+                case "CreatedAt":
+                    billReviewsQry = billReviewsQry.OrderBy(r => r.CreatedAt);
+                    break;
+                case "createdAt_desc":
+                    billReviewsQry = billReviewsQry.OrderByDescending(r => r.CreatedAt);
+                    break;
+                default:
+                    billReviewsQry = billReviewsQry.OrderBy(r => r.Bill.BillPrefixID).ThenBy(r => r.Bill.Suffix);
+                    break;
+            }
+
+            // execute query. The following filter/sort operations are performed on calculated properties 
+            // in the result set and cannot be included in the LINQ query above
+            var billReviewsList = await billReviewsQry.ToListAsync();
+
+            // apply search string (if exists)
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                string capSearchString = searchString.ToUpper();
+                foreach (BillReview r in billReviewsList.ToList())
+                {
+                    if (!r.Bill.CompositeBillNumber.Contains(capSearchString))
+                    {
+                        billReviewsList.Remove(r);
+                    }
+                }
+            }
+
+            // apply post-query sort order
+            switch (sortOrder)
+            {
+                case "CreatedBy":
+                    billReviewsList = billReviewsQry.OrderBy(r => r.CreatedByUser.LastName).ToList();
+                    break;
+                case "createdBy_desc":
+                    billReviewsList = billReviewsQry.OrderByDescending(r => r.CreatedByUser.LastName).ToList();
+                    break;
+                case "Division":
+                    billReviewsList = billReviewsQry.OrderBy(r => r.CreatedByUserInDiv.Description).ToList();
+                    break;
+                case "division_desc":
+                    billReviewsList = billReviewsQry.OrderByDescending(r => r.CreatedByUserInDiv.Description).ToList();
+                    break;
+                case "Recommendation":
+                    billReviewsList = billReviewsQry.OrderBy(r => r.Recommendation.Description).ToList();
+                    break;
+                case "recommendation_desc":
+                    billReviewsList = billReviewsQry.OrderByDescending(r => r.Recommendation.Description).ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            int pageNumber = (page ?? 1);
+            PagedList<BillReview> viewModel = new PagedList<BillReview>(billReviewsList, pageNumber, pageSize);
+
+            return View(viewModel);
         }
 
         // GET: BillReviews/Unread
         [Authorize(Roles = "BillsDept, BillsDiv")]
-        public async Task<ActionResult> Unread()
+        public async Task<ActionResult> Unread(string sortOrder, string currentFilter, string searchString, int? page, int pageSize = 10)
         {
+            // configure column sort parameters
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.BillSortParm = String.IsNullOrEmpty(sortOrder) ? "billNum_desc" : "";
+            ViewBag.CreatedBySortParm = sortOrder == "CreatedBy" ? "createdBy_desc" : "CreatedBy";
+            ViewBag.DivisionSortParm = sortOrder == "Division" ? "division_desc" : "Division";
+            ViewBag.RecommendationSortParm = sortOrder == "Recommendation" ? "recommendation_desc" : "Recommendation";
+            ViewBag.CreatedAtSortParm = sortOrder == "CreatedAt" ? "createdAt_desc" : "CreatedAt";
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewBag.CurrentFilter = searchString;
+
+            // load user properties
             ApplicationUser user = await ReturnCurrentUserAsync();
             var userModuleApprovalLevel = await ReturnUserModuleApprovalLevelAsync(user, 5);
-            var billReviews = new List<BillReview>();
-            
+
+            // initialize query
+            var billReviewsQry =  Enumerable.Empty<BillReview>().AsQueryable();
             switch (userModuleApprovalLevel)
             {
                 case 0:
                 case 1:
-                    billReviews = await db.BillReviews.
-                        Where(r =>
+                    billReviewsQry = db.BillReviews
+                        .Where(r =>
                             r.Notifications.Where(a => a.ApprovalLevel == userModuleApprovalLevel).Any() &&
                             r.Notifications.Where(a => a.ApprovalLevel == userModuleApprovalLevel).FirstOrDefault().IsRead == false &&
-                            r.CreatedByUserInDept.ID == user.DeptID).
-                        Include(r => r.Bill).
-                        Include(r => r.Recommendation).
-                        OrderBy(r => r.CreatedAt).
-                        ToListAsync();
+                            r.CreatedByUserInDept.ID == user.DeptID)
+                        .Include(r => r.Bill)
+                        .Include(r => r.Recommendation);
                     ViewBag.SubmittedByRole = "Division";
                     ViewBag.SubmittedForAgency = string.Format("Department ({0}):", user.Dept.CompositeDeptName);
                     break;
                 case 2:
-                    billReviews = await db.BillReviews.
-                        Where(r =>
+                    billReviewsQry = db.BillReviews
+                        .Where(r =>
                             r.Notifications.Where(a => a.ApprovalLevel == userModuleApprovalLevel).Any() &&
                             r.Notifications.Where(a => a.ApprovalLevel == userModuleApprovalLevel).FirstOrDefault().IsRead == false &&
-                            r.CreatedByUserInDiv.ID == user.DivID).
-                        Include(r => r.Bill).
-                        Include(r => r.Recommendation).
-                        OrderBy(r => r.CreatedAt).
-                        ToListAsync();
+                            r.CreatedByUserInDiv.ID == user.DivID)
+                        .Include(r => r.Bill)
+                        .Include(r => r.Recommendation);
                     ViewBag.SubmittedByRole = "Agency";
                     ViewBag.SubmittedForAgency = string.Format("Division ({0}):", user.Div.CompositeDivName);
                     break;
@@ -76,7 +258,69 @@ namespace AdminApps.Controllers
 
             }
 
-            return View(billReviews);
+            // apply pre-query sort order
+            switch (sortOrder)
+            {
+                case "billNum_desc":
+                    billReviewsQry = billReviewsQry.OrderByDescending(r => r.Bill.BillPrefixID).ThenByDescending(r => r.Bill.Suffix);
+                    break;
+                case "CreatedAt":
+                    billReviewsQry = billReviewsQry.OrderBy(r => r.CreatedAt);
+                    break;
+                case "createdAt_desc":
+                    billReviewsQry = billReviewsQry.OrderByDescending(r => r.CreatedAt);
+                    break;
+                default:
+                    billReviewsQry = billReviewsQry.OrderBy(r => r.Bill.BillPrefixID).ThenBy(r => r.Bill.Suffix);
+                    break;
+            }
+
+            // execute query. The following filter/sort operations are performed on calculated properties 
+            // in the result set and cannot be included in the LINQ query above
+            var billReviewsList = await billReviewsQry.ToListAsync();
+
+            // apply search string (if exists)
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                string capSearchString = searchString.ToUpper();
+                foreach (BillReview r in billReviewsList.ToList())
+                {
+                    if (!r.Bill.CompositeBillNumber.Contains(capSearchString))
+                    {
+                        billReviewsList.Remove(r);
+                    }
+                }
+            }
+
+            // apply post-query sort order
+            switch (sortOrder)
+            {
+                case "CreatedBy":
+                    billReviewsList = billReviewsQry.OrderBy(r => r.CreatedByUser.LastName).ToList();
+                    break;
+                case "createdBy_desc":
+                    billReviewsList = billReviewsQry.OrderByDescending(r => r.CreatedByUser.LastName).ToList();
+                    break;
+                case "Division":
+                    billReviewsList = billReviewsQry.OrderBy(r => r.CreatedByUserInDiv.Description).ToList();
+                    break;
+                case "division_desc":
+                    billReviewsList = billReviewsQry.OrderByDescending(r => r.CreatedByUserInDiv.Description).ToList();
+                    break;
+                case "Recommendation":
+                    billReviewsList = billReviewsQry.OrderBy(r => r.Recommendation.Description).ToList();
+                    break;
+                case "recommendation_desc":
+                    billReviewsList = billReviewsQry.OrderByDescending(r => r.Recommendation.Description).ToList();
+                    break;
+                default:
+                    break;
+            }
+
+            int pageNumber = (page ?? 1);
+            PagedList<BillReview> viewModel = new PagedList<BillReview>(billReviewsList, pageNumber, pageSize);
+
+            return View(viewModel);
         }
 
         // GET: BillReviews/Details/5
@@ -435,6 +679,7 @@ namespace AdminApps.Controllers
             BillReview review = await db.BillReviews
                                         .Where(r => r.ID == id)
                                         .Include(r => r.Bill)
+                                        .Include(r => r.CreatedByUser)
                                         .Include(r => r.CreatedByUserInDept)
                                         .Include(r => r.CreatedByUserInDiv)
                                         .FirstOrDefaultAsync();
@@ -522,7 +767,7 @@ namespace AdminApps.Controllers
                 var targetUsers = GetUsersInRoleAndDept("BillsDept", review.DeptID);
                 foreach (ApplicationUser u in targetUsers)
                 {
-                    string messageBody = string.Format(body, u.FirstName, review.Bill.calculatedHyperlink, review.Bill.CompositeBillNumber, review.CreatedByName, review.CreatedByUserInDiv.CompositeDivName, viewReviewUrl);
+                    string messageBody = string.Format(body, u.FirstName, review.Bill.calculatedHyperlink, review.Bill.CompositeBillNumber, review.CreatedByUser.FullName, review.CreatedByUserInDiv.CompositeDivName, viewReviewUrl);
                     await UserManager.SendEmailAsync(u.Id, messageSubject, messageBody);
                 }
             }

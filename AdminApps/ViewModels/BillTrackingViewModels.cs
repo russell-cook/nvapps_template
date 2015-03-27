@@ -266,7 +266,7 @@ namespace AdminApps.ViewModels
                 }
                 else if (IsReprint)
                 {
-                    return string.Format("Reprint {0}, {1}", ReprintNum, ReprintDate);
+                    return string.Format("Reprint {0}", ReprintNum);
                 }
                 else if (IsEnrolled)
                 {

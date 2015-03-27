@@ -75,8 +75,6 @@ namespace AdminApps.Models
         [Display(Name = "Chapter Number")]
         public int? ChapterNum { get; set; }
         public bool Exempt { get; set; }
-        //[DataType(DataType.Url)]
-        //public string NelisHyperlink { get; set; }
 
         [Timestamp]
         public byte[] RowVersion { get; set; }
@@ -218,7 +216,7 @@ namespace AdminApps.Models
                 }
                 else if(IsReprint)
                 {
-                    return string.Format("Reprint {0}, {1}", ReprintNum, ReprintDate);
+                    return string.Format("Reprint {0}", ReprintNum);
                 }
                 else if(IsEnrolled)
                 {
@@ -227,6 +225,7 @@ namespace AdminApps.Models
                 return null;
             }
         }
+
     }
 
     public class BillReview
@@ -278,6 +277,8 @@ namespace AdminApps.Models
         public int CreatedAtApprovalLevel { get; set; }
         [Display(Name = "Date Created")]
         public DateTime CreatedAt { get; set; }
+        public bool IsUnrevisedDupOfPrevReview { get; set; }
+        public bool IsRevisionOfPrevReview { get; set; }
 
         [Timestamp]
         public byte[] RowVersion { get; set; }
@@ -294,12 +295,13 @@ namespace AdminApps.Models
         public virtual ICollection<BillReviewNotification> Notifications { get; set; }
         public virtual ICollection<BillReviewApproval> Approvals { get; set; }
 
-        [Display(Name = "Reviewed by")]
-        public string CreatedByName
+        [Display(Name = "Date Created")]
+        [DataType(DataType.Date)]
+        public DateTime CreatedAtDate
         {
             get
             {
-                return CreatedByUser.FullName;
+                return this.CreatedAt;
             }
         }
 

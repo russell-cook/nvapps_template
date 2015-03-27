@@ -5,117 +5,146 @@
     ViewBag.ModuleName = "Bill Tracking";
 }
 
-<h2>Mark Review as Read</h2>
+<h3>Mark Review as Read?</h3>
 
-<div>
-    <h4>Bill Review</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Bill.NebsBdrNumber)
-        </dt>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h4 class="panel-title">@Html.DisplayFor(model => model.Bill.CompositeBillName)</h4>
+    </div>
+    <div class="panel-body">
 
-        <dd>
-            @Html.DisplayFor(model => model.Bill.NebsBdrNumber)
-        </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Recommendation.Description)
-        </dt>
+        <dl class="dl-horizontal">
+            <dt>
+                Reviewed by
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CreatedByUser.FullName)
+            </dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.Recommendation.Description)
-        </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedByUser.Div.CompositeDivName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.CreatedByUser.Div.CompositeDivName)
+            </dd>
+        </dl>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Comments)
-        </dt>
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Recommendation.Description)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Comments)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Recommendation.Description)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.RequiresTestimony)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.Comments)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.RequiresTestimony)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Comments)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.InformationToBeProvided)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.RequiresTestimony)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.InformationToBeProvided)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.RequiresTestimony)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.ActivelyTracking)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.InformationToBeProvided)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ActivelyTracking)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.InformationToBeProvided)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.PolicyImpact)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.PolicyImpact)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.PolicyImpact)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.PolicyImpact)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.FiscalImpactYr1)
-        </dt>
+        </dl>
 
-        <dd>
-            @Html.DisplayFor(model => model.FiscalImpactYr1)
-        </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.FiscalImpactYr2)
-        </dt>
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalNoteSubmitted)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.FiscalImpactYr2)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.FiscalNoteSubmitted)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.FiscalImpactFuture)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalImpactYr1)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.FiscalImpactFuture)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.FiscalImpactYr1)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.FiscalNoteSubmitted)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalImpactYr2)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.FiscalNoteSubmitted)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.FiscalImpactYr2)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Notes)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalImpactFuture)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Notes)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.FiscalImpactFuture)
+            </dd>
 
-    </dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.FiscalImpactTotal)
+            </dt>
 
-    @using (Html.BeginForm())
-    {
-        @Html.AntiForgeryToken()
+            <dd>
+                @Html.DisplayFor(model => model.FiscalImpactTotal)
+            </dd>
 
-        <div class="form-actions no-color">
-            <input type="submit" value="Confirm Mark As Read" class="btn btn-default" /> |
-            @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.ID }, null)
-        </div>
-    }
+        </dl>
+
+        <dl class="dl-horizontal">
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ActivelyTracking)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ActivelyTracking)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Notes)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Notes)
+            </dd>
+
+        </dl>
+    </div>
 </div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-actions no-color">
+        <input type="submit" value="Confirm Mark As Read" class="btn btn-success" /> |
+        @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.ID }, null)
+    </div>
+}

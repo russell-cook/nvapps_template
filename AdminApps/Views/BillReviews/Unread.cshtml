@@ -1,34 +1,47 @@
-﻿@model IEnumerable<AdminApps.Models.BillReview>
+﻿@model PagedList<AdminApps.Models.BillReview>
 
 @{
     ViewBag.Title = "Unread Bill Reviews";
     ViewBag.ModuleName = "Bill Tracking";
 }
 
-<h2>@ViewBag.Title</h2>
+<div class="row">
+    <div class="col col-md-6">
+        <h2>@ViewBag.Title</h2>
+    </div>
+    <div class="col col-md-6">
+        @using (Html.BeginForm("Unread", "BillReviews", FormMethod.Get))
+        {
+            <div style="float: right;">
+                Find by Bill #: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+                <input type="submit" value="Search" /><br />
+                <small>HINT: To filter by Bill Type enter the Bill Prefix only ("AB", "SB", etc.)</small>
+            </div>
+        }
+    </div>
+</div>
 
-<p>The following table lists unread Bill Reviews submitted by @ViewBag.SubmittedByRole level users within your @ViewBag.SubmittedForAgency</p>
-<table class="table table-striped table-condensed">
+<p><small>The following table lists unread Bill Reviews submitted by @ViewBag.SubmittedByRole level users within your @ViewBag.SubmittedForAgency</small></p>
+<table class="table table-condensed table-striped">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Bill.CompositeBillNumber)
+            @Html.ActionLink("Bill #", "Unread", new { sortOrder = ViewBag.BillSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Bill.Summary)
+            @Html.ActionLink("Created By", "Unread", new { sortOrder = ViewBag.CreatedBySortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().CreatedByUser.FullName)
+            @Html.ActionLink("Division", "Unread", new { sortOrder = ViewBag.DivisionSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().CreatedByUserInDiv.CompositeDivName)
+            @Html.ActionLink("Recommendation", "Unread", new { sortOrder = ViewBag.RecommendationSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().CreatedAt)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().FiscalImpactTotal)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Recommendation.Description)
+            @Html.ActionLink("Date Created", "Unread", new { sortOrder = ViewBag.CreatedAtSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
-        <th>Total Impact</th>
         <th></th>
     </tr>
 
@@ -36,19 +49,13 @@
     {
         <tr>
             <td>
-               @Html.ActionLink(item.Bill.CompositeBillNumber, "Details", "Bills", new { id = item.Bill.ID }, null)
+                @Html.ActionLink(item.Bill.CompositeBillNumber, "Details", "Bills", new { id = item.BillID }, null)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Bill.Summary)
+                @Html.DisplayFor(modelItem => item.CreatedByUser.FullNameLastFirst)
             </td>
             <td>
-                @Html.DisplayFor(model => item.CreatedByUser.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(model => item.CreatedByUserInDiv.CompositeDivName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
+                @Html.DisplayFor(modelItem => item.CreatedByUserInDiv.Description)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Recommendation.Description)
@@ -57,9 +64,17 @@
                 @Html.DisplayFor(modelItem => item.FiscalImpactTotal)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.CreatedAtDate)
+            </td>
+            <td>
                 @Html.ActionLink("View", "Details", new { id = item.ID }, new { @class = "btn btn-default btn-xs" })
             </td>
         </tr>
     }
 
 </table>
+
+<div>
+    @Html.PagedListPager(Model, page => Url.Action("Unread", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, pageSize = Model.PageSize }))
+    Showing @Model.FirstItemOnPage to @Model.LastItemOnPage of @Model.TotalItemCount Bills
+</div>

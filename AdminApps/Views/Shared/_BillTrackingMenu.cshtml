@@ -3,12 +3,17 @@
 
 @if (Request.IsAuthenticated && !User.IsInRole("BillsClerc"))
 {
-    <li role="presentation" @{if (ViewBag.Title == "My Bill Reviews") { <text> class="active" </text>     } }>@Html.ActionLink("My Bill Reviews", "Index", "BillReviews")</li>
+    <li role="presentation" @{if (ViewBag.Title == "My Bill Reviews") { <text> class="active" </text>      } }>@Html.ActionLink("My Bill Reviews", "Index", "BillReviews")</li>
+}
+
+@if (Request.IsAuthenticated && User.IsInRole("BillsDept"))
+{
+    <li role="presentation" @{if (ViewBag.Title == "Dept Bill Reviews") { <text> class="active" </text>             } }>@Html.ActionLink("Dept Bill Reviews", "Dept", "BillReviews")</li>
 }
 
 @if (Request.IsAuthenticated && (User.IsInRole("BillsDept") || User.IsInRole("BillsDiv")))
 {
-    <li role="presentation" @{if (ViewBag.Title == "Unread Bill Reviews") { <text> class="active" </text>          } }>@Html.ActionLink("Unread Bill Reviews", "Unread", "BillReviews")</li>
+    <li role="presentation" @{if (ViewBag.Title == "Unread Bill Reviews") { <text> class="active" </text>           } }>@Html.ActionLink("Unread Bill Reviews", "Unread", "BillReviews")</li>
 }
 
 @if (Request.IsAuthenticated && (User.IsInRole("BillsDiv") || User.IsInRole("BillsAgency")))

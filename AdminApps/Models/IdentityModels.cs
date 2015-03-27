@@ -65,6 +65,22 @@ namespace AdminApps.Models
             }
         }
 
+        [Display(Name = "Name")]
+        public string FullNameLastFirst
+        {
+            get
+            {
+                if (FirstName != null && LastName != null)
+                {
+                    return string.Format("{0}, {1}", this.LastName, this.FirstName);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
 
         // Bill Tracking Module navigation properties
         public virtual ICollection<Bill> CreatedBills { get; set; }
