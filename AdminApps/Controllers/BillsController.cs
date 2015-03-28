@@ -417,14 +417,19 @@ namespace AdminApps.Controllers
                 viewModel.ApprovedReview.InjectFrom(approvedReview);
                 viewModel.ApprovedReview.IsApproved = true;
 
-                if (viewModel.ApprovedReview.BillVersion.VersionNum == currentVersion.VersionNum)
-                {
-                    viewModel.ApprovedReview.UpToDate = true;
-                }
-                else
-                {
-                    viewModel.ApprovedReview.UpToDate = false;
-                }
+                //if (viewModel.ApprovedReview.BillVersion.VersionNum == currentVersion.VersionNum)
+                //{
+                //    viewModel.ApprovedReview.UpToDate = true;
+                //    viewModel.ApprovedReview.StatusMessage = "Up to date";
+                //}
+                //else
+                //{
+                //    viewModel.ApprovedReview.UpToDate = false;
+                //    viewModel.ApprovedReview.StatusMessage = "Out of date";
+                //}
+
+                CalcBillReviewStatus(currentVersion, approvedReview, viewModel.ApprovedReview);
+
                 var targetLevel = (userModuleApprovalLevel == 0 ? 1 : userModuleApprovalLevel);
                 BillReviewApproval approval = approvedReview.Approvals
                     .Where(r => r.ApprovalLevel == targetLevel)
@@ -462,11 +467,11 @@ namespace AdminApps.Controllers
                         var x = await db.BillReviews
                             .Where(r =>
                                 r.BillID == bill.ID &&
-                                (r.CreatedByUserInDept.ID == user.DeptID && 
+                                ((r.CreatedByUserInDept.ID == user.DeptID && 
                                     r.Approvals.Where(a => a.ApprovalLevel == 2).Any() && 
                                     r.ID != approvedReview.ID)
                                 || (r.CreatedAtApprovalLevel == 1 && 
-                                    r.ID != approvedReview.ID))
+                                    r.ID != approvedReview.ID)))
                             .Include(r => r.BillVersion)
                             .ToListAsync();
                         foreach (BillReview review in x)
@@ -475,14 +480,7 @@ namespace AdminApps.Controllers
                             r.InjectFrom(review);
                             r.IsApproved = false;
 
-                            if (review.BillVersion.VersionNum == currentVersion.VersionNum)
-                            {
-                                r.UpToDate = true;
-                            }
-                            else
-                            {
-                                r.UpToDate = false;
-                            }
+                            CalcBillReviewStatus(currentVersion, review, r);
 
                             viewModel.Reviews.Add(r);
                         }
@@ -505,14 +503,7 @@ namespace AdminApps.Controllers
                             r.InjectFrom(review);
                             r.IsApproved = false;
 
-                            if (review.BillVersion.VersionNum == currentVersion.VersionNum)
-                            {
-                                r.UpToDate = true;
-                            }
-                            else
-                            {
-                                r.UpToDate = false;
-                            }
+                            CalcBillReviewStatus(currentVersion, review, r);
 
                             viewModel.Reviews.Add(r);
                         }
@@ -564,14 +555,7 @@ namespace AdminApps.Controllers
                             r.InjectFrom(review);
                             r.IsApproved = false;
 
-                            if (review.BillVersion.VersionNum == currentVersion.VersionNum)
-                            {
-                                r.UpToDate = true;
-                            }
-                            else
-                            {
-                                r.UpToDate = false;
-                            }
+                            CalcBillReviewStatus(currentVersion, review, r);
 
                             viewModel.Reviews.Add(r);
                         }
@@ -590,14 +574,7 @@ namespace AdminApps.Controllers
                             r.InjectFrom(review);
                             r.IsApproved = false;
 
-                            if (review.BillVersion.VersionNum == currentVersion.VersionNum)
-                            {
-                                r.UpToDate = true;
-                            }
-                            else
-                            {
-                                r.UpToDate = false;
-                            }
+                            CalcBillReviewStatus(currentVersion, review, r);
 
                             viewModel.Reviews.Add(r);
                         }
@@ -665,6 +642,20 @@ namespace AdminApps.Controllers
             }
 
             return View(viewModel);
+        }
+
+        private static void CalcBillReviewStatus(BillVersion currentVersion, BillReview review, BillReviewViewModel r)
+        {
+            if (review.BillVersion.VersionNum == currentVersion.VersionNum)
+            {
+                r.UpToDate = true;
+                r.StatusMessage = "Up to date";
+            }
+            else
+            {
+                r.UpToDate = false;
+                r.StatusMessage = "Out of date";
+            }
         }
 
         // GET: Bills/Create

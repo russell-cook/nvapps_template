@@ -139,7 +139,6 @@ namespace AdminApps.ViewModels
         // properties for views
         public BillVersion CurrentVersion { get; set; }
         public bool UserCanReview { get; set; }
-        //public bool UserCanApprove { get; set; }
         public BillReviewViewModel ApprovedReview { get; set; }
         public DateTime ApprovedAt { get; set; }
         public ApplicationUser ApprovedByUser { get; set; }
@@ -305,6 +304,11 @@ namespace AdminApps.ViewModels
         [UIHint("BooleanButton")]
         [Display(Name = "Policy impact on agency?")]
         public bool? PolicyImpact { get; set; }
+        [UIHint("BooleanButton")]
+        [Display(Name = "Fiscal Note submitted?")]
+        public bool FiscalNoteSubmitted { get; set; }
+        public string Notes { get; set; }
+
         [Display(Name = "Fiscal Impact Yr 1")]
         [DataType(DataType.Currency)]
         public int FiscalImpactYr1 { get; set; }
@@ -314,24 +318,24 @@ namespace AdminApps.ViewModels
         [Display(Name = "Future Impact")]
         [DataType(DataType.Currency)]
         public int FiscalImpactFuture { get; set; }
-        [UIHint("BooleanButton")]
-        [Display(Name = "Fiscal Note submitted?")]
-        public bool FiscalNoteSubmitted { get; set; }
-        public string Notes { get; set; }
-
-        public int CreatedAtApprovalLevel { get; set; }
         [Display(Name = "Date Created")]
+        [DataType(DataType.Date)]
         public DateTime CreatedAt { get; set; }
+        public int CreatedAtApprovalLevel { get; set; }
 
         // properties for view
         public bool DisplayAsRead { get; set; }
         public bool UserCanEdit { get; set; }
         public bool UserCanApprove { get; set; }
+        public bool userCanConfirmRevise { get; set; }
         [UIHint("DangerText")]
         public string ApprovedReviewMessage { get; set; }
         public bool IsApproved { get; set; }
         public bool UpToDate { get; set; }
+        [Display(Name = "Review Status")]
         public string StatusMessage { get; set; }
+        [Display(Name = "Current Bill Version")]
+        public string CurrentBillVersion { get; set; }
 
         // navigation properties
         public virtual Bill Bill { get; set; }
@@ -376,12 +380,37 @@ namespace AdminApps.ViewModels
 
     }
 
-    public class BillReviewApprovalViewModel
+    public class BillReviewContainerViewModel : BillReviewViewModel
     {
-        public BillReview ReviewToApprove { get; set; }
-        public BillReview ApprovedReview { get; set; }
+
+    }
+
+    public class BillReviewPreviouslyApprovedContainerViewModel : BillReviewViewModel
+    {
         public ApplicationUser ApprovedByUser { get; set; }
         public DateTime ApprovedAt { get; set; }
+    }
+
+    public class BillReviewDetailViewModel
+    {
+        public BillReviewDetailViewModel()
+        {
+            this.Review = new BillReviewContainerViewModel();
+        }
+
+        public BillReviewContainerViewModel Review { get; set; }
+    }
+
+    public class BillReviewApprovalViewModel
+    {
+        public BillReviewApprovalViewModel()
+        {
+            this.ReviewToApprove = new BillReviewContainerViewModel();
+            this.ApprovedReview = new BillReviewPreviouslyApprovedContainerViewModel();
+        }
+
+        public BillReviewContainerViewModel ReviewToApprove { get; set; }
+        public BillReviewPreviouslyApprovedContainerViewModel ApprovedReview { get; set; }
     }
 
     public class BillReviewRequestIndividualUserViewModel

@@ -358,6 +358,8 @@
     <Content Include="Views\Bills\AddVersion.cshtml" />
     <Content Include="Views\Bills\AddVersionTemplate.cshtml" />
     <Content Include="Views\BillReviews\Dept.cshtml" />
+    <Content Include="Views\BillReviews\DisplayTemplates\BillReviewContainerViewModel.cshtml" />
+    <Content Include="Views\BillReviews\DisplayTemplates\BillReviewPreviouslyApprovedContainerViewModel.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

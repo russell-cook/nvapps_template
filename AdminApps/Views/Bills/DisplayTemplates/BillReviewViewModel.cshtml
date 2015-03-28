@@ -19,7 +19,10 @@
         @Html.DisplayFor(model => model.Recommendation.Description)
     </td>
     <td>
-        @Html.DisplayFor(model => model.FiscalImpactBiennium)
+        @Html.DisplayFor(model => model.FiscalImpactTotal)
+    </td>
+    <td>
+        @Html.DisplayFor(model => model.StatusMessage)
     </td>
     <td>
         @Html.ActionLink("View", "Details", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-default btn-sm" })

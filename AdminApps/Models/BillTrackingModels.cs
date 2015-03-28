@@ -205,7 +205,7 @@ namespace AdminApps.Models
         public virtual ICollection<BillReview> BillReviews { get; set; }
 
         // calculated properties
-        [Display(Name = "Version")]
+        [Display(Name = "Reviewed Bill Version")]
         public string VersionDescription
         {
             get

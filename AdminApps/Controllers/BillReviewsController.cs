@@ -333,7 +333,7 @@ namespace AdminApps.Controllers
 
             BillReview review = await db.BillReviews
                 .Where(r => r.ID == id).
-                Include(b => b.Bill).
+                Include("Bill.BillVersions").
                 Include(v => v.BillVersion).
                 Include(n => n.Notifications).
                 FirstOrDefaultAsync();
@@ -346,18 +346,18 @@ namespace AdminApps.Controllers
             ApplicationUser user = await ReturnCurrentUserAsync();
             var userModuleApprovalLevel = await ReturnUserModuleApprovalLevelAsync(user, 5);
 
-            BillReviewViewModel viewModel = new BillReviewViewModel();
-            viewModel.InjectFrom(review);
+            BillReviewDetailViewModel viewModel = new BillReviewDetailViewModel();
+            viewModel.Review.InjectFrom(review);
 
             // for Dept and Div users, if review was sent up from lower approval level, calculate whether BillReviewNotification has been read.
             // otherwise, set DisplayAsRead to true (this hides the 'mark as read' button)
             if (userModuleApprovalLevel < review.CreatedAtApprovalLevel && userModuleApprovalLevel != 0)
             {
-                viewModel.DisplayAsRead = review.Notifications.Where(n => n.ApprovalLevel == userModuleApprovalLevel).Single().IsRead;
+                viewModel.Review.DisplayAsRead = review.Notifications.Where(n => n.ApprovalLevel == userModuleApprovalLevel).Single().IsRead;
             }
             else
             {
-                viewModel.DisplayAsRead = true;
+                viewModel.Review.DisplayAsRead = true;
             }
 
             // if user created this BillReview, calculate whether or not user can edit. 
@@ -371,7 +371,7 @@ namespace AdminApps.Controllers
                     {
                         if (!notification.IsRead)
                         {
-                            viewModel.UserCanEdit = true;
+                            viewModel.Review.UserCanEdit = true;
                         }
                         else
                         {
@@ -390,13 +390,13 @@ namespace AdminApps.Controllers
                     }
                     else
                     {
-                        viewModel.UserCanEdit = true;
+                        viewModel.Review.UserCanEdit = true;
                     }
                 }
                 // otherwise, Dept level users have no restrictions on editing their own Reviews
                 else
                 {
-                    viewModel.UserCanEdit = true;
+                    viewModel.Review.UserCanEdit = true;
                 }
             }
 
@@ -415,10 +415,10 @@ namespace AdminApps.Controllers
                     {
                         if (approvedReview.ID == review.ID)
                         {
-                            viewModel.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDept.CompositeDeptName);
+                            viewModel.Review.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDept.CompositeDeptName);
                         }
                     }
-                    viewModel.UserCanApprove = false;
+                    viewModel.Review.UserCanApprove = false;
                     break;
                 // BillsDept users can approve a BillReview if the current BillReview is not already the approved review for its Bill
                 case 1:
@@ -429,17 +429,17 @@ namespace AdminApps.Controllers
                     {
                         if (approvedReview.ID == review.ID)
                         {
-                            viewModel.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDept.CompositeDeptName);
-                            viewModel.UserCanApprove = false;
+                            viewModel.Review.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDept.CompositeDeptName);
+                            viewModel.Review.UserCanApprove = false;
                         }
                         else
                         {
-                            viewModel.UserCanApprove = true;
+                            viewModel.Review.UserCanApprove = true;
                         }
                     }
                     else
                     {
-                        viewModel.UserCanApprove = true;
+                        viewModel.Review.UserCanApprove = true;
                     }
                     break;
                 // BillsDiv users can approve a BillReview if the current BillReview is not already the approved review,
@@ -452,33 +452,55 @@ namespace AdminApps.Controllers
                     {
                         if (approvedReview.ID == review.ID)
                         {
-                            viewModel.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDiv.CompositeDivName);
-                            viewModel.UserCanApprove = false;
+                            viewModel.Review.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDiv.CompositeDivName);
+                            viewModel.Review.UserCanApprove = false;
                         }
                         else if(approvedReview.Notifications.Where(n => n.ApprovalLevel == 1).FirstOrDefault().IsRead)
                         {
-                            viewModel.UserCanApprove = false;
+                            viewModel.Review.UserCanApprove = false;
                         }
                         else
                         {
-                            viewModel.UserCanApprove = true;
+                            viewModel.Review.UserCanApprove = true;
                         }
                     }
                     else
                     {
-                        viewModel.UserCanApprove = true;
+                        viewModel.Review.UserCanApprove = true;
                     }
                     break;
                 // BillsAgency users cannot approve BillReviews
                 case 3:
-                    viewModel.UserCanApprove = false;
+                    viewModel.Review.UserCanApprove = false;
                     break;
                 default:
                     break;
             }
 
+            // calculate BillReview status; if BillReview is out of date then determine whether user can ConfirmRevise
+            CalculateBillReviewStatus(review, user, viewModel.Review);
 
             return View(viewModel);
+        }
+
+        private static void CalculateBillReviewStatus(BillReview review, ApplicationUser user, BillReviewContainerViewModel viewModel)
+        {
+            var currentVersion = review.Bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
+            viewModel.CurrentBillVersion = currentVersion.VersionDescription;
+            if (review.BillVersion.VersionNum == currentVersion.VersionNum)
+            {
+                viewModel.UpToDate = true;
+                viewModel.StatusMessage = "Up to date";
+            }
+            else
+            {
+                viewModel.UpToDate = false;
+                viewModel.StatusMessage = "Out of date";
+                if (review.CreatedByUser.Id == user.Id)
+                {
+                    viewModel.userCanConfirmRevise = true;
+                }
+            }
         }
 
         // GET: BillReviews/Create/5
@@ -625,17 +647,23 @@ namespace AdminApps.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            BillReview review = await db.BillReviews.FindAsync(id);
+            BillReview review = await db.BillReviews
+                                        .Where(r => r.ID == id)
+                                        .Include("Bill.BillVersions")
+                                        .FirstOrDefaultAsync();
             if (review == null)
             {
                 return HttpNotFound();
             }
 
             BillReviewApprovalViewModel viewModel = new BillReviewApprovalViewModel();
-            viewModel.ReviewToApprove = review;
+            viewModel.ReviewToApprove.InjectFrom(review);
 
             ApplicationUser user = await ReturnCurrentUserAsync();
             var userModuleApprovalLevel = await ReturnUserModuleApprovalLevelAsync(user, 5);
+
+            // calculate BillReview status; if BillReview is out of date then determine whether user can ConfirmRevise
+            CalculateBillReviewStatus(review, user, viewModel.ReviewToApprove);
 
             // check for previously approved Review
             var approvedReview = new BillReview();
@@ -659,12 +687,12 @@ namespace AdminApps.Controllers
 
             if (approvedReview != null)
             {
-                viewModel.ApprovedReview = approvedReview;
+                viewModel.ApprovedReview.InjectFrom(approvedReview);
                 BillReviewApproval approval = approvedReview.Approvals
                     .Where(r => r.ApprovalLevel == userModuleApprovalLevel)
                     .FirstOrDefault();
-                viewModel.ApprovedByUser = approval.ApprovedBy;
-                viewModel.ApprovedAt = approval.ApprovedAt;
+                viewModel.ApprovedReview.ApprovedByUser = approval.ApprovedBy;
+                viewModel.ApprovedReview.ApprovedAt = approval.ApprovedAt;
             }
 
             return View(viewModel);
@@ -788,12 +816,33 @@ namespace AdminApps.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            BillReview review = await db.BillReviews.FindAsync(id);
+            BillReview review = await db.BillReviews
+                                        .Where(r => r.ID == id)
+                                        .Include("Bill.BillVersions")
+                                        .FirstOrDefaultAsync();
             if (review == null)
             {
                 return HttpNotFound();
             }
-            return View(review);
+            BillReviewDetailViewModel viewModel = new BillReviewDetailViewModel();
+            viewModel.Review.InjectFrom(review);
+
+
+            // calculate BillReview status
+            var currentVersion = review.Bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
+            viewModel.Review.CurrentBillVersion = currentVersion.VersionDescription;
+            if (review.BillVersion.VersionNum == currentVersion.VersionNum)
+            {
+                viewModel.Review.UpToDate = true;
+                viewModel.Review.StatusMessage = "Up to date";
+            }
+            else
+            {
+                viewModel.Review.UpToDate = false;
+                viewModel.Review.StatusMessage = "Out of date";
+            }
+
+            return View(viewModel);
         }
 
         // POST: BillReviews/MarkAsRead/5
