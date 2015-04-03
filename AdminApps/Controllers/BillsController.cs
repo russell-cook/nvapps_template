@@ -156,7 +156,7 @@ namespace AdminApps.Controllers
             foreach (Bill bill in bills)
             {
                 var numReviews = new int();
-                //var billVersionId = bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault().ID;
+                var currentVersion = bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
                 BillReview approvedReview = new BillReview();
                 var hasApprovedReview = false;
                 switch (userModuleApprovalLevel)
@@ -165,8 +165,10 @@ namespace AdminApps.Controllers
                     case 1:
                         // for Dept users, count all approved Reviews from the Div level, plus all reviews created at the Dept level
                         numReviews = bill.Reviews
-                            .Where(r => 
+                            .Where(r =>
+                                !(r is AlsrBillReviewSnapshot) &&
                                 r.CreatedByUserInDept.ID == user.DeptID &&
+                                r.BillVersionID == currentVersion.ID &&
                                 (r.Approvals.Where(a => a.ApprovalLevel == 2).Any() || r.CreatedAtApprovalLevel == 1))
                             .Count();
                         approvedReview = bill.Reviews
@@ -182,8 +184,10 @@ namespace AdminApps.Controllers
                     case 2:
                         // for Div or Agency users, count all Reviews created within that Div 
                         numReviews = bill.Reviews
-                            .Where(r => 
-                                r.CreatedAtApprovalLevel > 1 && 
+                            .Where(r =>
+                                !(r is AlsrBillReviewSnapshot) &&
+                                r.CreatedAtApprovalLevel > 1 &&
+                                r.BillVersionID == currentVersion.ID &&
                                 r.CreatedByUserInDiv.ID == user.DivID)
                             .Count();
                         approvedReview = bill.Reviews
@@ -199,7 +203,7 @@ namespace AdminApps.Controllers
                     case 3:
                         // for Agency users, display whether or not they have reviewed the bill
                         approvedReview = bill.Reviews
-                            .Where(r => r.ApplicationUserID == user.Id)
+                            .Where(r => !(r is AlsrBillReviewSnapshot) &&  r.ApplicationUserID == user.Id)
                             .FirstOrDefault();
                         if (approvedReview != null)
                         {
@@ -326,10 +330,10 @@ namespace AdminApps.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Bill bill = await db.Bills.
-                                Where(b => b.ID == id).
-                                Include(b => b.BillVersions).
-                                FirstOrDefaultAsync();
+            Bill bill = await db.Bills
+                                .Where(b => b.ID == id)
+                                .Include(b => b.BillVersions)
+                                .FirstOrDefaultAsync();
 
             if (bill == null)
             {
@@ -417,18 +421,7 @@ namespace AdminApps.Controllers
                 viewModel.ApprovedReview.InjectFrom(approvedReview);
                 viewModel.ApprovedReview.IsApproved = true;
 
-                //if (viewModel.ApprovedReview.BillVersion.VersionNum == currentVersion.VersionNum)
-                //{
-                //    viewModel.ApprovedReview.UpToDate = true;
-                //    viewModel.ApprovedReview.StatusMessage = "Up to date";
-                //}
-                //else
-                //{
-                //    viewModel.ApprovedReview.UpToDate = false;
-                //    viewModel.ApprovedReview.StatusMessage = "Out of date";
-                //}
-
-                CalcBillReviewStatus(currentVersion, approvedReview, viewModel.ApprovedReview);
+                CalcBillReviewStatus(currentVersion, approvedReview, viewModel.ApprovedReview, user);
 
                 var targetLevel = (userModuleApprovalLevel == 0 ? 1 : userModuleApprovalLevel);
                 BillReviewApproval approval = approvedReview.Approvals
@@ -436,10 +429,6 @@ namespace AdminApps.Controllers
                     .FirstOrDefault();
                 viewModel.ApprovedByUser = approval.ApprovedBy;
                 viewModel.ApprovedAt = approval.ApprovedAt;
-
-                // for Dept level users, set UserCanApprove to true
-                // for Div level users, determine if their Approved Review has been marked as read at the Dept level. if not, set UserCanApprove to true, otherwise set it to false
-                
 
                 // if user's review is the approved review then set the message accordingly and prevent them from creating an additional review
                 if (approval.BillReview.CreatedByUser.Id == user.Id)
@@ -466,23 +455,24 @@ namespace AdminApps.Controllers
                         // load approved reviews from Div level plus all reviews created at the Dept level, except for the approved review; restrict reviews to user's Dept
                         var x = await db.BillReviews
                             .Where(r =>
+                                !(r is AlsrBillReviewSnapshot) &&
                                 r.BillID == bill.ID &&
-                                ((r.CreatedByUserInDept.ID == user.DeptID && 
-                                    r.Approvals.Where(a => a.ApprovalLevel == 2).Any() && 
-                                    r.ID != approvedReview.ID)
-                                || (r.CreatedAtApprovalLevel == 1 && 
-                                    r.ID != approvedReview.ID)))
+                                r.CreatedByUserInDept.ID == user.DeptID &&
+                                ((r.Approvals.Where(a => a.ApprovalLevel == 2).Any() && r.ID != approvedReview.ID)
+                                    || (r.CreatedAtApprovalLevel == 1 && r.ID != approvedReview.ID)))
                             .Include(r => r.BillVersion)
+                            .GroupBy(r => r.CreatedByUser.Id)
                             .ToListAsync();
-                        foreach (BillReview review in x)
+                        foreach (IGrouping<string, BillReview> group in x)
                         {
-                            var r = new BillReviewViewModel();
-                            r.InjectFrom(review);
-                            r.IsApproved = false;
+                            var viewModelNonApprovedReview = new BillReviewViewModel();
+                            var latestReview = group.OrderByDescending(g => g.BillVersion.VersionNum).FirstOrDefault();
+                            viewModelNonApprovedReview.InjectFrom(latestReview);
+                            viewModelNonApprovedReview.IsApproved = false;
 
-                            CalcBillReviewStatus(currentVersion, review, r);
+                            CalcBillReviewStatus(currentVersion, latestReview, viewModelNonApprovedReview, user);
 
-                            viewModel.Reviews.Add(r);
+                            viewModel.Reviews.Add(viewModelNonApprovedReview);
                         }
                         // Dept level users have no restrictions on BillReviewApprovals
                         ViewBag.UserCanApprove = (userModuleApprovalLevel == 0 ? false : true);
@@ -491,21 +481,24 @@ namespace AdminApps.Controllers
                         // load reviews created at the Div or Agency level, except for the approved review; restrict reviews to user's Div
                         var y = await db.BillReviews
                             .Where(r =>
+                                !(r is AlsrBillReviewSnapshot) &&
                                 r.BillID == bill.ID &&
-                                (r.CreatedByUserInDiv.ID == user.DivID && 
-                                    r.CreatedAtApprovalLevel >= userModuleApprovalLevel && 
-                                    r.ID != approvedReview.ID))
+                                r.CreatedByUserInDiv.ID == user.DivID && 
+                                r.CreatedAtApprovalLevel >= userModuleApprovalLevel && 
+                                r.ID != approvedReview.ID)
                             .Include(r => r.BillVersion)
+                            .GroupBy(r => r.CreatedByUser.Id)
                             .ToListAsync();
-                        foreach (BillReview review in y)
+                        foreach (IGrouping<string, BillReview> group in y)
                         {
-                            var r = new BillReviewViewModel();
-                            r.InjectFrom(review);
-                            r.IsApproved = false;
+                            var viewModelNonApprovedReview = new BillReviewViewModel();
+                            var latestReview = group.OrderByDescending(g => g.BillVersion.VersionNum).FirstOrDefault();
+                            viewModelNonApprovedReview.InjectFrom(latestReview);
+                            viewModelNonApprovedReview.IsApproved = false;
 
-                            CalcBillReviewStatus(currentVersion, review, r);
+                            CalcBillReviewStatus(currentVersion, latestReview, viewModelNonApprovedReview, user);
 
-                            viewModel.Reviews.Add(r);
+                            viewModel.Reviews.Add(viewModelNonApprovedReview);
                         }
                         // if ApprovedReview has been read at Dept level, set UserCanApprove to false, otherwise set it to true
                         if (approvedReview.Notifications.Where(n => n.ApprovalLevel == userModuleApprovalLevel - 1).Single().IsRead)
@@ -545,38 +538,46 @@ namespace AdminApps.Controllers
                         // load approved reviews from Div level plus all reviews created at the Dept level; restrict reviews to user's Dept
                         var x = await db.BillReviews
                             .Where(r =>
+                                !(r is AlsrBillReviewSnapshot) &&
                                 r.BillID == bill.ID &&
                                 ((r.CreatedByUserInDept.ID == user.DeptID && r.Approvals.Where(a => a.ApprovalLevel == 2).Any())
                                 || (r.CreatedAtApprovalLevel == 1)))
+                            .Include(r => r.BillVersion)
+                            .GroupBy(r => r.CreatedByUser.Id)
                             .ToListAsync();
-                        foreach (BillReview review in x)
+                        foreach (IGrouping<string, BillReview> group in x)
                         {
-                            var r = new BillReviewViewModel();
-                            r.InjectFrom(review);
-                            r.IsApproved = false;
+                            var viewModelNonApprovedReview = new BillReviewViewModel();
+                            var latestReview = group.OrderByDescending(g => g.BillVersion.VersionNum).FirstOrDefault();
+                            viewModelNonApprovedReview.InjectFrom(latestReview);
+                            viewModelNonApprovedReview.IsApproved = false;
 
-                            CalcBillReviewStatus(currentVersion, review, r);
+                            CalcBillReviewStatus(currentVersion, latestReview, viewModelNonApprovedReview, user);
 
-                            viewModel.Reviews.Add(r);
+                            viewModel.Reviews.Add(viewModelNonApprovedReview);
                         }
                         break;
                     case 2:
                         // load all reviews created at the Div or Agency level; restrict reviews to user's Div
                         var y = await db.BillReviews
                             .Where(r =>
+                                !(r is AlsrBillReviewSnapshot) &&
                                 r.BillID == bill.ID &&
-                                (r.CreatedByUserInDiv.ID == user.DivID && 
-                                    r.CreatedAtApprovalLevel >= userModuleApprovalLevel))
+                                r.CreatedByUserInDiv.ID == user.DivID && 
+                                r.CreatedAtApprovalLevel >= userModuleApprovalLevel)
+                            .Include(r => r.BillVersion)
+                            .GroupBy(r => r.CreatedByUser.Id)
                             .ToListAsync();
-                        foreach (BillReview review in y)
+                        foreach (IGrouping<string, BillReview> group in y)
                         {
-                            var r = new BillReviewViewModel();
-                            r.InjectFrom(review);
-                            r.IsApproved = false;
+                            var viewModelNonApprovedReview = new BillReviewViewModel();
+                            var latestReview = group.OrderByDescending(g => g.BillVersion.VersionNum).FirstOrDefault();
+                            viewModelNonApprovedReview.InjectFrom(latestReview);
+                            viewModelNonApprovedReview.IsApproved = false;
 
-                            CalcBillReviewStatus(currentVersion, review, r);
+                            CalcBillReviewStatus(currentVersion, latestReview, viewModelNonApprovedReview, user);
 
-                            viewModel.Reviews.Add(r);
+                            viewModel.Reviews.Add(viewModelNonApprovedReview);
                         }
                         break;
                     default:
@@ -644,17 +645,21 @@ namespace AdminApps.Controllers
             return View(viewModel);
         }
 
-        private static void CalcBillReviewStatus(BillVersion currentVersion, BillReview review, BillReviewViewModel r)
+        private static void CalcBillReviewStatus(BillVersion currentVersion, BillReview review, BillReviewViewModel viewModel, ApplicationUser user)
         {
             if (review.BillVersion.VersionNum == currentVersion.VersionNum)
             {
-                r.UpToDate = true;
-                r.StatusMessage = "Up to date";
+                viewModel.UpToDate = true;
+                viewModel.StatusMessage = "Up to date";
             }
             else
             {
-                r.UpToDate = false;
-                r.StatusMessage = "Out of date";
+                viewModel.UpToDate = false;
+                viewModel.StatusMessage = "Out of date";
+                if (review.CreatedByUser.Id == user.Id)
+                {
+                    viewModel.UserCanUpdate = true;
+                }
             }
         }
 
@@ -959,7 +964,7 @@ namespace AdminApps.Controllers
                     {
                         // compose email notification
                         int userBillReviewId = u.CreatedBillReviews.Where(r => r.BillID == newVersionRead.BillID).OrderByDescending(r => r.BillVersion.VersionNum).FirstOrDefault().ID;
-                        string confirmReviseBillReviewUrl = string.Format("{0}/BillReviews/ConfirmRevise/{1}", domain, userBillReviewId);
+                        string confirmReviseBillReviewUrl = string.Format("{0}/BillReviews/Update/{1}", domain, userBillReviewId);
                         string messageBody = string.Format(body, newVersionRead.Bill.CompositeBillNumber, u.FirstName, newVersionRead.ReprintDate.Value.ToShortDateString(), newVersionRead.Bill.calculatedHyperlink, confirmReviseBillReviewUrl, newVersionRead.VersionDescription);
                         await UserManager.SendEmailAsync(u.Id, messageSubject, messageBody);
 
@@ -1025,8 +1030,23 @@ namespace AdminApps.Controllers
                     Selected = false
                 };
 
-                var previousReview = u.CreatedBillReviews.Where(r => r.BillID == bill.ID).FirstOrDefault();
-                if (previousReview == null)
+                // for Dept users, look for Approved Reviews from the Div level.
+                // for Div users, look for any Reviews that have been created within the Div
+                BillReview existingReview = new BillReview();
+                switch (userModuleApprovalLevel)
+                {
+                    case 0:
+                    case 1:
+                        existingReview = u.CreatedBillReviews.Where(r => r.BillID == bill.ID && r.Approvals.Where(a => a.ApprovalLevel == 2).Any()).FirstOrDefault();
+                        break;
+                    case 2:
+                        existingReview = u.CreatedBillReviews.Where(r => r.BillID == bill.ID).FirstOrDefault();
+                        break;
+                    default:
+                        break;
+                }
+
+                if (existingReview == null)
                 {
                     var previousRequest = u.BillReviewRequestsTo.Where(r => r.BillID == bill.ID).FirstOrDefault();
                     if (previousRequest != null)

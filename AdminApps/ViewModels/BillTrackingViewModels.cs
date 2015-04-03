@@ -281,6 +281,7 @@ namespace AdminApps.ViewModels
     {
         public int ID { get; set; }
         public int BillID { get; set; }
+        [Index]
         public int BillVersionID { get; set; }
         [Display(Name = "Recommendation")]
         public int BillReviewRecommendationID { get; set; }
@@ -304,30 +305,47 @@ namespace AdminApps.ViewModels
         [UIHint("BooleanButton")]
         [Display(Name = "Policy impact on agency?")]
         public bool? PolicyImpact { get; set; }
-        [UIHint("BooleanButton")]
-        [Display(Name = "Fiscal Note submitted?")]
-        public bool FiscalNoteSubmitted { get; set; }
-        public string Notes { get; set; }
 
         [Display(Name = "Fiscal Impact Yr 1")]
+        [Required]
         [DataType(DataType.Currency)]
         public int FiscalImpactYr1 { get; set; }
         [Display(Name = "Fiscal Impact Yr 2")]
         [DataType(DataType.Currency)]
+        [Required]
         public int FiscalImpactYr2 { get; set; }
-        [Display(Name = "Future Impact")]
+        [Display(Name = "Impact on Future Biennia")]
         [DataType(DataType.Currency)]
+        [Required]
         public int FiscalImpactFuture { get; set; }
-        [Display(Name = "Date Created")]
-        [DataType(DataType.Date)]
-        public DateTime CreatedAt { get; set; }
+        [UIHint("BooleanButton")]
+        [Display(Name = "Fiscal Note submitted?")]
+        public bool FiscalNoteSubmitted { get; set; }
+        [DataType(DataType.MultilineText)]
+        public string Notes { get; set; }
+
         public int CreatedAtApprovalLevel { get; set; }
+        [Display(Name = "Date Created")]
+        public DateTime CreatedAt { get; set; }
+        public bool IsVerifiedDupOfPrevReview { get; set; }
+        public bool IsRevisionOfPrevReview { get; set; }
+        public bool IsOverrideRevision { get; set; }
+        [ForeignKey("OverrideRevisionCreatedByUser")]
+        public string OverrideRevisionCreatedByUserID { get; set; }
+        public int OverrideOfBillReviewID { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
 
         // properties for view
+        public bool Create { get; set; }
         public bool DisplayAsRead { get; set; }
+        public bool UserCreated { get; set; }
         public bool UserCanEdit { get; set; }
+        public string EditMessage { get; set; }
         public bool UserCanApprove { get; set; }
-        public bool userCanConfirmRevise { get; set; }
+        public bool UserCanUpdate { get; set; }
+        public string UpdateMessage { get; set; }
         [UIHint("DangerText")]
         public string ApprovedReviewMessage { get; set; }
         public bool IsApproved { get; set; }
@@ -346,6 +364,7 @@ namespace AdminApps.ViewModels
         public virtual Dept CreatedByUserInDept { get; set; }
         [Display(Name = "Div")]
         public virtual Div CreatedByUserInDiv { get; set; }
+        public virtual ApplicationUser OverrideRevisionCreatedByUser { get; set; }
 
         // calculated properties
         [Display(Name = "Reviewed by")]
@@ -353,7 +372,17 @@ namespace AdminApps.ViewModels
         {
             get
             {
-                return CreatedByUser.FullName;
+                return this.CreatedByUser.FullName;
+            }
+        }
+
+        [Display(Name = "Date Created")]
+        [DataType(DataType.Date)]
+        public DateTime CreatedAtDate
+        {
+            get
+            {
+                return this.CreatedAt;
             }
         }
 
@@ -377,40 +406,24 @@ namespace AdminApps.ViewModels
             }
         }
 
-
     }
 
-    public class BillReviewContainerViewModel : BillReviewViewModel
-    {
-
-    }
-
-    public class BillReviewPreviouslyApprovedContainerViewModel : BillReviewViewModel
+    public class BillReviewPreviouslyApprovedViewModel : BillReviewViewModel
     {
         public ApplicationUser ApprovedByUser { get; set; }
         public DateTime ApprovedAt { get; set; }
-    }
-
-    public class BillReviewDetailViewModel
-    {
-        public BillReviewDetailViewModel()
-        {
-            this.Review = new BillReviewContainerViewModel();
-        }
-
-        public BillReviewContainerViewModel Review { get; set; }
     }
 
     public class BillReviewApprovalViewModel
     {
         public BillReviewApprovalViewModel()
         {
-            this.ReviewToApprove = new BillReviewContainerViewModel();
-            this.ApprovedReview = new BillReviewPreviouslyApprovedContainerViewModel();
+            this.ReviewToApprove = new BillReviewViewModel();
+            this.ApprovedReview = new BillReviewPreviouslyApprovedViewModel();
         }
 
-        public BillReviewContainerViewModel ReviewToApprove { get; set; }
-        public BillReviewPreviouslyApprovedContainerViewModel ApprovedReview { get; set; }
+        public BillReviewViewModel ReviewToApprove { get; set; }
+        public BillReviewPreviouslyApprovedViewModel ApprovedReview { get; set; }
     }
 
     public class BillReviewRequestIndividualUserViewModel

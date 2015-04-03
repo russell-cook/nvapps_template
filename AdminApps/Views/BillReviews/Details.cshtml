@@ -1,42 +1,59 @@
-﻿@model AdminApps.ViewModels.BillReviewDetailViewModel
+﻿@model AdminApps.ViewModels.BillReviewViewModel
 
 @{
     ViewBag.Title = "Bill Review Details";
     ViewBag.ModuleName = "Bill Tracking";
 }
 
-<h3>
+<h2>
     @ViewBag.Title
-    @if (Model.Review.DisplayAsRead == false)
+    @if (Model.DisplayAsRead == false)
     {
         @Html.Encode(" (Unread)");
     }
-</h3>
-
-@if (Model.Review.DisplayAsRead == false)
+</h2>
+@if (!Model.UpToDate)
 {
-    @Html.ActionLink("Mark As Read", "MarkAsRead", "BillReviews", new { id = Model.Review.ID }, new { @class = "btn btn-default" })
+    <h3 class="text-danger">WARNING: This Bill Review is out of date.@(Model.UserCanUpdate ? " Please click the 'Update!' button below to confirm or revise your review." : "")</h3>
 }
 
-<p>@Html.DisplayFor(model => model.Review.ApprovedReviewMessage)</p>
 
-@Html.DisplayFor(model => model.Review)
+@if (Model.DisplayAsRead == false)
+{
+    @Html.ActionLink("Mark As Read", "MarkAsRead", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-default" })
+}
 
-@if (Model.Review.UserCanApprove == true)
+<p>@Html.DisplayFor(model => model.ApprovedReviewMessage)</p>
+
+@Html.DisplayFor(model => model)
+
+@if (Model.UserCanApprove == true && Model.UpToDate)
 {
     <p>
-        @Html.ActionLink("Approve Bill Review", "Approve", "BillReviews", new { id = Model.Review.ID }, new { @class = "btn btn-success btn-sm" })
+        @Html.ActionLink("Approve Bill Review", "Approve", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-success btn-sm" })
     </p>
+}
+
+
+@if (Model.UserCanEdit == true && Model.UpToDate)
+{
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-default" })
+    </p>
+}
+else if (!Model.UpToDate)
+{
+    <p>
+        @Html.ActionLink("Update!", "Update", new { id = Model.ID }, new { @class = "btn btn-danger btn-sm" })
+    </p>
+}
+else
+{
+    <p class="danger">@Html.DisplayFor(model => model.EditMessage)</p>
 }
 
 <p>
-    @if (Model.Review.UserCanEdit == true)
-    {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Review.ID }, new { @class = "btn btn-default" });
-    }
-    else
-    {
-    <p class="danger">@ViewBag.EditMessage</p>
-    }
-    @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.Review.BillID }, new { @class = "btn btn-default" })
-    </p>
+    @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.BillID }, new { @class = "btn btn-default" })
+</p>
+
+

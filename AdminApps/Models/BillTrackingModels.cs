@@ -256,6 +256,7 @@ namespace AdminApps.Models
         [UIHint("BooleanButton")]
         [Display(Name = "Policy impact on agency?")]
         public bool? PolicyImpact { get; set; }
+
         [Display(Name = "Fiscal Impact Yr 1")]
         [Required]
         [DataType(DataType.Currency)]
@@ -277,20 +278,28 @@ namespace AdminApps.Models
         public int CreatedAtApprovalLevel { get; set; }
         [Display(Name = "Date Created")]
         public DateTime CreatedAt { get; set; }
-        public bool IsUnrevisedDupOfPrevReview { get; set; }
+        public bool IsVerifiedDupOfPrevReview { get; set; }
         public bool IsRevisionOfPrevReview { get; set; }
+        public bool IsOverrideRevision { get; set; }
+        [ForeignKey("OverrideRevisionCreatedByUser")]
+        public string OverrideRevisionCreatedByUserID { get; set; }
+        public int OverrideOfBillReviewID { get; set; }
 
         [Timestamp]
         public byte[] RowVersion { get; set; }
 
+        // navigation properties
         public virtual Bill Bill { get; set; }
         public virtual BillVersion BillVersion { get; set; }
         public virtual BillReviewRecommendation Recommendation { get; set; }
+        [InverseProperty("CreatedBillReviews")]
         public virtual ApplicationUser CreatedByUser { get; set; }
         [Display(Name = "Dept")]
         public virtual Dept CreatedByUserInDept { get; set; }
         [Display(Name = "Div")]
         public virtual Div CreatedByUserInDiv { get; set; }
+        [InverseProperty("CreatedOverrideOfBillReviews")]
+        public virtual ApplicationUser OverrideRevisionCreatedByUser { get; set; }
 
         public virtual ICollection<BillReviewNotification> Notifications { get; set; }
         public virtual ICollection<BillReviewApproval> Approvals { get; set; }
@@ -352,8 +361,10 @@ namespace AdminApps.Models
         public decimal DivID { get; set; }
         public byte[] Pdf { get; set; }
         public string Filename { get; set; }
+        [Display(Name = "Date/Time Created")]
         public DateTime CreatedAt { get; set; }
         [DataType(DataType.Date)]
+        [Display(Name = "Delivery Date")]
         public DateTime GovOfficeDeliveryDate { get; set; }
         [ForeignKey("CreatedByUser")]
         public string ApplicationUserID { get; set; }

@@ -26,10 +26,15 @@
     </td>
     <td>
         @Html.ActionLink("View", "Details", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-default btn-sm" })
-        @if (!Model.IsApproved && ViewBag.UserCanApprove)
+        @if (Model.UserCanUpdate)
+        {
+            @Html.ActionLink("Update!", "Update", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-danger btn-sm" })
+        }
+        else if (!Model.IsApproved && ViewBag.UserCanApprove && Model.UpToDate)
         {
             @Html.ActionLink("Approve", "Approve", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-default btn-sm" })
         }
 
     </td>
+
 </tr>

@@ -19,7 +19,10 @@ namespace AdminApps.DAL.Services
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.BillsAlsrReports.ToList();
+                return context.BillsAlsrReports
+                            .Include(r => r.CreatedByUser)
+                            .OrderByDescending(r => r.CreatedAt)
+                            .ToList();
             }
         }
 
@@ -27,7 +30,7 @@ namespace AdminApps.DAL.Services
         {
             using (var context = new ApplicationDbContext())
             {
-                var report = context.BillsAlsrReports.FirstOrDefault(r => r.ID == id);
+                var report = context.BillsAlsrReports.Include(r => r.Dept).FirstOrDefault(r => r.ID == id);
 
                 if (report == null)
                 {

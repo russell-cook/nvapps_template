@@ -1,0 +1,163 @@
+﻿@model AdminApps.ViewModels.BillReviewViewModel
+
+@{
+    ViewBag.Title = "Create";
+    ViewBag.ModuleName = "Bill Tracking";
+}
+
+<h2>Create Review for: @ViewBag.ParentID</h2>
+<h4>Current Bill Version: @Html.DisplayFor(model => model.BillVersion.VersionDescription)</h4>
+<h6>NELIS Link: <a href="@ViewBag.ParentNelisLink" target="_blank">@ViewBag.ParentNelisLink</a></h6>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.BillID)
+        @Html.HiddenFor(model => model.BillVersionID)
+
+        <!--begin form section panel: Analysis-->
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Analysis</strong></div>
+            <div class="panel-body">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BillReviewRecommendationID, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownList("BillReviewRecommendationID", null, "--Select Recommendation--", htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.BillReviewRecommendationID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Comments, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control", @rows = 4, @placeholder = "Enter comments" } })
+                        @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+                        <p class="help-block">In the comment box above, please indicate if passage of this bill would constitute good public policy.  Explain Briefly.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RequiresTestimony, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.RequiresTestimony, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.RequiresTestimony, "", new { @class = "text-danger" })
+                        <p class="help-block">Do you recommend testimony on this Bill?</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.InformationToBeProvided, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.InformationToBeProvided, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.InformationToBeProvided, "", new { @class = "text-danger" })
+                        <p class="help-block">Information/testimony or data to be provided on this bill?</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PolicyImpact, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.PolicyImpact, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.PolicyImpact, "", new { @class = "text-danger" })
+                        <p class="help-block">If enacted, would this Bill have a policy impact on your agency?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end form section panel: Analysis-->
+        <!--begin form section panel: Fiscal Impact-->
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Fiscal Impact</strong></div>
+            <div class="panel-body">
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FiscalNoteSubmitted, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.FiscalNoteSubmitted, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.FiscalNoteSubmitted, "", new { @class = "text-danger" })
+                        <p class="help-block">Has your agency submitted a Fiscal Note for this Bill?</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FiscalImpactYr1, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            @Html.EditorFor(model => model.FiscalImpactYr1, new { htmlAttributes = new { @class = "form-control" } })
+                            <span class="input-group-addon">.00</span>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.FiscalImpactYr1, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FiscalImpactYr2, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            @Html.EditorFor(model => model.FiscalImpactYr2, new { htmlAttributes = new { @class = "form-control" } })
+                            <span class="input-group-addon">.00</span>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.FiscalImpactYr2, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.FiscalImpactFuture, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            @Html.EditorFor(model => model.FiscalImpactFuture, new { htmlAttributes = new { @class = "form-control" } })
+                            <span class="input-group-addon">.00</span>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.FiscalImpactFuture, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--end form section panel: Fiscal Impact-->
+        <!--begin form section panel: Agency Details-->
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Agency Details</strong></div>
+            <div class="panel-body">
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ActivelyTracking, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.ActivelyTracking, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ActivelyTracking, "", new { @class = "text-danger" })
+                        <p class="help-block">Is your agency actively tracking this bill internally? If amendments to this Bill have caused your agency to stop tracking it then this should be marked 'No'.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Notes, new { htmlAttributes = new { @class = "form-control", @rows = 4, @placeholder = "Enter notes" } })
+                        @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+                        <p class="help-block">The 'Notes' field is for use within the Department and will not be included on the Agency Legislative Status Report for the Governor's Office.</p>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <!--end form section panel: Agency Details-->
+
+        <div class="form-group">
+            <div class="col-md-12">
+                <input type="submit" value="Submit Review" class="btn btn-lg btn-success" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.BillID }, null)
+</div>

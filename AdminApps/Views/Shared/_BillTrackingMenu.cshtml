@@ -24,7 +24,6 @@
 @if (Request.IsAuthenticated && (User.IsInRole("BillsClerc") || User.IsInRole("BillsDept")))
 {
     @*<li role="presentation" @{if (ViewBag.Title == "My Bills") { <text> class="active" </text>        } }>@Html.ActionLink("My Bills", "BillsOfInterest", "Bills")</li>*@
-    <li role="presentation" @{if (ViewBag.Title == "List NEBS Transmitted BDRs") { <text> class="active" </text>         } }>@Html.ActionLink("NEBS BDRs", "NEBS_BDRs", "Bills")</li>
     <li role="presentation" @{if (ViewBag.Title == "Reports") { <text> class="active" </text>       } }>@Html.ActionLink("Reports", "Index", "BillReports")</li>
 }
 
@@ -40,6 +39,7 @@
 
 @if (Request.IsAuthenticated && User.IsInRole("GlobalAdmin"))
 {
+    <li role="presentation" @{if (ViewBag.Title == "List NEBS Transmitted BDRs") { <text> class="active" </text>          } }>@Html.ActionLink("NEBS BDRs", "NEBS_BDRs", "Bills")</li>
     <li role="presentation" @{if (ViewBag.Title == "Pending User Account Requests") { <text> class="active" </text>             } }>@Html.ActionLink("Pending User Account Requests", "PendingBillsUserAccountRequests", "Bills")</li>
 }
 

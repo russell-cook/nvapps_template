@@ -33,7 +33,7 @@ namespace AdminApps.Controllers
             return View();
         }
 
-        // GET: BillReports/DocumentsViewsList
+        // GET: BillReports/ALSR
         public ActionResult ALSR()
         {
             var reportService = new BillsAlsrReportsService();
@@ -42,7 +42,7 @@ namespace AdminApps.Controllers
             return View(reports);
         }
 
-        // GET: BillReports/ALSR
+        // GET: BillReports/GenerateALSR
         public async Task<ActionResult> GenerateALSR()
         {
             var user = await ReturnCurrentUserAsync();
@@ -72,7 +72,7 @@ namespace AdminApps.Controllers
             return View(viewModel);
         }
 
-        // POST: BillReports/ALSR
+        // POST: BillReports/GenerateALSR
         [HttpPost]
         public async Task<ActionResult> GenerateALSR(AlsrReportSelectBillReviewsViewModel model)
         {
@@ -102,6 +102,7 @@ namespace AdminApps.Controllers
                 var user = await ReturnCurrentUserAsync();
                 report.DeptID = user.DeptID;
                 report.DivID = user.DivID;
+                report.ApplicationUserID = user.Id;
 
                 //var snapshots = new List<AlsrBillReviewSnapshot>();
                 foreach (BillReview r in selectedBillReviews.ToList())

@@ -358,8 +358,11 @@
     <Content Include="Views\Bills\AddVersion.cshtml" />
     <Content Include="Views\Bills\AddVersionTemplate.cshtml" />
     <Content Include="Views\BillReviews\Dept.cshtml" />
-    <Content Include="Views\BillReviews\DisplayTemplates\BillReviewContainerViewModel.cshtml" />
-    <Content Include="Views\BillReviews\DisplayTemplates\BillReviewPreviouslyApprovedContainerViewModel.cshtml" />
+    <Content Include="Views\BillReviews\DisplayTemplates\BillReviewViewModel.cshtml" />
+    <Content Include="Views\BillReviews\DisplayTemplates\BillReviewPreviouslyApprovedViewModel.cshtml" />
+    <Content Include="Views\BillReviews\EditorTemplates\BillReviewViewModel.cshtml" />
+    <Content Include="Views\BillReviews\Create - Copy.cshtml" />
+    <Content Include="Views\BillReviews\Update.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -512,6 +515,14 @@
     <Compile Include="Migrations\201503270213385_AddRevisionStatusBoolsToBillReview.Designer.cs">
       <DependentUpon>201503270213385_AddRevisionStatusBoolsToBillReview.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201504012253135_ExtendBillReviewVersioningProperties.cs" />
+    <Compile Include="Migrations\201504012253135_ExtendBillReviewVersioningProperties.Designer.cs">
+      <DependentUpon>201504012253135_ExtendBillReviewVersioningProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201504022107493_RefineBillReviewVerifyUpdateProperties.cs" />
+    <Compile Include="Migrations\201504022107493_RefineBillReviewVerifyUpdateProperties.Designer.cs">
+      <DependentUpon>201504022107493_RefineBillReviewVerifyUpdateProperties.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
@@ -568,6 +579,12 @@
     <EmbeddedResource Include="Migrations\201503270213385_AddRevisionStatusBoolsToBillReview.resx">
       <DependentUpon>201503270213385_AddRevisionStatusBoolsToBillReview.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504012253135_ExtendBillReviewVersioningProperties.resx">
+      <DependentUpon>201504012253135_ExtendBillReviewVersioningProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504022107493_RefineBillReviewVerifyUpdateProperties.resx">
+      <DependentUpon>201504022107493_RefineBillReviewVerifyUpdateProperties.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -575,6 +592,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

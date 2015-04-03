@@ -85,6 +85,7 @@ namespace AdminApps.Models
         // Bill Tracking Module navigation properties
         public virtual ICollection<Bill> CreatedBills { get; set; }
         public virtual ICollection<BillReview> CreatedBillReviews { get; set; }
+        public virtual ICollection<BillReview> CreatedOverrideOfBillReviews { get; set; }
         public virtual ICollection<BillReviewNotification> BillReviewNotificationsRead { get; set; }
         public virtual ICollection<BillReviewApproval> BillReviewApprovals { get; set; }
         public virtual ICollection<BillReviewRequest> BillReviewRequestsBy { get; set; }

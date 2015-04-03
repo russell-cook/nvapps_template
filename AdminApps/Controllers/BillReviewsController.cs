@@ -346,18 +346,29 @@ namespace AdminApps.Controllers
             ApplicationUser user = await ReturnCurrentUserAsync();
             var userModuleApprovalLevel = await ReturnUserModuleApprovalLevelAsync(user, 5);
 
-            BillReviewDetailViewModel viewModel = new BillReviewDetailViewModel();
-            viewModel.Review.InjectFrom(review);
+            BillReviewViewModel viewModel = new BillReviewViewModel();
+            viewModel.InjectFrom(review);
+
+            // calculate BillReview status and set viewModel properties accordingly
+            CalculateBillReviewStatus(review, viewModel, user,userModuleApprovalLevel);
+
+            return View(viewModel);
+        }
+
+        private static void CalculateBillReviewStatus(BillReview review, BillReviewViewModel viewModel, ApplicationUser user, int userModuleApprovalLevel)
+        {
+            var currentVersion = review.Bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
+            viewModel.CurrentBillVersion = currentVersion.VersionDescription;
 
             // for Dept and Div users, if review was sent up from lower approval level, calculate whether BillReviewNotification has been read.
             // otherwise, set DisplayAsRead to true (this hides the 'mark as read' button)
             if (userModuleApprovalLevel < review.CreatedAtApprovalLevel && userModuleApprovalLevel != 0)
             {
-                viewModel.Review.DisplayAsRead = review.Notifications.Where(n => n.ApprovalLevel == userModuleApprovalLevel).Single().IsRead;
+                viewModel.DisplayAsRead = review.Notifications.Where(n => n.ApprovalLevel == userModuleApprovalLevel).Single().IsRead;
             }
             else
             {
-                viewModel.Review.DisplayAsRead = true;
+                viewModel.DisplayAsRead = true;
             }
 
             // if user created this BillReview, calculate whether or not user can edit. 
@@ -371,17 +382,17 @@ namespace AdminApps.Controllers
                     {
                         if (!notification.IsRead)
                         {
-                            viewModel.Review.UserCanEdit = true;
+                            viewModel.UserCanEdit = true;
                         }
                         else
                         {
                             switch (userModuleApprovalLevel)
                             {
                                 case 2:
-                                    ViewBag.EditMessage = string.Format("This review has already been read at the Department level and can no longer be edited.");
+                                    viewModel.EditMessage = string.Format("This review has already been received at the Department level and can no longer be edited.");
                                     break;
                                 case 3:
-                                    ViewBag.EditMessage = string.Format("This review has already been read at the Division level and can no longer be edited.");
+                                    viewModel.EditMessage = string.Format("This review has already been received at the Division level and can no longer be edited.");
                                     break;
                                 default:
                                     break;
@@ -390,13 +401,13 @@ namespace AdminApps.Controllers
                     }
                     else
                     {
-                        viewModel.Review.UserCanEdit = true;
+                        viewModel.UserCanEdit = true;
                     }
                 }
                 // otherwise, Dept level users have no restrictions on editing their own Reviews
                 else
                 {
-                    viewModel.Review.UserCanEdit = true;
+                    viewModel.UserCanEdit = true;
                 }
             }
 
@@ -407,18 +418,18 @@ namespace AdminApps.Controllers
                 // BillsClerc users cannot approve BillReviews
                 case 0:
                     approvedReview = review.Bill.Reviews
-                        .Where(r => 
-                            r.Approvals.Where(a => a.ApprovalLevel == 1).Any() && 
+                        .Where(r =>
+                            r.Approvals.Where(a => a.ApprovalLevel == 1).Any() &&
                             r.CreatedByUserInDept.ID == user.DeptID)
                         .FirstOrDefault();
                     if (approvedReview != null)
                     {
                         if (approvedReview.ID == review.ID)
                         {
-                            viewModel.Review.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDept.CompositeDeptName);
+                            viewModel.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDept.CompositeDeptName);
                         }
                     }
-                    viewModel.Review.UserCanApprove = false;
+                    viewModel.UserCanApprove = false;
                     break;
                 // BillsDept users can approve a BillReview if the current BillReview is not already the approved review for its Bill
                 case 1:
@@ -429,17 +440,17 @@ namespace AdminApps.Controllers
                     {
                         if (approvedReview.ID == review.ID)
                         {
-                            viewModel.Review.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDept.CompositeDeptName);
-                            viewModel.Review.UserCanApprove = false;
+                            viewModel.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDept.CompositeDeptName);
+                            viewModel.UserCanApprove = false;
                         }
                         else
                         {
-                            viewModel.Review.UserCanApprove = true;
+                            viewModel.UserCanApprove = true;
                         }
                     }
                     else
                     {
-                        viewModel.Review.UserCanApprove = true;
+                        viewModel.UserCanApprove = true;
                     }
                     break;
                 // BillsDiv users can approve a BillReview if the current BillReview is not already the approved review,
@@ -452,41 +463,33 @@ namespace AdminApps.Controllers
                     {
                         if (approvedReview.ID == review.ID)
                         {
-                            viewModel.Review.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDiv.CompositeDivName);
-                            viewModel.Review.UserCanApprove = false;
+                            viewModel.ApprovedReviewMessage = string.Format("This is the Approved Review for {0}.", approvedReview.CreatedByUserInDiv.CompositeDivName);
+                            viewModel.UserCanApprove = false;
                         }
-                        else if(approvedReview.Notifications.Where(n => n.ApprovalLevel == 1).FirstOrDefault().IsRead)
+                        else if (approvedReview.Notifications.Where(n => n.ApprovalLevel == 1).FirstOrDefault().IsRead)
                         {
-                            viewModel.Review.UserCanApprove = false;
+                            viewModel.UserCanApprove = false;
                         }
                         else
                         {
-                            viewModel.Review.UserCanApprove = true;
+                            viewModel.UserCanApprove = true;
                         }
                     }
                     else
                     {
-                        viewModel.Review.UserCanApprove = true;
+                        viewModel.UserCanApprove = true;
                     }
                     break;
                 // BillsAgency users cannot approve BillReviews
                 case 3:
-                    viewModel.Review.UserCanApprove = false;
+                    viewModel.UserCanApprove = false;
                     break;
                 default:
                     break;
             }
 
-            // calculate BillReview status; if BillReview is out of date then determine whether user can ConfirmRevise
-            CalculateBillReviewStatus(review, user, viewModel.Review);
 
-            return View(viewModel);
-        }
-
-        private static void CalculateBillReviewStatus(BillReview review, ApplicationUser user, BillReviewContainerViewModel viewModel)
-        {
-            var currentVersion = review.Bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
-            viewModel.CurrentBillVersion = currentVersion.VersionDescription;
+            // calculate version status
             if (review.BillVersion.VersionNum == currentVersion.VersionNum)
             {
                 viewModel.UpToDate = true;
@@ -498,7 +501,7 @@ namespace AdminApps.Controllers
                 viewModel.StatusMessage = "Out of date";
                 if (review.CreatedByUser.Id == user.Id)
                 {
-                    viewModel.userCanConfirmRevise = true;
+                    viewModel.UserCanUpdate = true;
                 }
             }
         }
@@ -512,19 +515,20 @@ namespace AdminApps.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Bill parentBill = await db.Bills.
-                                        Where(b => b.ID == id).
-                                        Include(b => b.BillVersions).
-                                        FirstOrDefaultAsync();
+            Bill parentBill = await db.Bills
+                                        .Where(b => b.ID == id)
+                                        .Include(b => b.BillVersions)
+                                        .FirstOrDefaultAsync();
             ViewBag.ParentID = parentBill.CompositeBillName;
             ViewBag.ParentNelisLink = parentBill.calculatedHyperlink;
 
-            BillReview review = new BillReview();
-            review.BillID = id.Value;
-            review.BillVersion = parentBill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
-            review.BillVersionID = review.BillVersion.ID;
+            BillReviewViewModel viewModel = new BillReviewViewModel();
+            viewModel.Create = true;
+            viewModel.BillID = id.Value;
+            viewModel.BillVersion = parentBill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
+            viewModel.BillVersionID = viewModel.BillVersion.ID;
             ViewBag.BillReviewRecommendationID = new SelectList(await db.BillReviewRecommendations.ToListAsync(), "ID", "Description");
-            return View(review);
+            return View(viewModel);
         }
 
         // POST: BillReviews/Create/5
@@ -533,12 +537,16 @@ namespace AdminApps.Controllers
         [Authorize(Roles = "BillsDept, BillsDiv, BillsAgency")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "ID,BillID,BillVersionID,BillReviewRecommendationID,Comments,RequiresTestimony,InformationToBeProvided,ActivelyTracking,PolicyImpact,FiscalImpactYr1,FiscalImpactYr2,FiscalImpactFuture,FiscalNoteSubmitted,Notes")] BillReview review)
+        //public async Task<ActionResult> Create([Bind(Include = "ID,BillID,BillVersionID,BillReviewRecommendationID,Comments,RequiresTestimony,InformationToBeProvided,ActivelyTracking,PolicyImpact,FiscalImpactYr1,FiscalImpactYr2,FiscalImpactFuture,FiscalNoteSubmitted,Notes")] BillReview review)
+        public async Task<ActionResult> Create(BillReviewViewModel model)
         {
             if (ModelState.IsValid)
             {
                 ApplicationUser user = await ReturnCurrentUserAsync();
                 var userModuleApprovalLevel = await ReturnUserModuleApprovalLevelAsync(user, 5);
+
+                BillReview review = new BillReview();
+                review.InjectFrom(model);
 
                 review.ApplicationUserID = user.Id;
                 review.DeptID = user.DeptID;
@@ -571,9 +579,9 @@ namespace AdminApps.Controllers
                 return RedirectToAction("Details", "Bills", new { id = review.BillID } );
             }
 
-            ViewBag.BillID = new SelectList(db.Bills, "ID", "NebsBdrNumber", review.BillID);
-            ViewBag.BillReviewRecommendationID = new SelectList(db.BillReviewRecommendations, "ID", "Description", review.BillReviewRecommendationID);
-            return View(review);
+            //ViewBag.BillID = new SelectList(db.Bills, "ID", "NebsBdrNumber", review.BillID);
+            ViewBag.BillReviewRecommendationID = new SelectList(db.BillReviewRecommendations, "ID", "Description", model.BillReviewRecommendationID);
+            return View(model);
         }
 
         // GET: BillReviews/Edit/5
@@ -589,8 +597,10 @@ namespace AdminApps.Controllers
             {
                 return HttpNotFound();
             }
+            BillReviewViewModel viewModel = new BillReviewViewModel();
+            viewModel.InjectFrom(review);
             ViewBag.BillReviewRecommendationID = new SelectList(db.BillReviewRecommendations, "ID", "Description", review.BillReviewRecommendationID);
-            return View(review);
+            return View(viewModel);
         }
 
         // POST: BillReviews/Edit/5
@@ -599,16 +609,21 @@ namespace AdminApps.Controllers
         [Authorize(Roles = "BillsDept, BillsDiv, BillsAgency")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "ID,BillID,BillVersionID,BillReviewRecommendationID,Comments,RequiresTestimony,InformationToBeProvided,ActivelyTracking,PolicyImpact,FiscalImpactYr1,FiscalImpactYr2,FiscalImpactFuture,FiscalNoteSubmitted,Notes,CreatedAtApprovalLevel,CreatedAt,ApplicationUserID,DeptID,DivID,RowVersion")] BillReview review)
+        //public async Task<ActionResult> Edit([Bind(Include = "ID,BillID,BillVersionID,BillReviewRecommendationID,Comments,RequiresTestimony,InformationToBeProvided,ActivelyTracking,PolicyImpact,FiscalImpactYr1,FiscalImpactYr2,FiscalImpactFuture,FiscalNoteSubmitted,Notes,CreatedAtApprovalLevel,CreatedAt,ApplicationUserID,DeptID,DivID,RowVersion")] BillReview review)
+        public async Task<ActionResult> Edit(BillReviewViewModel model)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(review).State = EntityState.Modified;
+                //db.Entry(review).State = EntityState.Modified;
+                BillReview review = await db.BillReviews
+                                            .Where(r => r.ID == model.ID)
+                                            .FirstOrDefaultAsync();
+                review.InjectFrom(model);
                 await db.SaveChangesAsync();
-                return RedirectToAction("Details", new { id = review.ID });
+                return RedirectToAction("Details", new { id = model.ID });
             }
-            ViewBag.BillReviewRecommendationID = new SelectList(db.BillReviewRecommendations, "ID", "Description", review.BillReviewRecommendationID);
-            return View(review);
+            ViewBag.BillReviewRecommendationID = new SelectList(db.BillReviewRecommendations, "ID", "Description", model.BillReviewRecommendationID);
+            return View(model);
         }
 
         // GET: BillReviews/Delete/5
@@ -639,6 +654,81 @@ namespace AdminApps.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: BillReviews/Update/5
+        [Authorize(Roles = "BillsDept, BillsDiv, BillsAgency")]
+        public async Task<ActionResult> Update(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            BillReview review = await db.BillReviews
+                .Where(r => r.ID == id)
+                .Include("Bill.BillVersions")
+                .Include(r => r.BillVersion)
+                .Include(r => r.Notifications)
+                .FirstOrDefaultAsync();
+
+            if (review == null)
+            {
+                return HttpNotFound();
+            }
+
+            ApplicationUser user = await ReturnCurrentUserAsync();
+            var userModuleApprovalLevel = await ReturnUserModuleApprovalLevelAsync(user, 5);
+
+            // verify that current user created the BillReview
+            if (review.ApplicationUserID != user.Id)
+            {
+                Danger("Error: A BillReview can only be updated by the user who created the review.", true);
+                return RedirectToAction("Index");
+            }
+
+            BillReviewViewModel viewModel = new BillReviewViewModel();
+
+            // calculate BillReview status and set viewModel properties accordingly
+            CalculateBillReviewStatus(review, viewModel, user, userModuleApprovalLevel);
+
+            viewModel.InjectFrom(review);
+            viewModel.Bill.InjectFrom(review.Bill);
+
+            return View(viewModel);
+        }
+
+        // POST: BillReviews/Update/5
+        [Authorize(Roles = "BillsDept, BillsDiv, BillsAgency")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Update(int id)
+        {
+            BillReview review = await db.BillReviews
+                                        .Where(r => r.ID == id)
+                                        .Include("Bill.BillVersions")
+                                        .FirstOrDefaultAsync();
+            if (review == null)
+            {
+                return HttpNotFound();
+            }
+
+            ApplicationUser user = await ReturnCurrentUserAsync();
+            var userModuleApprovalLevel = await ReturnUserModuleApprovalLevelAsync(user, 5);
+
+            BillReview newReview = new BillReview();
+            newReview.InjectFrom(review);
+            newReview.CreatedAt = DateTime.Now;
+            newReview.IsVerifiedDupOfPrevReview = true;
+            db.BillReviews.Add(newReview);
+
+            var currentVersion = review.Bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
+            newReview.BillVersionID = currentVersion.ID;
+
+            await db.SaveChangesAsync();
+
+            Success("Your previous Bill Review has been verified as accurate. The current version is displayed below.");
+            return RedirectToAction("Details", new { id = newReview.ID });
+        }
+
         // GET: BillReviews/Approve/5
         [Authorize(Roles = "BillsDept, BillsDiv")]
         public async Task<ActionResult> Approve(int? id)
@@ -662,8 +752,8 @@ namespace AdminApps.Controllers
             ApplicationUser user = await ReturnCurrentUserAsync();
             var userModuleApprovalLevel = await ReturnUserModuleApprovalLevelAsync(user, 5);
 
-            // calculate BillReview status; if BillReview is out of date then determine whether user can ConfirmRevise
-            CalculateBillReviewStatus(review, user, viewModel.ReviewToApprove);
+            // calculate BillReview status; if BillReview is out of date then determine whether user can Update
+            CalculateBillReviewStatus(review, viewModel.ReviewToApprove, user, userModuleApprovalLevel);
 
             // check for previously approved Review
             var approvedReview = new BillReview();
@@ -824,22 +914,22 @@ namespace AdminApps.Controllers
             {
                 return HttpNotFound();
             }
-            BillReviewDetailViewModel viewModel = new BillReviewDetailViewModel();
-            viewModel.Review.InjectFrom(review);
+            BillReviewViewModel viewModel = new BillReviewViewModel();
+            viewModel.InjectFrom(review);
 
 
             // calculate BillReview status
             var currentVersion = review.Bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
-            viewModel.Review.CurrentBillVersion = currentVersion.VersionDescription;
+            viewModel.CurrentBillVersion = currentVersion.VersionDescription;
             if (review.BillVersion.VersionNum == currentVersion.VersionNum)
             {
-                viewModel.Review.UpToDate = true;
-                viewModel.Review.StatusMessage = "Up to date";
+                viewModel.UpToDate = true;
+                viewModel.StatusMessage = "Up to date";
             }
             else
             {
-                viewModel.Review.UpToDate = false;
-                viewModel.Review.StatusMessage = "Out of date";
+                viewModel.UpToDate = false;
+                viewModel.StatusMessage = "Out of date";
             }
 
             return View(viewModel);

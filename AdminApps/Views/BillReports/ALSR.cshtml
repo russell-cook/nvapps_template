@@ -13,10 +13,13 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().ID)
+            @Html.DisplayNameFor(model => model.FirstOrDefault().GovOfficeDeliveryDate)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.FirstOrDefault().CreatedAt)
+        </th>
+        <th>
+            Created By
         </th>
         <th>
         </th>
@@ -25,10 +28,13 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.ID)
+            @Html.DisplayFor(modelItem => item.GovOfficeDeliveryDate)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.CreatedAt)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatedByUser.FullNameLastFirst)
         </td>
         <td>
             @Html.ActionLink("Download PDF", "DownloadAlsr", new {  id = item.ID })

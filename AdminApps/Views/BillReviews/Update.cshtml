@@ -1,0 +1,32 @@
+﻿@model AdminApps.ViewModels.BillReviewViewModel
+
+@{
+    ViewBag.Title = "Update Bill Review";
+    ViewBag.ModuleName = "Bill Tracking";
+}
+
+<h2>@ViewBag.Title</h2>
+<div class="panel panel-danger">
+    <div class="panel-body">
+        WARNING: This Bill Review is currently out of date. Please review the latest version of @Html.DisplayFor(model => model.Bill.CompositeBillNumber) at the link below.
+        If the information you provided in your Bill Review is unaffected by the changes then click the 'Verify Previous Bill Review' button at the bottom of the screen.
+        If the information you provided has been impacted by the changes click the 'Revise Previous Bill Review' button to make the required changes.
+        Your original Bill Review will be saved, but a new version will be created to correspond to the latest Bill text.
+    </div>
+</div>
+
+<h5>
+    @Html.DisplayFor(model => model.Bill.calculatedHyperlink)
+</h5>
+
+@Html.DisplayFor(model => model)
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-actions no-color">
+        <input type="submit" value="Verify Previous Bill Review" class="btn btn-success" />
+        @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.Bill.ID }, new { @class = "btn btn-default" })
+    </div>
+}
