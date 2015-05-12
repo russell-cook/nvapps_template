@@ -1,4 +1,4 @@
-﻿@model AdminApps.ViewModels.BillReviewDetailViewModel
+﻿@model AdminApps.ViewModels.BillReviewViewModel
 
 @{
     ViewBag.Title = "Mark as Read";
@@ -7,7 +7,7 @@
 
 <h3>Mark Review as Read?</h3>
 
-@Html.DisplayFor(model => model.Review)
+@Html.DisplayFor(model => model)
 
 @using (Html.BeginForm())
 {
@@ -15,6 +15,6 @@
 
     <div class="form-actions no-color">
         <input type="submit" value="Confirm Mark As Read" class="btn btn-success" /> |
-        @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.Review.ID }, null)
+        @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.BillID }, null)
     </div>
 }

@@ -18,7 +18,7 @@
 
 
         <!--begin form section panel: Analysis-->
-        <div class="panel panel-default">
+        <div class="panel @(Model.UpToDate ? "panel-primary" : "panel-danger")">
             <div class="panel-heading"><strong>Analysis</strong></div>
             <div class="panel-body">
                 <div class="form-group">
@@ -68,7 +68,7 @@
         </div>
         <!--end form section panel: Analysis-->
         <!--begin form section panel: Fiscal Impact-->
-        <div class="panel panel-default">
+        <div class="panel @(Model.UpToDate ? "panel-primary" : "panel-danger")">
             <div class="panel-heading"><strong>Fiscal Impact</strong></div>
             <div class="panel-body">
 
@@ -121,7 +121,7 @@
         </div>
         <!--end form section panel: Fiscal Impact-->
         <!--begin form section panel: Agency Details-->
-        <div class="panel panel-default">
+        <div class="panel @(Model.UpToDate ? "panel-primary" : "panel-danger")">
             <div class="panel-heading"><strong>Agency Details</strong></div>
             <div class="panel-body">
 
@@ -150,7 +150,7 @@
 
         <div class="form-group">
             <div class="col-md-12">
-                <input type="submit" value="@(Model.Create ? "Create Review" : "Save")" class="btn btn-lg btn-success" />
+                <input type="submit" value="@(Model.Create ? "Create Review" : "Save")" class="btn btn-success" />
             </div>
         </div>
     </div>

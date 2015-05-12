@@ -156,7 +156,7 @@ namespace AdminApps.Controllers
             foreach (Bill bill in bills)
             {
                 var numReviews = new int();
-                var currentVersion = bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
+                //var currentVersion = bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
                 BillReview approvedReview = new BillReview();
                 var hasApprovedReview = false;
                 switch (userModuleApprovalLevel)
@@ -168,9 +168,15 @@ namespace AdminApps.Controllers
                             .Where(r =>
                                 !(r is AlsrBillReviewSnapshot) &&
                                 r.CreatedByUserInDept.ID == user.DeptID &&
-                                r.BillVersionID == currentVersion.ID &&
                                 (r.Approvals.Where(a => a.ApprovalLevel == 2).Any() || r.CreatedAtApprovalLevel == 1))
+                            .GroupBy(r => r.CreatedByUser.Id)
                             .Count();
+                        //int counter = 0;
+                        //foreach (IGrouping<string, BillReview> group in reviewsList)
+                        //{
+                        //    counter++;
+                        //}
+                        //numReviews = counter;
                         approvedReview = bill.Reviews
                             .Where(r =>
                                 r.Approvals.Where(a => a.ApprovalLevel == 1).Any() && 
@@ -187,8 +193,8 @@ namespace AdminApps.Controllers
                             .Where(r =>
                                 !(r is AlsrBillReviewSnapshot) &&
                                 r.CreatedAtApprovalLevel > 1 &&
-                                r.BillVersionID == currentVersion.ID &&
                                 r.CreatedByUserInDiv.ID == user.DivID)
+                            .GroupBy(r => r.CreatedByUser.Id)
                             .Count();
                         approvedReview = bill.Reviews
                             .Where(r =>
@@ -362,7 +368,7 @@ namespace AdminApps.Controllers
                 case 1:
                     approvedReview = bill.Reviews
                         .Where(r =>
-                            r.BillID == bill.ID &&
+                            //r.BillID == bill.ID &&
                             r.Approvals.Where(a => a.ApprovalLevel == 1).Any() && 
                             r.CreatedByUserInDept.ID == user.DeptID)
                         .OrderByDescending(r => r.BillVersion.VersionNum)
@@ -372,7 +378,7 @@ namespace AdminApps.Controllers
                 case 2:
                     approvedReview = bill.Reviews
                         .Where(r =>
-                            r.BillID == bill.ID &&
+                            //r.BillID == bill.ID &&
                             r.Approvals.Where(a => a.ApprovalLevel == 2).Any() && 
                             r.CreatedByUserInDiv.ID == user.DivID)
                         .OrderByDescending(r => r.BillVersion.VersionNum)
@@ -385,7 +391,7 @@ namespace AdminApps.Controllers
                     // and then removes all other BillReviews from the viewModel
                     approvedReview = bill.Reviews
                         .Where(r =>
-                            r.BillID == bill.ID &&
+                            //r.BillID == bill.ID &&
                             r.ApplicationUserID == user.Id)
                         .OrderByDescending(r => r.BillVersion.VersionNum)
                         .FirstOrDefault();
@@ -458,8 +464,9 @@ namespace AdminApps.Controllers
                                 !(r is AlsrBillReviewSnapshot) &&
                                 r.BillID == bill.ID &&
                                 r.CreatedByUserInDept.ID == user.DeptID &&
-                                ((r.Approvals.Where(a => a.ApprovalLevel == 2).Any() && r.ID != approvedReview.ID)
-                                    || (r.CreatedAtApprovalLevel == 1 && r.ID != approvedReview.ID)))
+                                r.ApplicationUserID != approvedReview.ApplicationUserID &&
+                                (r.Approvals.Where(a => a.ApprovalLevel == 2).Any() 
+                                    || r.CreatedAtApprovalLevel == 1 && r.ID != approvedReview.ID))
                             .Include(r => r.BillVersion)
                             .GroupBy(r => r.CreatedByUser.Id)
                             .ToListAsync();
@@ -484,8 +491,8 @@ namespace AdminApps.Controllers
                                 !(r is AlsrBillReviewSnapshot) &&
                                 r.BillID == bill.ID &&
                                 r.CreatedByUserInDiv.ID == user.DivID && 
-                                r.CreatedAtApprovalLevel >= userModuleApprovalLevel && 
-                                r.ID != approvedReview.ID)
+                                r.ApplicationUserID != approvedReview.ApplicationUserID &&
+                                r.CreatedAtApprovalLevel >= userModuleApprovalLevel)
                             .Include(r => r.BillVersion)
                             .GroupBy(r => r.CreatedByUser.Id)
                             .ToListAsync();

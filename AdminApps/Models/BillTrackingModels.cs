@@ -280,6 +280,7 @@ namespace AdminApps.Models
         public DateTime CreatedAt { get; set; }
         public bool IsVerifiedDupOfPrevReview { get; set; }
         public bool IsRevisionOfPrevReview { get; set; }
+        public int PrevReviewID { get; set; }
         public bool IsOverrideRevision { get; set; }
         [ForeignKey("OverrideRevisionCreatedByUser")]
         public string OverrideRevisionCreatedByUserID { get; set; }
@@ -320,7 +321,7 @@ namespace AdminApps.Models
         {
             get
             {
-                return FiscalImpactYr1 + FiscalImpactYr2;
+                return this.FiscalImpactYr1 + this.FiscalImpactYr2;
             }
         }
 
@@ -330,7 +331,7 @@ namespace AdminApps.Models
         {
             get
             {
-                return FiscalImpactYr1 + FiscalImpactYr2 + FiscalImpactFuture;
+                return this.FiscalImpactYr1 + this.FiscalImpactYr2 + this.FiscalImpactFuture;
             }
         }
 

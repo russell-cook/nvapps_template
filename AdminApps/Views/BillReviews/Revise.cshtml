@@ -1,0 +1,13 @@
+﻿@model AdminApps.ViewModels.BillReviewViewModel
+
+@{
+    ViewBag.Title = "Revise Previous Bill Review";
+    ViewBag.ModuleName = "Bill Tracking";
+}
+
+<h2 class="text-danger">@Html.DisplayFor(model => model.Bill.CompositeBillNumber): @ViewBag.Title</h2>
+<h6>
+    Link to @Html.DisplayFor(model => model.Bill.CompositeBillNumber) (NELIS): @Html.DisplayFor(model => model.Bill.calculatedHyperlink)
+</h6>
+
+@Html.EditorFor(model => model)

@@ -212,6 +212,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Templates\BillRecordRequestFulfilledConfirmation.html" />
+    <Content Include="Templates\BillReviewDivRevisionNotification.html" />
     <Content Include="Templates\BillReviewDivApprovalNotification.html" />
     <Content Include="Templates\BillReviewRequestNotificationAgency.html" />
     <Content Include="Templates\BillReviewRequestNotificationDiv.html" />
@@ -322,7 +323,9 @@
     </Content>
     <Content Include="Content\Files\BillTracking\Help\AdminApps_BillTracking_Top-Down_Flow_Chart.pdf" />
     <Content Include="Content\Files\BillTracking\Help\AdminApps_BillTracking_Bottom-Up_Flow_Chart.pdf" />
-    <Content Include="PrivateSettings.config" />
+    <Content Include="PrivateSettings.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="job_scheduling_data_2_0.xsd" />
     <None Include="Properties\PublishProfiles\AdminAppsProd.pubxml" />
     <None Include="Properties\PublishProfiles\AdminAppsTest.pubxml" />
@@ -361,8 +364,8 @@
     <Content Include="Views\BillReviews\DisplayTemplates\BillReviewViewModel.cshtml" />
     <Content Include="Views\BillReviews\DisplayTemplates\BillReviewPreviouslyApprovedViewModel.cshtml" />
     <Content Include="Views\BillReviews\EditorTemplates\BillReviewViewModel.cshtml" />
-    <Content Include="Views\BillReviews\Create - Copy.cshtml" />
     <Content Include="Views\BillReviews\Update.cshtml" />
+    <Content Include="Views\BillReviews\Revise.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -523,6 +526,10 @@
     <Compile Include="Migrations\201504022107493_RefineBillReviewVerifyUpdateProperties.Designer.cs">
       <DependentUpon>201504022107493_RefineBillReviewVerifyUpdateProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201504031809056_AddPrevReviewIdToBillReview.cs" />
+    <Compile Include="Migrations\201504031809056_AddPrevReviewIdToBillReview.Designer.cs">
+      <DependentUpon>201504031809056_AddPrevReviewIdToBillReview.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
@@ -584,6 +591,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201504022107493_RefineBillReviewVerifyUpdateProperties.resx">
       <DependentUpon>201504022107493_RefineBillReviewVerifyUpdateProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504031809056_AddPrevReviewIdToBillReview.resx">
+      <DependentUpon>201504031809056_AddPrevReviewIdToBillReview.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

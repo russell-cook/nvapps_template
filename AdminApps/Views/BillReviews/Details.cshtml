@@ -30,27 +30,24 @@
 @if (Model.UserCanApprove == true && Model.UpToDate)
 {
     <p>
-        @Html.ActionLink("Approve Bill Review", "Approve", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-success btn-sm" })
+        @Html.ActionLink("Approve Review and Submit to Department", "Approve", "BillReviews", new { id = Model.ID }, new { @class = "btn btn-success" })
     </p>
 }
 
-
+<p>
 @if (Model.UserCanEdit == true && Model.UpToDate)
 {
-    <p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-default" })
-    </p>
+        @Html.ActionLink("Edit Review", "Edit", new { id = Model.ID }, new { @class = "btn btn-default" })
 }
-else if (!Model.UpToDate)
+else if (Model.UserCanUpdate)
 {
-    <p>
         @Html.ActionLink("Update!", "Update", new { id = Model.ID }, new { @class = "btn btn-danger btn-sm" })
-    </p>
 }
 else
 {
-    <p class="danger">@Html.DisplayFor(model => model.EditMessage)</p>
+    <div class="text-danger">@Html.DisplayFor(model => model.EditMessage)</div>
 }
+</p>
 
 <p>
     @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.BillID }, new { @class = "btn btn-default" })

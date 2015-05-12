@@ -5,19 +5,22 @@
     ViewBag.ModuleName = "Bill Tracking";
 }
 
-<h2>@ViewBag.Title</h2>
+<h2 class="text-danger">@ViewBag.Title</h2>
+
+<h6>
+    Link to @Html.DisplayFor(model => model.Bill.CompositeBillNumber) (NELIS): @Html.DisplayFor(model => model.Bill.calculatedHyperlink)
+</h6>
+
 <div class="panel panel-danger">
-    <div class="panel-body">
-        WARNING: This Bill Review is currently out of date. Please review the latest version of @Html.DisplayFor(model => model.Bill.CompositeBillNumber) at the link below.
-        If the information you provided in your Bill Review is unaffected by the changes then click the 'Verify Previous Bill Review' button at the bottom of the screen.
-        If the information you provided has been impacted by the changes click the 'Revise Previous Bill Review' button to make the required changes.
-        Your original Bill Review will be saved, but a new version will be created to correspond to the latest Bill text.
+    <div class="panel-body text-danger">
+        <small>
+            <strong>WARNING:</strong> Your previous Bill Review (displayed below) is currently out of date. Please review the latest version of @Html.DisplayFor(model => model.Bill.CompositeBillNumber) at the link above.
+            If the information you provided in your Bill Review is unaffected by the changes then click the 'Verify Previous Bill Review' button at the bottom of the screen.
+            If the information you provided has been impacted by the changes then click the 'Revise Previous Bill Review' button to make the required changes.
+            Your original Bill Review will be saved, but a new version will be created to bring your review up to date with the latest Bill text.
+        </small>
     </div>
 </div>
-
-<h5>
-    @Html.DisplayFor(model => model.Bill.calculatedHyperlink)
-</h5>
 
 @Html.DisplayFor(model => model)
 
@@ -26,7 +29,10 @@
     @Html.AntiForgeryToken()
 
     <div class="form-actions no-color">
-        <input type="submit" value="Verify Previous Bill Review" class="btn btn-success" />
+        <p>
+            <input type="submit" value="Verify Previous Bill Review" class="btn btn-success" />
+            @Html.ActionLink("Revise Previous Bill Review", "Revise", new { id = Model.ID }, new { @class = "btn btn-danger" })
+        </p>
         @Html.ActionLink("Back to Bill", "Details", "Bills", new { id = Model.Bill.ID }, new { @class = "btn btn-default" })
     </div>
 }
