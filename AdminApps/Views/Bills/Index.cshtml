@@ -49,30 +49,31 @@
         <th></th>
     </tr>
 
-    @foreach (var item in Model)
+        @foreach (var item in Model)
     {
-        <tr class="@(item.HasApprovedReview ? "success" : "")">
-            <td>
-                @Html.DisplayFor(modelItem => item.CompositeBillNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TruncSummary)
-            </td>
-            @if (Request.IsAuthenticated && (User.IsInRole("GlobalAdmin") || User.IsInRole("BillsDept") || User.IsInRole("BillsDiv")))
-            {
+            @*<tr class="@(item.HasApprovedReview ? "success" : "")">*@
+            <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.NumReviews)
+                    @Html.DisplayFor(modelItem => item.CompositeBillNumber)
                 </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TruncSummary)
+                </td>
+                @if (Request.IsAuthenticated && (User.IsInRole("GlobalAdmin") || User.IsInRole("BillsDept") || User.IsInRole("BillsDiv")))
+            {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumReviews)
+                    </td>
             }
-            <td>
-                @Html.ActionLink("View Bill Details", "Details", new { id = item.AdminAppsID }, new { @class = "btn btn-default btn-sm" })
-                @if (Request.IsAuthenticated && (User.IsInRole("GlobalAdmin") || User.IsInRole("BillsDept")))
+                <td>
+                    @Html.ActionLink("View Bill Details", "Details", new { id = item.AdminAppsID }, new { @class = "btn btn-default btn-sm" })
+                    @if (Request.IsAuthenticated && (User.IsInRole("GlobalAdmin") || User.IsInRole("BillsDept")))
                 {
-                    @Html.ActionLink("Edit", "Edit", new { id = item.AdminAppsID }, new { @class = "btn btn-default btn-sm" })
-                    @Html.ActionLink("Delete", "Delete", new { id = item.AdminAppsID }, new { @class = "btn btn-default btn-sm" })
+                        @Html.ActionLink("Edit", "Edit", new { id = item.AdminAppsID }, new { @class = "btn btn-default btn-sm" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.AdminAppsID }, new { @class = "btn btn-default btn-sm" })
                 }
-            </td>
-        </tr>
+                </td>
+            </tr>
     }
 
 </table>

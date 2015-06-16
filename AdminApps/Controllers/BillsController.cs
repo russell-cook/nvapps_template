@@ -65,10 +65,12 @@ namespace AdminApps.Controllers
                 Danger("You have " + reviewRequests.Count() + " outstanding <a href='BillReviewRequests' class='panel-title'>Bill Review Requests</a>.");
             }
 
-            var billNotifications = await db.BillReviewNotifications.Where(n => n.ApprovalLevel == userModuleApprovalLevel && n.IsRead == false).ToListAsync();
-            if (billNotifications.Any())
+            // count Unread BillReviews
+            BillReviewsRepository billReviews = new BillReviewsRepository();
+            int unreadReviews = await billReviews.CountUnreadAsync(user, userModuleApprovalLevel);
+            if (unreadReviews > 0)
             {
-                Warning("You have " + billNotifications.Count() + " <a href='../BillReviews/Unread' class='panel-title'>unread Bill Reviews</a>.");
+                Warning("You have " + unreadReviews + " <a href='../BillReviews/Unread' class='panel-title'>unread Bill Reviews</a>.");
             }
 
         }
@@ -87,12 +89,23 @@ namespace AdminApps.Controllers
 
 
             // load top 5 recent Bill Reviews
-            viewModel.RecentBillReviews = await db.BillReviews
-                                                    .Where(r => r.CreatedByUser.Id == user.Id)
-                                                    .OrderByDescending(r => r.CreatedAt)
-                                                    .Take(5)
-                                                    .ToListAsync();
-
+            //viewModel.RecentBillReviews = await db.BillReviews
+            //                                        .Where(r => r.CreatedByUser.Id == user.Id)
+            //                                        .OrderByDescending(r => r.CreatedAt)
+            //                                        .Take(5)
+            //                                        .ToListAsync();
+            var userBillReviews = await db.BillReviews
+                                    .Where(r => r.CreatedByUser.Id == user.Id
+                                            && r.Bill.BudgetPeriodID == appGlobalBudgetPeriod)
+                                    .Include(r => r.BillVersion)
+                                    .GroupBy(r => r.BillID)
+                                    .ToListAsync();
+            foreach (IGrouping<int, BillReview> group in userBillReviews)
+            {
+                var mostRecentReview = group.OrderByDescending(g => g.BillVersion.VersionNum).FirstOrDefault();
+                viewModel.RecentBillReviews.Add(mostRecentReview);
+            }
+            viewModel.RecentBillReviews = viewModel.RecentBillReviews.OrderByDescending(r => r.CreatedAt).Take(5).ToList();
 
             return View(viewModel);
         }

@@ -21,11 +21,18 @@ namespace AdminApps
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/bootstrap.custom.js",
-                      "~/Scripts/respond.js"));
+                      "~/Scripts/respond.js",
+                      "~/Scripts/bootstrap-datepicker.js",
+                      "~/Scripts/DatePickerReady.js",
+                      "~/Scripts/jquery.timepicker.js",
+                      "~/Scripts/TimePickerReady.js"
+            ));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/themes/nvapps/bootstrap.css",
                       "~/Content/bootstrap.custom.css",
+                      "~/Content/bootstrap-datepicker3.css",
+                      "~/Content/jquery.timepicker.css",
                       "~/Content/site.css"));
         }
     }

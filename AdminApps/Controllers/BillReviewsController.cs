@@ -72,7 +72,16 @@ namespace AdminApps.Controllers
 
             // execute query. The following filter/sort operations are performed on calculated properties 
             // in the result set and cannot be included in the LINQ query above
-            var billReviewsList = await billReviewsQry.ToListAsync();
+            var billReviewsQryResults = await billReviewsQry.ToListAsync();
+
+            // remove any Bill Reviews which aren't the most recent version
+            var billReviewsGrouping = billReviewsQryResults.GroupBy(r => r.BillID).ToList();
+            var billReviewsList = new List<BillReview>();
+            foreach (IGrouping<int, BillReview> group in billReviewsGrouping)
+            {
+                var mostRecentReview = group.OrderByDescending(g => g.BillVersion.VersionNum).FirstOrDefault();
+                billReviewsList.Add(mostRecentReview);
+            }
 
             // apply search string (if exists)
             if (!String.IsNullOrEmpty(searchString))
@@ -91,10 +100,10 @@ namespace AdminApps.Controllers
             switch (sortOrder)
             {
                 case "Division":
-                    billReviewsList = billReviewsQry.OrderBy(r => r.CreatedByUserInDiv.Description).ToList();
+                    billReviewsList = billReviewsList.OrderBy(r => r.CreatedByUserInDiv.Description).ToList();
                     break;
                 case "division_desc":
-                    billReviewsList = billReviewsQry.OrderByDescending(r => r.CreatedByUserInDiv.Description).ToList();
+                    billReviewsList = billReviewsList.OrderByDescending(r => r.CreatedByUserInDiv.Description).ToList();
                     break;
                 default:
                     break;
@@ -155,7 +164,16 @@ namespace AdminApps.Controllers
 
             // execute query. The following filter/sort operations are performed on calculated properties 
             // in the result set and cannot be included in the LINQ query above
-            var billReviewsList = await billReviewsQry.ToListAsync();
+            var billReviewsQryResults = await billReviewsQry.ToListAsync();
+
+            // remove any Bill Reviews which aren't the most recent version
+            var billReviewsGrouping = billReviewsQryResults.GroupBy(r => r.BillID).ToList();
+            var billReviewsList = new List<BillReview>();
+            foreach (IGrouping<int, BillReview> group in billReviewsGrouping)
+            {
+                var mostRecentReview = group.OrderByDescending(g => g.BillVersion.VersionNum).FirstOrDefault();
+                billReviewsList.Add(mostRecentReview);
+            }
 
             // apply search string (if exists)
             if (!String.IsNullOrEmpty(searchString))
@@ -174,22 +192,22 @@ namespace AdminApps.Controllers
             switch (sortOrder)
             {
                 case "CreatedBy":
-                    billReviewsList = billReviewsQry.OrderBy(r => r.CreatedByUser.LastName).ToList();
+                    billReviewsList = billReviewsList.OrderBy(r => r.CreatedByUser.LastName).ToList();
                     break;
                 case "createdBy_desc":
-                    billReviewsList = billReviewsQry.OrderByDescending(r => r.CreatedByUser.LastName).ToList();
+                    billReviewsList = billReviewsList.OrderByDescending(r => r.CreatedByUser.LastName).ToList();
                     break;
                 case "Division":
-                    billReviewsList = billReviewsQry.OrderBy(r => r.CreatedByUserInDiv.Description).ToList();
+                    billReviewsList = billReviewsList.OrderBy(r => r.CreatedByUserInDiv.Description).ToList();
                     break;
                 case "division_desc":
-                    billReviewsList = billReviewsQry.OrderByDescending(r => r.CreatedByUserInDiv.Description).ToList();
+                    billReviewsList = billReviewsList.OrderByDescending(r => r.CreatedByUserInDiv.Description).ToList();
                     break;
                 case "Recommendation":
-                    billReviewsList = billReviewsQry.OrderBy(r => r.Recommendation.Description).ToList();
+                    billReviewsList = billReviewsList.OrderBy(r => r.Recommendation.Description).ToList();
                     break;
                 case "recommendation_desc":
-                    billReviewsList = billReviewsQry.OrderByDescending(r => r.Recommendation.Description).ToList();
+                    billReviewsList = billReviewsList.OrderByDescending(r => r.Recommendation.Description).ToList();
                     break;
                 default:
                     break;
@@ -277,7 +295,20 @@ namespace AdminApps.Controllers
 
             // execute query. The following filter/sort operations are performed on calculated properties 
             // in the result set and cannot be included in the LINQ query above
-            var billReviewsList = await billReviewsQry.ToListAsync();
+            var billReviewsQryResults = await billReviewsQry.ToListAsync();
+
+            // remove any Bill Reviews which aren't the most recent version
+            var billReviewsGrouping = billReviewsQryResults.GroupBy(r => r.BillID).ToList();
+            var billReviewsList = new List<BillReview>();
+            foreach (IGrouping<int, BillReview> group in billReviewsGrouping)
+            {
+                var mostRecentUnreadReview = group.OrderByDescending(g => g.BillVersion.VersionNum).FirstOrDefault();
+                var mostRecentReviewID = db.BillReviews.Where(r => r.BillID == mostRecentUnreadReview.BillID && r.ApplicationUserID == mostRecentUnreadReview.ApplicationUserID).OrderByDescending(r => r.BillVersion.VersionNum).FirstOrDefault().ID;
+                if (mostRecentReviewID == mostRecentUnreadReview.ID)
+                {
+                    billReviewsList.Add(mostRecentUnreadReview);
+                }
+            }
 
             // apply search string (if exists)
             if (!String.IsNullOrEmpty(searchString))
@@ -842,7 +873,7 @@ namespace AdminApps.Controllers
                 var bill = await db.Bills.Where(b => b.ID == model.BillID).FirstOrDefaultAsync();
                 var currentVersion = bill.BillVersions.OrderByDescending(v => v.VersionNum).FirstOrDefault();
 
-                // create VerifiedDupOfPrevReview record
+                // create RevisionOfPrevReview record
                 BillReview newReview = new BillReview()
                 {
                     ActivelyTracking = model.ActivelyTracking,
@@ -861,14 +892,17 @@ namespace AdminApps.Controllers
                     FiscalNoteSubmitted = model.FiscalNoteSubmitted,
                     InformationToBeProvided = model.InformationToBeProvided,
                     IsRevisionOfPrevReview = true,
+                    Notes = model.Notes,
                     PolicyImpact = model.PolicyImpact,
                     PrevReviewID = model.ID,
                     RequiresTestimony = model.RequiresTestimony
                 };
                 db.BillReviews.Add(newReview);
 
+                // load user properties
                 ApplicationUser user = await ReturnCurrentUserAsync();
                 var userModuleApprovalLevel = await ReturnUserModuleApprovalLevelAsync(user, 5);
+
                 switch (userModuleApprovalLevel)
                 {
                     // when a Dept user revises an Approved Review, create new Approval record
@@ -926,7 +960,8 @@ namespace AdminApps.Controllers
                 }
 
                 await db.SaveChangesAsync();
-                return RedirectToAction("Details", new { id = model.ID });
+                Success("Your Bill Review has been updated successfully.");
+                return RedirectToAction("Details", new { id = newReview.ID });
             }
             ViewBag.BillReviewRecommendationID = new SelectList(db.BillReviewRecommendations, "ID", "Description", model.BillReviewRecommendationID);
             return View(model);
@@ -982,7 +1017,7 @@ namespace AdminApps.Controllers
             }
             foreach (ApplicationUser u in targetUsers)
             {
-                string messageBody = string.Format(body, u.FirstName, review.Bill.calculatedHyperlink, review.Bill.CompositeBillNumber, review.CreatedByUser.FullName, review.CreatedByUserInDiv.CompositeDivName, viewReviewUrl, currentVersion.VersionDescription);
+                string messageBody = string.Format(body, u.FirstName, review.Bill.calculatedHyperlink, review.Bill.CompositeBillNumber, user.FullName, user.Div.CompositeDivName, viewReviewUrl, currentVersion.VersionDescription);
                 await UserManager.SendEmailAsync(u.Id, messageSubject, messageBody);
             }
         }

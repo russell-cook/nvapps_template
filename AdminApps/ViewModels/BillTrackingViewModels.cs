@@ -11,6 +11,11 @@ namespace AdminApps.ViewModels
 {
     public class BillsHomeViewModel
     {
+        public BillsHomeViewModel()
+        {
+            this.RecentBillReviews = new List<BillReview>();
+        }
+
         public List<BillReview> RecentBillReviews { get; set; }
     }
 

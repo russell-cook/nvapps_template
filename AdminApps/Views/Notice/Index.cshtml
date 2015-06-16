@@ -1,0 +1,46 @@
+﻿@model AdminApps.Models.Notice
+
+
+@{
+    ViewBag.Title = "Post New Notice";
+}
+
+<h2>@ViewBag.Title</h2>
+<hr />
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MeetingDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.MeetingDate)
+                @Html.ValidationMessageFor(model => model.MeetingDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.MeetingTime, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @*@Html.EditorFor(model => model.MeetingTime, new { htmlAttributes = new { @class = "form-control" } })*@
+                @Html.EditorFor(model => model.MeetingTime)
+                @Html.ValidationMessageFor(model => model.MeetingTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Validate" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.MeetingDateTime != null)
+{
+    <h3>Meeting Date/Time: @Model.MeetingDateTime</h3>
+}
