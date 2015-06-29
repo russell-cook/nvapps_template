@@ -199,6 +199,10 @@
     <Content Include="Content\bootstrap\variables.min.css">
       <DependentUpon>variables.css</DependentUpon>
     </Content>
+    <Content Include="Content\dhtmlxgantt\dhtmlxgantt_broadway.css" />
+    <Content Include="Content\dhtmlxgantt\dhtmlxgantt_meadow.css" />
+    <Content Include="Content\dhtmlxgantt\dhtmlxgantt_skyblue.css" />
+    <Content Include="Content\dhtmlxgantt\dhtmlxgantt_terrace.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\jquery.timepicker.css" />
     <Content Include="Content\PagedList.css" />
@@ -223,6 +227,12 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\DatePickerReady.js" />
+    <Content Include="Scripts\dhtmlxgantt.js" />
+    <Content Include="Scripts\ext\dhtmlxgantt_marker.js" />
+    <Content Include="Scripts\ext\dhtmlxgantt_multiselect.js" />
+    <Content Include="Scripts\ext\dhtmlxgantt_quick_info.js" />
+    <Content Include="Scripts\ext\dhtmlxgantt_tooltip.js" />
+    <Content Include="Scripts\init-gantt.js" />
     <Content Include="Scripts\jquery.timepicker.js" />
     <Content Include="Scripts\jquery.timepicker.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.ar.min.js" />
@@ -286,6 +296,71 @@
     <Content Include="Scripts\locales\bootstrap-datepicker.uk.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.vi.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.zh-TW.min.js" />
+    <Content Include="Scripts\locale\locale.js" />
+    <Content Include="Scripts\locale\locale_ar.js" />
+    <Content Include="Scripts\locale\locale_be.js" />
+    <Content Include="Scripts\locale\locale_ca.js" />
+    <Content Include="Scripts\locale\locale_cn.js" />
+    <Content Include="Scripts\locale\locale_cs.js" />
+    <Content Include="Scripts\locale\locale_da.js" />
+    <Content Include="Scripts\locale\locale_de.js" />
+    <Content Include="Scripts\locale\locale_el.js" />
+    <Content Include="Scripts\locale\locale_es.js" />
+    <Content Include="Scripts\locale\locale_fi.js" />
+    <Content Include="Scripts\locale\locale_fr.js" />
+    <Content Include="Scripts\locale\locale_he.js" />
+    <Content Include="Scripts\locale\locale_hu.js" />
+    <Content Include="Scripts\locale\locale_id.js" />
+    <Content Include="Scripts\locale\locale_it.js" />
+    <Content Include="Scripts\locale\locale_jp.js" />
+    <Content Include="Scripts\locale\locale_kr.js" />
+    <Content Include="Scripts\locale\locale_nb.js" />
+    <Content Include="Scripts\locale\locale_nl.js" />
+    <Content Include="Scripts\locale\locale_no.js" />
+    <Content Include="Scripts\locale\locale_pl.js" />
+    <Content Include="Scripts\locale\locale_pt.js" />
+    <Content Include="Scripts\locale\locale_ro.js" />
+    <Content Include="Scripts\locale\locale_ru.js" />
+    <Content Include="Scripts\locale\locale_si.js" />
+    <Content Include="Scripts\locale\locale_sk.js" />
+    <Content Include="Scripts\locale\locale_sv.js" />
+    <Content Include="Scripts\locale\locale_tr.js" />
+    <Content Include="Scripts\locale\locale_ua.js" />
+    <Content Include="Scripts\sources\dhtmlxgantt.js" />
+    <Content Include="Scripts\sources\ext\dhtmlxgantt_marker.js" />
+    <Content Include="Scripts\sources\ext\dhtmlxgantt_multiselect.js" />
+    <Content Include="Scripts\sources\ext\dhtmlxgantt_quick_info.js" />
+    <Content Include="Scripts\sources\ext\dhtmlxgantt_tooltip.js" />
+    <Content Include="Scripts\sources\locale\locale.js" />
+    <Content Include="Scripts\sources\locale\locale_ar.js" />
+    <Content Include="Scripts\sources\locale\locale_be.js" />
+    <Content Include="Scripts\sources\locale\locale_ca.js" />
+    <Content Include="Scripts\sources\locale\locale_cn.js" />
+    <Content Include="Scripts\sources\locale\locale_cs.js" />
+    <Content Include="Scripts\sources\locale\locale_da.js" />
+    <Content Include="Scripts\sources\locale\locale_de.js" />
+    <Content Include="Scripts\sources\locale\locale_el.js" />
+    <Content Include="Scripts\sources\locale\locale_es.js" />
+    <Content Include="Scripts\sources\locale\locale_fi.js" />
+    <Content Include="Scripts\sources\locale\locale_fr.js" />
+    <Content Include="Scripts\sources\locale\locale_he.js" />
+    <Content Include="Scripts\sources\locale\locale_hu.js" />
+    <Content Include="Scripts\sources\locale\locale_id.js" />
+    <Content Include="Scripts\sources\locale\locale_it.js" />
+    <Content Include="Scripts\sources\locale\locale_jp.js" />
+    <Content Include="Scripts\sources\locale\locale_kr.js" />
+    <Content Include="Scripts\sources\locale\locale_nb.js" />
+    <Content Include="Scripts\sources\locale\locale_nl.js" />
+    <Content Include="Scripts\sources\locale\locale_no.js" />
+    <Content Include="Scripts\sources\locale\locale_pl.js" />
+    <Content Include="Scripts\sources\locale\locale_pt.js" />
+    <Content Include="Scripts\sources\locale\locale_ro.js" />
+    <Content Include="Scripts\sources\locale\locale_ru.js" />
+    <Content Include="Scripts\sources\locale\locale_si.js" />
+    <Content Include="Scripts\sources\locale\locale_sk.js" />
+    <Content Include="Scripts\sources\locale\locale_sv.js" />
+    <Content Include="Scripts\sources\locale\locale_tr.js" />
+    <Content Include="Scripts\sources\locale\locale_ua.js" />
     <Content Include="Scripts\TimePickerReady.js" />
     <Content Include="Templates\BillRecordRequestFulfilledConfirmation.html" />
     <Content Include="Templates\BillReviewDivRevisionNotification.html" />
@@ -444,6 +519,44 @@
     <Content Include="Views\Notice\Index.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Date.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
+    <Content Include="Scripts\sources\locale\locale_ua.js.map" />
+    <Content Include="Scripts\sources\locale\locale_tr.js.map" />
+    <Content Include="Scripts\sources\locale\locale_sv.js.map" />
+    <Content Include="Scripts\sources\locale\locale_sk.js.map" />
+    <Content Include="Scripts\sources\locale\locale_si.js.map" />
+    <Content Include="Scripts\sources\locale\locale_ru.js.map" />
+    <Content Include="Scripts\sources\locale\locale_ro.js.map" />
+    <Content Include="Scripts\sources\locale\locale_pt.js.map" />
+    <Content Include="Scripts\sources\locale\locale_pl.js.map" />
+    <Content Include="Scripts\sources\locale\locale_no.js.map" />
+    <Content Include="Scripts\sources\locale\locale_nl.js.map" />
+    <Content Include="Scripts\sources\locale\locale_nb.js.map" />
+    <Content Include="Scripts\sources\locale\locale_kr.js.map" />
+    <Content Include="Scripts\sources\locale\locale_jp.js.map" />
+    <Content Include="Scripts\sources\locale\locale_it.js.map" />
+    <Content Include="Scripts\sources\locale\locale_id.js.map" />
+    <Content Include="Scripts\sources\locale\locale_hu.js.map" />
+    <Content Include="Scripts\sources\locale\locale_he.js.map" />
+    <Content Include="Scripts\sources\locale\locale_fr.js.map" />
+    <Content Include="Scripts\sources\locale\locale_fi.js.map" />
+    <Content Include="Scripts\sources\locale\locale_es.js.map" />
+    <Content Include="Scripts\sources\locale\locale_el.js.map" />
+    <Content Include="Scripts\sources\locale\locale_de.js.map" />
+    <Content Include="Scripts\sources\locale\locale_da.js.map" />
+    <Content Include="Scripts\sources\locale\locale_cs.js.map" />
+    <Content Include="Scripts\sources\locale\locale_cn.js.map" />
+    <Content Include="Scripts\sources\locale\locale_ca.js.map" />
+    <Content Include="Scripts\sources\locale\locale_be.js.map" />
+    <Content Include="Scripts\sources\locale\locale_ar.js.map" />
+    <Content Include="Scripts\sources\locale\locale.js.map" />
+    <Content Include="Scripts\sources\ext\dhtmlxgantt_tooltip.js.map" />
+    <Content Include="Scripts\sources\ext\dhtmlxgantt_quick_info.js.map" />
+    <Content Include="Scripts\sources\ext\dhtmlxgantt_multiselect.js.map" />
+    <Content Include="Scripts\sources\ext\dhtmlxgantt_marker.js.map" />
+    <Content Include="Scripts\sources\dhtmlxgantt.js.map" />
+    <Content Include="Views\Projects\Index.cshtml" />
+    <Content Include="Views\Projects\IT.cshtml" />
+    <Content Include="Views\Projects\IT_Details.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -528,6 +641,9 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\NebsConcurrencyController.cs" />
     <Compile Include="Controllers\NoticeController.cs" />
+    <Compile Include="Controllers\ProjectsController.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Controllers\RolesAdminController.cs" />
     <Compile Include="Controllers\TrafficController.cs" />
     <Compile Include="Controllers\UserAdminController.cs" />
@@ -610,6 +726,10 @@
     <Compile Include="Migrations\201504031809056_AddPrevReviewIdToBillReview.Designer.cs">
       <DependentUpon>201504031809056_AddPrevReviewIdToBillReview.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201506260028046_AddGanttModelsForProjMgmtDemo.cs" />
+    <Compile Include="Migrations\201506260028046_AddGanttModelsForProjMgmtDemo.Designer.cs">
+      <DependentUpon>201506260028046_AddGanttModelsForProjMgmtDemo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
@@ -618,6 +738,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\NoticeModels.cs" />
+    <Compile Include="Models\ProjectManagementModels.cs" />
     <Compile Include="ScheduledTasks\JobScheduler.cs" />
     <Compile Include="ScheduledTasks\PollSqlServerExpress.cs" />
     <Compile Include="ViewModels\BillTrackingViewModels.cs" />
@@ -675,6 +796,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201504031809056_AddPrevReviewIdToBillReview.resx">
       <DependentUpon>201504031809056_AddPrevReviewIdToBillReview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506260028046_AddGanttModelsForProjMgmtDemo.resx">
+      <DependentUpon>201506260028046_AddGanttModelsForProjMgmtDemo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

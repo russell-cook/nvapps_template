@@ -16,7 +16,8 @@ namespace AdminApps
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-                        "~/Scripts/modernizr-*"));
+                        "~/Scripts/modernizr-*",
+                        "~/Scripts/dhtmlxgantt.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
@@ -26,6 +27,7 @@ namespace AdminApps
                       "~/Scripts/DatePickerReady.js",
                       "~/Scripts/jquery.timepicker.js",
                       "~/Scripts/TimePickerReady.js"
+                      //"~/Scripts/init-gantt.js"
             ));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
@@ -33,7 +35,9 @@ namespace AdminApps
                       "~/Content/bootstrap.custom.css",
                       "~/Content/bootstrap-datepicker3.css",
                       "~/Content/jquery.timepicker.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      // load theme for dhtmlx gantt chart. multiple themes are available
+                      "~/Content/dhtmlxgantt/dhtmlxgantt_terrace.css"));
         }
     }
 }

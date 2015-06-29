@@ -96,6 +96,9 @@ namespace AdminApps.Models
         public virtual ICollection<UserAccountRequest> UserAccountRequestsFulfilledBy { get; set; }
         public virtual ICollection<Bill> BillsOfInterest { get; set; }
         public virtual ICollection<BillsAlsrReport> BillsAlsrReports { get; set; }
+
+        // Project Management module navigation properties
+        public virtual ICollection<UserProject> CreatedUserProjects { get; set; }
     }
 
     // Custom class for extensible User Role management per http://typecastexception.com/post/2014/06/22/ASPNET-Identity-20-Customizing-Users-and-Roles.aspx

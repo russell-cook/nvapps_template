@@ -1,0 +1,51 @@
+﻿@model List<AdminApps.Models.ITProject>
+
+@{
+    ViewBag.Title = "List All IT Projects";
+    //ViewBag.ModuleName = "Project Management";
+}
+
+<h2>List All IT Projects</h2>
+
+<p>@Html.ActionLink("Create New IT Project", "IT_Create", null, new { @class = "btn btn-default" })</p>
+
+<table class="table table-striped table-condensed">
+    <tr>
+        <th>
+            Project Name
+        </th>
+        <th>
+            Description
+        </th>
+        <th>
+            Status
+        </th>
+        <th>
+            Date Created
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectStatus.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.ActionLink("View Project Details", "IT_Details", new { id = item.ID }, new { @class = "btn btn-default btn-sm" })
+                @Html.ActionLink("Edit", "IT_Edit", new { id = item.ID }, new { @class = "btn btn-default btn-sm" })
+            </td>
+        </tr>
+    }
+
+</table>

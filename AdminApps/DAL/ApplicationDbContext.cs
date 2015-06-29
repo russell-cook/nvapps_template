@@ -63,6 +63,14 @@ namespace AdminApps.DAL
         public DbSet<BillsAlsrReport> BillsAlsrReports { get; set; }
         public DbSet<AlsrBillReviewSnapshot> AlsrBillReviewSnapshots { get; set; }
 
+        // Project Management Demo
+        public DbSet<GanttTask> GanttTasks { get; set; }
+        public DbSet<GanttLink> GanttLinks { get; set; }
+        //public DbSet<ProjectStatus> ProjectStatuses { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<ITProject> ITProjects { get; set; }
+        public DbSet<BudgetProject> BudgetProjects { get; set; }
+        public DbSet<UserProject> UserProjects { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

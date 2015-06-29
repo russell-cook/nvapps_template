@@ -27,6 +27,10 @@
                     {
                         <li>@Html.ActionLink("Bill Tracking", "Home", "Bills")</li>
                     }
+                    @if (Request.IsAuthenticated && (User.IsInRole("GlobalAdmin") || User.IsInRole("BillsDept") || User.IsInRole("BillsDiv") || User.IsInRole("BillsAgency")))
+                    {
+                        <li>@Html.ActionLink("Bill Tracking", "Home", "Bills")</li>
+                    }
                     @if (Request.IsAuthenticated && (User.IsInRole("GlobalAdmin") || User.IsInRole("RolesAdmin")))
                     {
                         <li>@Html.ActionLink("RolesAdmin", "Index", "RolesAdmin")</li>
