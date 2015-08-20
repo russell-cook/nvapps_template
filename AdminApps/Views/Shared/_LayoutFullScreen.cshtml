@@ -1,0 +1,33 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.ModuleName - @ViewBag.Title - AdminApps</title>
+    @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("headLevel", required: false)
+    @Styles.Render("~/Content/css")
+
+    <style type="text/css" media="screen">
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+
+</head>
+@*<body>*@
+@RenderSection("bodyTagOpen", required: true)
+    @RenderSection("topLevel", required: false)
+    @RenderBody()
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

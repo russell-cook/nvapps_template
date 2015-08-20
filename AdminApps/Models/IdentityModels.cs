@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace AdminApps.Models
 {
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
-    public class ApplicationUser : IdentityUser
+    public partial class ApplicationUser : IdentityUser
     {
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -97,8 +97,6 @@ namespace AdminApps.Models
         public virtual ICollection<Bill> BillsOfInterest { get; set; }
         public virtual ICollection<BillsAlsrReport> BillsAlsrReports { get; set; }
 
-        // Project Management module navigation properties
-        public virtual ICollection<UserProject> CreatedUserProjects { get; set; }
     }
 
     // Custom class for extensible User Role management per http://typecastexception.com/post/2014/06/22/ASPNET-Identity-20-Customizing-Users-and-Roles.aspx

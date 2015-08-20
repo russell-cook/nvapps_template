@@ -1,0 +1,217 @@
+﻿@*initialize gantt and load data*@
+<script type="text/javascript">
+
+    (function () {
+        gantt.config.readonly = @Convert.ToString(Model.ReadOnly).ToLower();
+        gantt.config.xml_date = "%Y-%m-%d %H:%i:%s"; // format of dates in XML
+        gantt.config.task_height = 16;
+        gantt.config.row_height = 40;
+
+        gantt.config.grid_resize = true;
+        //gantt.config.grid_width = 480;
+        //gantt.config.date_grid = "%F %d";
+
+        //gantt.config.start_date = new Date(2015, 7, 1);
+        //gantt.config.end_date = new Date(2015, 10, 1);
+
+
+        gantt.config.work_time = true;
+        gantt.config.correct_work_time = true;
+        gantt.config.auto_scheduling = true;
+        gantt.config.auto_scheduling_strict = true;
+        //gantt.config.details_on_create = false;
+        gantt.config.scale_unit = "day";
+        gantt.config.duration_unit = "day";
+        gantt.config.date_scale = "%d";
+
+
+        gantt.config.subscales = [
+            { unit: "month", step: 1, date: "%F, %Y" }
+        ];
+        gantt.config.scale_height = 50;
+
+        gantt.config.min_column_width = 30;
+
+        gantt.templates.date_scale = function (date) {
+            var dateToStr = gantt.date.date_to_str("%d %M");
+            var endDate = gantt.date.add(gantt.date.add(date, 1, "week"), -1, "day");
+            return dateToStr(date) + " - " + dateToStr(endDate);
+        };
+
+        // add section to type selection: task, project or milestone
+        gantt.config.lightbox.sections = [
+            { name: "description", height: 70, map_to: "text", type: "textarea", focus: true },
+            { name: "type", type: "typeselect", map_to: "type" },
+            { name: "time", type: "duration", map_to: "auto" },
+            { name: "baseline", map_to: { start_date: "planned_start", end_date: "planned_end" }, button: true, type: "duration_optional" } // add editor for baseline data values
+        ];
+
+        gantt.locale.labels.baseline_enable_button = 'Set';
+        gantt.locale.labels.baseline_disable_button = 'Remove';
+        gantt.locale.labels.section_baseline = "Planned";
+
+
+        // display 'Planned' values in grid
+        gantt.addTaskLayer(function draw_planned(task) {
+            if (task.planned_start && task.planned_end) {
+                var sizes = gantt.getTaskPosition(task, task.planned_start, task.planned_end);
+                var el = document.createElement('div');
+                el.className = 'baseline';
+                el.style.left = sizes.left + 'px';
+                el.style.width = sizes.width + 'px';
+                el.style.top = sizes.top + gantt.config.task_height + 13 + 'px';
+                return el;
+            }
+            return false;
+        });
+
+        // calculate overdue status
+        gantt.templates.task_class = function (start, end, task) {
+            if (task.planned_end) {
+                var classes = ['has-baseline'];
+                if (end.getTime() > task.planned_end.getTime()) {
+                    classes.push('overdue');
+                }
+                return classes.join(' ');
+            }
+        };
+
+        // configure milestone description and overdue message
+        gantt.templates.rightside_text = function (start, end, task) {
+            if (task.type == gantt.config.types.milestone) {
+                return task.text;
+            }
+            if (task.planned_end) {
+                if (end.getTime() > task.planned_end.getTime()) {
+                    var overdue = Math.ceil(Math.abs((end.getTime() - task.planned_end.getTime()) / (24 * 60 * 60 * 1000)));
+                    var text = "<b>Overdue: " + overdue + " days</b>";
+                    return text;
+                }
+            }
+            return "";
+        };
+
+        // configure shading of weekend days
+        gantt.templates.scale_cell_class = function (date) {
+            if (date.getDay() == 0 || date.getDay() == 6) {
+                return "weekend";
+            }
+        };
+        gantt.templates.task_cell_class = function (item, date) {
+            if (date.getDay() == 0 || date.getDay() == 6) {
+                return "weekend";
+            }
+        };
+
+        // configure columns
+        gantt.config.columns = [
+            { name: "text", label: "Task name", width: 150, tree: true, resize: true },
+            { name: "start_time", label: "Start Date", template: function (obj) { return gantt.templates.date_grid(obj.start_date); }, align: "center", width: 85, resize: true },
+            { name: "duration", label: "Duration", align: "center", width: 60, resize: true },
+            { name: "planned_start", label: "Planned Start", template: function (obj) { if (obj.planned_start) return gantt.templates.date_grid(obj.planned_start); return ""; }, align: "center", width: 85, resize: true, hide: @(Model.FullScreen ? "false" : "true") },
+            { name: "planned_end", label: "Planned End", template: function (obj) { if (obj.planned_start) return gantt.templates.date_grid(obj.planned_end); return ""; }, align: "center", width: 85, resize: true, hide: @(Model.FullScreen ? "false" : "true") },
+            { name: "add", label: "", width: 44, hide: @(Model.FullScreen ? "false" : "true") }
+        ];
+
+        // parse 'Planned' date values
+        gantt.attachEvent("onTaskLoading", function (task) {
+            task.planned_start = gantt.date.parseDate(task.planned_start, "xml_date");
+            task.planned_end = gantt.date.parseDate(task.planned_end, "xml_date");
+            return true;
+        });
+
+        // attach AutoSchedule notifications
+        gantt.attachEvent("onBeforeAutoSchedule", function(){
+            dhtmlx.message("Recalculating project schedule...");
+            return true;
+        });
+        gantt.attachEvent("onAfterTaskAutoSchedule", function(task, new_date, constraint, predecessor){
+            dhtmlx.message({
+                text: "<b>"+task.text+"</b> has been rescheduled to " + gantt.templates.task_date(new_date) + " due to <b>"+predecessor.text+"</b> constraint",
+                expire:4000
+            });
+        });
+
+
+        gantt.init("ganttContainer"); // initialize gantt
+        gantt.load("/ProjectScheduleVersions/GetGanttData/" + @Model.ProjectScheduleVersion.ID, "json"); // load Gantt data
+
+        // enable dataProcessor for automatic saving
+        var dp = new dataProcessor("/ProjectScheduleVersions/Save/" + @Model.ProjectScheduleVersion.ID + "?projectId=" + @Model.ID);
+        dp.init(gantt);
+
+        // configure pop-up menu
+        (function addContentMenu() {
+            var menu = new dhtmlXMenuObject();
+            menu.setIconsPath("~/Scripts/dhtmlxMenu/codebase/imgs/dhxmenu_terrace");
+            menu.renderAsContextMenu();
+            menu.setSkin("dhx_terrace");
+
+            gantt.attachEvent("onContextMenu", function (taskId, linkId, event) {
+                var x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft,
+                        y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+
+                var target = (event.target || event.srcElement);
+                var column_id = target.getAttribute("column_id");
+                menu.clearAll();
+
+                addColumnsConfig();
+                if (column_id) {
+                    addColumnToggle(column_id);
+                }
+
+                menu.showContextMenu(x, y);
+                return false;
+            });
+
+            menu.attachEvent("onClick", function (id, zoneId, cas) {
+                var parts = (id + "").split("#");
+                var is_toggle = parts[0] == "toggle",
+                        column_id = parts[1] || id;
+
+                var column = gantt.getGridColumn(column_id);
+
+                if (column) {
+                    var visible = !is_toggle ? menu.getCheckboxState(id) : false;
+                    column.hide = !visible;
+                    gantt.render();
+                }
+                return true;
+            });
+
+            function addColumnToggle(column_name) {
+                var column = gantt.getGridColumn(column_name);
+                var label = getColumnLabel(column);
+
+                //add prefix to distinguish from the same item in 'show columns' menu
+                var item_id = "toggle#" + column_name
+                menu.addNewChild(null, -1, item_id, "Hide '" + label + "'", false);
+                menu.addNewSeparator(item_id);
+            }
+
+            function addColumnsConfig() {
+                menu.addNewChild(null, -1, "show_columns", "Show columns:", false);
+                var columns = gantt.config.columns;
+
+                for (var i = 0; i < columns.length; i++) {
+                    var checked = (!columns[i].hide),
+                            itemLabel = getColumnLabel(columns[i]);
+                    menu.addCheckbox("child", "show_columns", i, columns[i].name, itemLabel, checked);
+                }
+            }
+
+            function getColumnLabel(column) {
+                if (column == null)
+                    return '';
+
+                var locale = gantt.locale.labels;
+                var text = column.label !== undefined ? column.label : locale["column_" + column.name];
+
+                text = text || column.name;
+                return text;
+            }
+        })();
+
+    })();
+
+</script>

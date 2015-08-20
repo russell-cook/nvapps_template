@@ -1,4 +1,5 @@
 ﻿using AdminApps.Models;
+using AdminApps.Models.ProjectManagement;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
@@ -66,8 +67,9 @@ namespace AdminApps.DAL
         // Project Management Demo
         public DbSet<GanttTask> GanttTasks { get; set; }
         public DbSet<GanttLink> GanttLinks { get; set; }
-        //public DbSet<ProjectStatus> ProjectStatuses { get; set; }
+        public DbSet<ProjectStatus> ProjectStatuses { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectScheduleVersion> ProjectScheduleVersions { get; set; }
         public DbSet<ITProject> ITProjects { get; set; }
         public DbSet<BudgetProject> BudgetProjects { get; set; }
         public DbSet<UserProject> UserProjects { get; set; }
@@ -107,6 +109,10 @@ namespace AdminApps.DAL
             modelBuilder.Entity<BillVersion>().HasRequired(f => f.Bill).WithMany(f => f.BillVersions).WillCascadeOnDelete(false);
             modelBuilder.Entity<BillsAlsrReport>().HasRequired(r => r.Dept).WithMany(r => r.BillsAlsrReports).WillCascadeOnDelete(false);
             modelBuilder.Entity<BillsAlsrReport>().HasRequired(r => r.Div).WithMany(r => r.BillsAlsrReports).WillCascadeOnDelete(false);
+
+            // configure Project Management models
+            modelBuilder.Entity<GanttLink>().HasRequired(s => s.Project).WithMany(p => p.GanttLinks).WillCascadeOnDelete(false); // cascade delete is tied to ProjectScheduleVersion
+            modelBuilder.Entity<GanttTask>().HasRequired(s => s.Project).WithMany(p => p.GanttTasks).WillCascadeOnDelete(false); // cascade delete is tied to ProjectScheduleVersion
         }
 
 

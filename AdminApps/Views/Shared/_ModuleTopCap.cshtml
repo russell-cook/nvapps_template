@@ -1,26 +1,13 @@
 ﻿@{
     string trimmedModuleName = ViewBag.ModuleName.Replace(" ", "");
-    string partialName = string.Format("_{0}Menu", trimmedModuleName);
-    string rolePartial = string.Format("_{0}Role", trimmedModuleName);
+    string menuPath = string.Format("~/Views/{0}/_{1}Menu.cshtml", trimmedModuleName, trimmedModuleName);
 }
 
 <div class="row">
     <div class="col-md-2 col-xs-4">
         <br />
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">@ViewBag.ModuleName</h3>
-            </div>
-            <div class="panel-body" role="navigation">
-                <ul class="nav nav-pills nav-stacked">
-                    @{
-                        Html.RenderPartial(partialName);
-                    }
-                </ul>
-            </div>
-            <div class="panel-footer">
-                <small>Role: @{Html.RenderPartial(rolePartial);}</small>
-            </div>
+            @{Html.RenderPartial(menuPath); }
         </div>
     </div>
     <div class="col-md-10 col-xs-8">

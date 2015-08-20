@@ -10,6 +10,7 @@ namespace AdminApps.Migrations
     using AdminApps.DAL;
     using Microsoft.AspNet.Identity.EntityFramework;
     using System;
+    using AdminApps.Models.ProjectManagement;
 
 
     internal sealed class Configuration : DbMigrationsConfiguration<AdminApps.DAL.ApplicationDbContext>
@@ -53,7 +54,8 @@ namespace AdminApps.Migrations
                     new AppModule { ID = 2, Title = "Global App Settings", DefaultController = "Home", DefaultAction = "Index" },
                     new AppModule { ID = 3, Title = "Role Administration", DefaultController = "RolesAdmin", DefaultAction = "Index" },
                     new AppModule { ID = 4, Title = "User Administration", DefaultController = "UsersAdmin", DefaultAction = "Index" },
-                    new AppModule { ID = 5, Title = "Bill Tracking", DefaultController = "Bills", DefaultAction = "Home" }
+                    new AppModule { ID = 5, Title = "Bill Tracking", DefaultController = "Bills", DefaultAction = "Home" },
+                    new AppModule { ID = 6, Title = "User Projects", DefaultController = "UserProjects", DefaultAction = "Index" }
                 );
 
 
@@ -134,7 +136,8 @@ namespace AdminApps.Migrations
                 new ApplicationRole(){Name = "BillsClerc",  AppModuleID = 5, AppModuleApprovalLevel = 0, AppModuleApprovalTitle = "Clerical",   Description = "Bill Tracking module: Clerical access, including CRUD actions for Bill records"},
                 new ApplicationRole(){Name = "BillsDept",   AppModuleID = 5, AppModuleApprovalLevel = 1, AppModuleApprovalTitle = "Department", Description = "Bill Tracking module: Department-level access, including all Reviews from Divisions within that Department"},
                 new ApplicationRole(){Name = "BillsDiv",    AppModuleID = 5, AppModuleApprovalLevel = 2, AppModuleApprovalTitle = "Division",   Description = "Bill Tracking module: Division-level access"},
-                new ApplicationRole(){Name = "BillsAgency", AppModuleID = 5, AppModuleApprovalLevel = 3, AppModuleApprovalTitle = "Agency",     Description = "Bill Tracking module: Agency-level access"}
+                new ApplicationRole(){Name = "BillsAgency", AppModuleID = 5, AppModuleApprovalLevel = 3, AppModuleApprovalTitle = "Agency",     Description = "Bill Tracking module: Agency-level access"},
+                new ApplicationRole(){Name = "UserProjects", AppModuleID = 6, AppModuleApprovalLevel = 0, AppModuleApprovalTitle = "",     Description = "User Projects module: basic access"}
             };
 
             //Create ApplicationRole for each roleNames if it does not exist
@@ -165,63 +168,17 @@ namespace AdminApps.Migrations
             }
 
 
-
-            // Seed data for Project Management Demo
-            context.GanttTasks.AddOrUpdate(i => i.GanttTaskId,
-                new GanttTask
-                {
-                    GanttTaskId = 1,
-                    ProjectID = 1,
-                    Text = "Project #2",
-                    StartDate = DateTime.Now.AddHours(-3),
-                    Duration = 18,
-                    SortOrder = 10,
-                    Progress = 0.4m,
-                    ParentId = null
-                },
-                new GanttTask
-                {
-                    GanttTaskId = 2,
-                    ProjectID = 1,
-                    Text = "Task #1",
-                    StartDate = DateTime.Now.AddHours(-2),
-                    Duration = 8,
-                    SortOrder = 10,
-                    Progress = 0.6m,
-                    ParentId = 1
-                },
-                new GanttTask
-                {
-                    GanttTaskId = 3,
-                    ProjectID = 1,
-                    Text = "Task #2",
-                    StartDate = DateTime.Now.AddHours(-1),
-                    Duration = 8,
-                    SortOrder = 20,
-                    Progress = 0.6m,
-                    ParentId = 1
-                }
+            // Seed data for Project Management Module
+            context.ProjectStatuses.AddOrUpdate(i => i.ID,
+                new ProjectStatus { ID = 1, Description = "Pending" },
+                new ProjectStatus { ID = 2, Description = "In-Progress" },
+                new ProjectStatus { ID = 3, Description = "Completed" },
+                new ProjectStatus { ID = 4, Description = "Deferred" },
+                new ProjectStatus { ID = 5, Description = "Deferred (In-Progress)" },
+                new ProjectStatus { ID = 6, Description = "Ongoing (Recurring)" },
+                new ProjectStatus { ID = 7, Description = "Discontinued (Recurring)" }
             );
 
-            context.GanttLinks.AddOrUpdate(i => i.GanttLinkId,
-                new GanttLink { GanttLinkId = 1, ProjectID = 1, SourceTaskId = 1, TargetTaskId = 2, Type = "1" },
-                new GanttLink { GanttLinkId = 2, ProjectID = 1, SourceTaskId = 2, TargetTaskId = 3, Type = "0" }
-            );
-
-            //context.ProjectStatuses.AddOrUpdate(i => i.ID,
-            //    new ProjectStatus { ID = 1, Description = "Deferred" },
-            //    new ProjectStatus { ID = 2, Description = "Completed" },
-            //    new ProjectStatus { ID = 3, Description = "In-Progress" },
-            //    new ProjectStatus { ID = 4, Description = "Ongoing (Recurring)" },
-            //    new ProjectStatus { ID = 5, Description = "Discontinued (Recurring)" },
-            //    new ProjectStatus { ID = 6, Description = "Deferred (In-Progress)" }
-            //);
-
-            context.ITProjects.AddOrUpdate(i => i.ID,
-                new ITProject { ID = 1, Name = "Test IT Project 1", CreatedAt = DateTime.Now.AddHours(-2), ModifiedAt = DateTime.Now.AddHours(-2), Description = "This is the first project for the Project Management demo.", ProjectStatus = ProjectStatus.Completed },
-                new ITProject { ID = 2, Name = "Test IT Project 2", CreatedAt = DateTime.Now.AddHours(-1), ModifiedAt = DateTime.Now.AddHours(-1), Description = "This is the second project for the Project Management demo.", ProjectStatus = ProjectStatus.Deferred },
-                new ITProject { ID = 3, Name = "Test IT Project 3", CreatedAt = DateTime.Now, ModifiedAt = DateTime.Now, Description = "This is the third project for the Project Management demo.", ProjectStatus = ProjectStatus.InProgress }
-            );
         }
     }
 }

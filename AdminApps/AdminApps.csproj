@@ -199,11 +199,9 @@
     <Content Include="Content\bootstrap\variables.min.css">
       <DependentUpon>variables.css</DependentUpon>
     </Content>
-    <Content Include="Content\dhtmlxgantt\dhtmlxgantt_broadway.css" />
-    <Content Include="Content\dhtmlxgantt\dhtmlxgantt_meadow.css" />
-    <Content Include="Content\dhtmlxgantt\dhtmlxgantt_skyblue.css" />
-    <Content Include="Content\dhtmlxgantt\dhtmlxgantt_terrace.css" />
+    <Content Include="Content\dhtmlxgantt.custom.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\img\nv_state_seal_for_intranet.png" />
     <Content Include="Content\jquery.timepicker.css" />
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\themes\nvapps\bootstrap.css">
@@ -227,12 +225,128 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\DatePickerReady.js" />
-    <Content Include="Scripts\dhtmlxgantt.js" />
-    <Content Include="Scripts\ext\dhtmlxgantt_marker.js" />
-    <Content Include="Scripts\ext\dhtmlxgantt_multiselect.js" />
-    <Content Include="Scripts\ext\dhtmlxgantt_quick_info.js" />
-    <Content Include="Scripts\ext\dhtmlxgantt_tooltip.js" />
-    <Content Include="Scripts\init-gantt.js" />
+    <Content Include="Scripts\dhtmlxCommon\codebase\dhtmlxcommon.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\base_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\chart_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\combo_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\convert.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\crosslink_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\dataprocessor.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\dataview_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\data_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_adodb.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_common.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_excel.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_filesystem.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_mssql.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_mysqli.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_oracle.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_pdo.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_phpcake.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_phpcake2.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_phpci.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_phpci2.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_phpyii.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_phpyii1.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_postgre.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_sasql.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_sqlite.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_sqlite3.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\db_sqlsrv.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\filesystem_item.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\form_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\gantt_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\grid_config.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\grid_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\keygrid_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\mixed_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\options_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\scheduler_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\strategy.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\tools.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\treedatagroup_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\treedatamultitable_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\treegridgroup_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\treegridmultitable_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\treegrid_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\treegroup_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\treemultitable_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\tree_connector.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\update.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\connector\xss_filter.php" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\dhtmlxgantt.css" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\dhtmlxgantt.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\ext\dhtmlxgantt_auto_scheduling.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\ext\dhtmlxgantt_critical_path.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\ext\dhtmlxgantt_csp.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\ext\dhtmlxgantt_fullscreen.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\ext\dhtmlxgantt_grouping.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\ext\dhtmlxgantt_marker.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\ext\dhtmlxgantt_multiselect.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\ext\dhtmlxgantt_quick_info.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\ext\dhtmlxgantt_tooltip.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_ar.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_be.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_ca.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_cn.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_cs.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_da.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_de.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_el.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_es.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_fi.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_fr.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_he.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_hu.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_id.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_it.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_jp.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_kr.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_nb.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_nl.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_no.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_pl.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_pt.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_ro.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_ru.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_si.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_sk.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_sv.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_tr.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\locale\locale_ua.js" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\skins\dhtmlxgantt_broadway.css" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\skins\dhtmlxgantt_meadow.css" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\skins\dhtmlxgantt_skyblue.css" />
+    <Content Include="Scripts\dhtmlxGantt\codebase\skins\dhtmlxgantt_terrace.css" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\dhtmlxmenu.js" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\dhtmlxmenu_deprecated.js" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\ext\dhtmlxmenu_effects.js" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\ext\dhtmlxmenu_ext.js" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_skyblue\dhxmenu_arrow_down.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_skyblue\dhxmenu_arrow_down_dis.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_skyblue\dhxmenu_arrow_up.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_skyblue\dhxmenu_arrow_up_dis.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_skyblue\dhxmenu_chrd.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_skyblue\dhxmenu_loader.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_skyblue\dhxmenu_subar.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_terrace\dhxmenu_arrow_down.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_terrace\dhxmenu_arrow_down_dis.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_terrace\dhxmenu_arrow_up.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_terrace\dhxmenu_arrow_up_dis.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_terrace\dhxmenu_chrd.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_terrace\dhxmenu_loader.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_terrace\dhxmenu_subar.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_web\dhxmenu_arrow_down.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_web\dhxmenu_arrow_down_dis.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_web\dhxmenu_arrow_up.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_web\dhxmenu_arrow_up_dis.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_web\dhxmenu_chrd.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_web\dhxmenu_loader.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\imgs\dhxmenu_web\dhxmenu_subar.gif" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\skins\dhtmlxmenu_dhx_skyblue.css" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\skins\dhtmlxmenu_dhx_terrace.css" />
+    <Content Include="Scripts\dhtmlxMenu\codebase\skins\dhtmlxmenu_dhx_web.css" />
     <Content Include="Scripts\jquery.timepicker.js" />
     <Content Include="Scripts\jquery.timepicker.min.js" />
     <Content Include="Scripts\locales\bootstrap-datepicker.ar.min.js" />
@@ -326,41 +440,6 @@
     <Content Include="Scripts\locale\locale_sv.js" />
     <Content Include="Scripts\locale\locale_tr.js" />
     <Content Include="Scripts\locale\locale_ua.js" />
-    <Content Include="Scripts\sources\dhtmlxgantt.js" />
-    <Content Include="Scripts\sources\ext\dhtmlxgantt_marker.js" />
-    <Content Include="Scripts\sources\ext\dhtmlxgantt_multiselect.js" />
-    <Content Include="Scripts\sources\ext\dhtmlxgantt_quick_info.js" />
-    <Content Include="Scripts\sources\ext\dhtmlxgantt_tooltip.js" />
-    <Content Include="Scripts\sources\locale\locale.js" />
-    <Content Include="Scripts\sources\locale\locale_ar.js" />
-    <Content Include="Scripts\sources\locale\locale_be.js" />
-    <Content Include="Scripts\sources\locale\locale_ca.js" />
-    <Content Include="Scripts\sources\locale\locale_cn.js" />
-    <Content Include="Scripts\sources\locale\locale_cs.js" />
-    <Content Include="Scripts\sources\locale\locale_da.js" />
-    <Content Include="Scripts\sources\locale\locale_de.js" />
-    <Content Include="Scripts\sources\locale\locale_el.js" />
-    <Content Include="Scripts\sources\locale\locale_es.js" />
-    <Content Include="Scripts\sources\locale\locale_fi.js" />
-    <Content Include="Scripts\sources\locale\locale_fr.js" />
-    <Content Include="Scripts\sources\locale\locale_he.js" />
-    <Content Include="Scripts\sources\locale\locale_hu.js" />
-    <Content Include="Scripts\sources\locale\locale_id.js" />
-    <Content Include="Scripts\sources\locale\locale_it.js" />
-    <Content Include="Scripts\sources\locale\locale_jp.js" />
-    <Content Include="Scripts\sources\locale\locale_kr.js" />
-    <Content Include="Scripts\sources\locale\locale_nb.js" />
-    <Content Include="Scripts\sources\locale\locale_nl.js" />
-    <Content Include="Scripts\sources\locale\locale_no.js" />
-    <Content Include="Scripts\sources\locale\locale_pl.js" />
-    <Content Include="Scripts\sources\locale\locale_pt.js" />
-    <Content Include="Scripts\sources\locale\locale_ro.js" />
-    <Content Include="Scripts\sources\locale\locale_ru.js" />
-    <Content Include="Scripts\sources\locale\locale_si.js" />
-    <Content Include="Scripts\sources\locale\locale_sk.js" />
-    <Content Include="Scripts\sources\locale\locale_sv.js" />
-    <Content Include="Scripts\sources\locale\locale_tr.js" />
-    <Content Include="Scripts\sources\locale\locale_ua.js" />
     <Content Include="Scripts\TimePickerReady.js" />
     <Content Include="Templates\BillRecordRequestFulfilledConfirmation.html" />
     <Content Include="Templates\BillReviewDivRevisionNotification.html" />
@@ -482,7 +561,7 @@
     <None Include="Properties\PublishProfiles\AdminAppsTest.pubxml" />
     <Content Include="Views\Bills\Home.cshtml" />
     <Content Include="Views\BillReviews\Approve.cshtml" />
-    <Content Include="Views\Shared\_BillTrackingMenu.cshtml" />
+    <Content Include="Views\Bills\_BillsMenu.cshtml" />
     <Content Include="Views\BillReviews\MarkAsRead.cshtml" />
     <Content Include="Views\BillReviews\Unread.cshtml" />
     <Content Include="Views\Bills\NEBS_BDRs.cshtml" />
@@ -503,7 +582,6 @@
     <Content Include="Views\Bills\BillsUserAccountRequests.cshtml" />
     <Content Include="Views\Bills\PendingBillsUserAccountRequests.cshtml" />
     <Content Include="Views\Bills\Help.cshtml" />
-    <Content Include="Views\Shared\_BillTrackingRole.cshtml" />
     <Content Include="Scripts\bootstrap.custom.js" />
     <Content Include="Views\Account\ConfirmEmailTokenExpirationError.cshtml" />
     <Content Include="Views\BillReports\EditorTemplates\AlsrReportIndividualBillReviewViewModel.cshtml" />
@@ -519,44 +597,20 @@
     <Content Include="Views\Notice\Index.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Date.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Time.cshtml" />
-    <Content Include="Scripts\sources\locale\locale_ua.js.map" />
-    <Content Include="Scripts\sources\locale\locale_tr.js.map" />
-    <Content Include="Scripts\sources\locale\locale_sv.js.map" />
-    <Content Include="Scripts\sources\locale\locale_sk.js.map" />
-    <Content Include="Scripts\sources\locale\locale_si.js.map" />
-    <Content Include="Scripts\sources\locale\locale_ru.js.map" />
-    <Content Include="Scripts\sources\locale\locale_ro.js.map" />
-    <Content Include="Scripts\sources\locale\locale_pt.js.map" />
-    <Content Include="Scripts\sources\locale\locale_pl.js.map" />
-    <Content Include="Scripts\sources\locale\locale_no.js.map" />
-    <Content Include="Scripts\sources\locale\locale_nl.js.map" />
-    <Content Include="Scripts\sources\locale\locale_nb.js.map" />
-    <Content Include="Scripts\sources\locale\locale_kr.js.map" />
-    <Content Include="Scripts\sources\locale\locale_jp.js.map" />
-    <Content Include="Scripts\sources\locale\locale_it.js.map" />
-    <Content Include="Scripts\sources\locale\locale_id.js.map" />
-    <Content Include="Scripts\sources\locale\locale_hu.js.map" />
-    <Content Include="Scripts\sources\locale\locale_he.js.map" />
-    <Content Include="Scripts\sources\locale\locale_fr.js.map" />
-    <Content Include="Scripts\sources\locale\locale_fi.js.map" />
-    <Content Include="Scripts\sources\locale\locale_es.js.map" />
-    <Content Include="Scripts\sources\locale\locale_el.js.map" />
-    <Content Include="Scripts\sources\locale\locale_de.js.map" />
-    <Content Include="Scripts\sources\locale\locale_da.js.map" />
-    <Content Include="Scripts\sources\locale\locale_cs.js.map" />
-    <Content Include="Scripts\sources\locale\locale_cn.js.map" />
-    <Content Include="Scripts\sources\locale\locale_ca.js.map" />
-    <Content Include="Scripts\sources\locale\locale_be.js.map" />
-    <Content Include="Scripts\sources\locale\locale_ar.js.map" />
-    <Content Include="Scripts\sources\locale\locale.js.map" />
-    <Content Include="Scripts\sources\ext\dhtmlxgantt_tooltip.js.map" />
-    <Content Include="Scripts\sources\ext\dhtmlxgantt_quick_info.js.map" />
-    <Content Include="Scripts\sources\ext\dhtmlxgantt_multiselect.js.map" />
-    <Content Include="Scripts\sources\ext\dhtmlxgantt_marker.js.map" />
-    <Content Include="Scripts\sources\dhtmlxgantt.js.map" />
-    <Content Include="Views\Projects\Index.cshtml" />
-    <Content Include="Views\Projects\IT.cshtml" />
-    <Content Include="Views\Projects\IT_Details.cshtml" />
+    <Content Include="Views\UserProjects\Create.cshtml" />
+    <Content Include="Views\UserProjects\Delete.cshtml" />
+    <Content Include="Views\UserProjects\Details.cshtml" />
+    <Content Include="Views\UserProjects\Edit.cshtml" />
+    <Content Include="Views\UserProjects\Index.cshtml" />
+    <Content Include="Views\DhtmlxGantt\_dhtmlxGanttHeadScriptIncludes.cshtml" />
+    <Content Include="Views\DhtmlxGantt\_initializeGantt.js.cshtml" />
+    <Content Include="Views\DhtmlxGantt\_dhtmlxGanttTopSection.cshtml" />
+    <Content Include="Views\UserProjects\EditScheduleFS.cshtml" />
+    <Content Include="Views\Shared\_LayoutFullScreen.cshtml" />
+    <Content Include="Views\UserProjects\_UserProjectsMenu.cshtml" />
+    <Content Include="Views\UserProjects\Help.cshtml" />
+    <Content Include="Views\UserProjects\_ArchivedScheduleVersions.cshtml" />
+    <Content Include="Views\UserProjects\_ArchivedScheduleVersions.js.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -641,12 +695,13 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\NebsConcurrencyController.cs" />
     <Compile Include="Controllers\NoticeController.cs" />
-    <Compile Include="Controllers\ProjectsController.cs">
+    <Compile Include="Controllers\ProjectScheduleVersionsController.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\RolesAdminController.cs" />
     <Compile Include="Controllers\TrafficController.cs" />
     <Compile Include="Controllers\UserAdminController.cs" />
+    <Compile Include="Controllers\UserProjectsController.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="DAL\ApplicationDbInitializer.cs">
       <SubType>Code</SubType>
@@ -654,6 +709,8 @@
     <Compile Include="DAL\BillsRepository.cs" />
     <Compile Include="DAL\DbContextExtensions.cs" />
     <Compile Include="DAL\NebsContext.cs" />
+    <Compile Include="DAL\ProjectManagement\ProjectScheduleVersionsRepository.cs" />
+    <Compile Include="DAL\ProjectManagement\UserProjectsRepository.cs" />
     <Compile Include="DAL\Services\BillsReportServices.cs" />
     <Compile Include="DAL\Services\IRepository.cs" />
     <Compile Include="Global.asax.cs">
@@ -730,6 +787,18 @@
     <Compile Include="Migrations\201506260028046_AddGanttModelsForProjMgmtDemo.Designer.cs">
       <DependentUpon>201506260028046_AddGanttModelsForProjMgmtDemo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201507292001015_AddBaselineFieldsToProjectModelBaseClass.cs" />
+    <Compile Include="Migrations\201507292001015_AddBaselineFieldsToProjectModelBaseClass.Designer.cs">
+      <DependentUpon>201507292001015_AddBaselineFieldsToProjectModelBaseClass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201508132038562_AddProjectScheduleVersion.cs" />
+    <Compile Include="Migrations\201508132038562_AddProjectScheduleVersion.Designer.cs">
+      <DependentUpon>201508132038562_AddProjectScheduleVersion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201508200125526_AddSavedAtDateAndCommentsToProjectScheduleVersion.cs" />
+    <Compile Include="Migrations\201508200125526_AddSavedAtDateAndCommentsToProjectScheduleVersion.Designer.cs">
+      <DependentUpon>201508200125526_AddSavedAtDateAndCommentsToProjectScheduleVersion.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
@@ -738,7 +807,10 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\NoticeModels.cs" />
-    <Compile Include="Models\ProjectManagementModels.cs" />
+    <Compile Include="Models\ProjectManagement\BudgetProjectModels.cs" />
+    <Compile Include="Models\ProjectManagement\ITProjectModels.cs" />
+    <Compile Include="Models\ProjectManagement\ProjectModels.cs" />
+    <Compile Include="Models\ProjectManagement\UserProjectModels.cs" />
     <Compile Include="ScheduledTasks\JobScheduler.cs" />
     <Compile Include="ScheduledTasks\PollSqlServerExpress.cs" />
     <Compile Include="ViewModels\BillTrackingViewModels.cs" />
@@ -747,6 +819,7 @@
     <Compile Include="DAL\ValidateDatabase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\UserProjectViewModels.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201502130404142_InitializeDb.resx">
@@ -799,6 +872,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201506260028046_AddGanttModelsForProjMgmtDemo.resx">
       <DependentUpon>201506260028046_AddGanttModelsForProjMgmtDemo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507292001015_AddBaselineFieldsToProjectModelBaseClass.resx">
+      <DependentUpon>201507292001015_AddBaselineFieldsToProjectModelBaseClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508132038562_AddProjectScheduleVersion.resx">
+      <DependentUpon>201508132038562_AddProjectScheduleVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508200125526_AddSavedAtDateAndCommentsToProjectScheduleVersion.resx">
+      <DependentUpon>201508200125526_AddSavedAtDateAndCommentsToProjectScheduleVersion.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
