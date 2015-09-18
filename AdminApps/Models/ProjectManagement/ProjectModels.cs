@@ -31,6 +31,7 @@ namespace AdminApps.Models
         public int ID { get; set; }
         public int ProjectID { get; set; }
         public int VersionNum { get; set; }
+        [Display(Name = "Revision Notes")]
         public string Comments { get; set; }
         public DateTime CreatedAt { get; set; }
         [Display(Name = "Revision Date")]
@@ -39,6 +40,23 @@ namespace AdminApps.Models
         public virtual Project Project { get; set; }
         public virtual ICollection<GanttTask> GanttTasks { get; set; }
         public virtual ICollection<GanttLink> GanttLinks { get; set; }
+
+        public string TruncComments
+        {
+            get
+            {
+                if (this.Comments.Length > 50)
+                {
+                    return this.Comments.Substring(0, 50) + "...";
+                }
+                else
+                {
+                    return this.Comments;
+                }
+            }
+        }
+
+
     }
 
     public class ProjectStatus
@@ -63,6 +81,7 @@ namespace AdminApps.Models
         public int SortOrder { get; set; }
         public string Type { get; set; }
         public int? ParentId { get; set; }
+        public bool Open { get; set; }
 
         // custom properties for baseline date values
         public DateTime? PlannedStartDate { get; set; }
@@ -96,6 +115,7 @@ namespace AdminApps.Models
         public GanttTask UpdatedTask { get; set; }
         public GanttLink UpdatedLink { get; set; }
         public long SourceId { get; set; }
+        //public string ReOrderTarget { get; set; }
 
         /// <summary>
         /// Create new GanttData object and populate it
@@ -140,7 +160,7 @@ namespace AdminApps.Models
 
                     request.UpdatedTask = new GanttTask()
                     {
-                        GanttTaskId = (request.Action == GanttAction.Updated) ? (int)request.SourceId : 0,
+                        GanttTaskId = (request.Action == GanttAction.Updated || request.Action == GanttAction.Order) ? (int)request.SourceId : 0,
                         Text = parse("text"),
                         StartDate = DateTime.Parse(parse("start_date")),
                         Duration = Int32.Parse(parse("duration")),
@@ -152,7 +172,8 @@ namespace AdminApps.Models
                         SortOrder = (parse("order") != null) ? Int32.Parse(parse("order")) : 0,
                         Type = parse("type"),
                         PlannedStartDate = plannedStartValue,
-                        PlannedEndDate = plannedEndValue
+                        PlannedEndDate = plannedEndValue,
+                        Open = (parse("open") != null) ? bool.Parse(parse("open")) : false
                     };
                 }
                 // parse gantt link
@@ -161,7 +182,6 @@ namespace AdminApps.Models
                     request.UpdatedLink = new GanttLink()
                     {
                         GanttLinkId = (request.Action == GanttAction.Updated) ? (int)request.SourceId : 0,
-                        //ProjectID = (int)request.UpdatedLink.ProjectID,
                         SourceTaskId = Int32.Parse(parse("source")),
                         TargetTaskId = Int32.Parse(parse("target")),
                         Type = parse("type")
@@ -195,7 +215,8 @@ namespace AdminApps.Models
         Inserted,
         Updated,
         Deleted,
-        Error
+        Error,
+        Order
     }
 
 }

@@ -28,7 +28,7 @@
             @Html.DisplayNameFor(model => model.ModifiedAt)
         </th>*@
         <th>
-            @Html.DisplayNameFor(model => model.ProjectStatus)
+            @Html.DisplayNameFor(model => model.ProjectStatus.Description)
         </th>
         <th></th>
     </tr>
@@ -36,16 +36,16 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
+            @Html.DisplayFor(modelItem => item.TruncName)
         </td>
         @*<td>
             @Html.DisplayFor(modelItem => item.Description)
         </td>*@
         <td>
-            @Html.DisplayFor(modelItem => item.Comments)
+            @Html.DisplayFor(modelItem => item.TruncComments)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.CreatedAt)
+            @Html.DisplayFor(modelItem => item.TruncDateCreated)
         </td>
         @*<td>
             @Html.DisplayFor(modelItem => item.ModifiedAt)

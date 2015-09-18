@@ -90,7 +90,8 @@ namespace AdminApps.DAL.ProjectManagement
                     Duration = 1,
                     Progress = 0m,
                     SortOrder = 0,
-                    Type = "project"
+                    Type = "project",
+                    Open = true
                 };
                 db.GanttTasks.Add(initProject);
                 await db.SaveChangesAsync();
@@ -104,7 +105,7 @@ namespace AdminApps.DAL.ProjectManagement
                     StartDate = viewModel.ProjectStartDate,
                     Duration = 1,
                     Progress = 0m,
-                    SortOrder = 0,
+                    SortOrder = 1,
                     Type = "task",
                     ParentId = initProject.GanttTaskId
                 };

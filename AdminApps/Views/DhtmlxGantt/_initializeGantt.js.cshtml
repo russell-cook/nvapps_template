@@ -1,25 +1,75 @@
 ﻿@*initialize gantt and load data*@
 <script type="text/javascript">
 
+    // initialize toolbar controls
+    $( document ).ready(function () {
+        $('#btnOutdent').prop('disabled', true);
+        $('#btnIndent').prop('disabled', true);
+    })
+
+
+    function modSampleHeight() {
+        var headerHeight = $('#ganttFullScreenHeader').outerHeight(true);
+        var toolbarHeight = $('#ganttToolbar').outerHeight(true);
+        var totalHeadHeight =  headerHeight + toolbarHeight;
+        var chart = document.getElementById("ganttContainer");
+        chart.style.height = (parseInt(document.body.offsetHeight) - totalHeadHeight) + "px";
+        //var contbox = document.getElementById("headerContainer");
+        //contbox.style.width = (parseInt(document.body.offsetWidth) - 300) + "px";
+
+        gantt.setSizes();
+    }
+
+    function calculateCriticalPathDuration() {
+        var tasks = gantt.getTaskByTime();
+        var criticalTasks = [];
+        for(var i = 0; i < tasks.length; i++){
+            var task = tasks[i];
+            if (gantt.isCriticalTask(task.id))
+            {
+                criticalTasks.push({id: task.id, start_date: task.start_date, end_date: task.end_date});
+            }
+        }
+
+        criticalTasks.sort(function(a,b) {
+            return a.start_date - b.start_date;
+        })
+        var criticalPathStartDate = criticalTasks[0].start_date;
+
+        criticalTasks.sort(function(a,b) {
+            return a.end_date - b.end_date;
+        })
+        var criticalPathEndDate = criticalTasks[criticalTasks.length - 1].end_date;
+
+        return gantt.calculateDuration(criticalPathStartDate, criticalPathEndDate);
+    }
+
+    function updateCriticalPath(toggle) {
+        gantt.config.highlight_critical_path = !gantt.config.highlight_critical_path;
+        if (gantt.config.highlight_critical_path) {
+            toggle.innerHTML = "Hide Critical Path";
+            //var criticalPathDuration = calculateCriticalPathDuration();
+            $('#lblCriticalPathDuration').html('<strong>Duration: ' +  calculateCriticalPathDuration() + ' Work Days</strong>');
+            gantt.config.highlight_critical_path = true;
+        } else {
+            toggle.innerHTML = "Show Critical Path";
+            $('#lblCriticalPathDuration').html('');
+            gantt.config.highlight_critical_path = false;
+        }
+        gantt.render();
+    }
+
     (function () {
         gantt.config.readonly = @Convert.ToString(Model.ReadOnly).ToLower();
         gantt.config.xml_date = "%Y-%m-%d %H:%i:%s"; // format of dates in XML
         gantt.config.task_height = 16;
         gantt.config.row_height = 40;
-
         gantt.config.grid_resize = true;
-        //gantt.config.grid_width = 480;
-        //gantt.config.date_grid = "%F %d";
-
-        //gantt.config.start_date = new Date(2015, 7, 1);
-        //gantt.config.end_date = new Date(2015, 10, 1);
-
-
         gantt.config.work_time = true;
         gantt.config.correct_work_time = true;
         gantt.config.auto_scheduling = true;
         gantt.config.auto_scheduling_strict = true;
-        //gantt.config.details_on_create = false;
+        gantt.config.drag_progress = false;
         gantt.config.scale_unit = "day";
         gantt.config.duration_unit = "day";
         gantt.config.date_scale = "%d";
@@ -31,6 +81,11 @@
         gantt.config.scale_height = 50;
 
         gantt.config.min_column_width = 30;
+
+        gantt.config.highlight_critical_path = false;
+        gantt.config.order_branch = @Convert.ToString(Model.FullScreen).ToLower();
+        //gantt.config.order_branch_free = @Convert.ToString(Model.FullScreen).ToLower();
+        gantt.config.sort = false;
 
         gantt.templates.date_scale = function (date) {
             var dateToStr = gantt.date.date_to_str("%d %M");
@@ -122,7 +177,10 @@
 
         // attach AutoSchedule notifications
         gantt.attachEvent("onBeforeAutoSchedule", function(){
-            dhtmlx.message("Recalculating project schedule...");
+            dhtmlx.message({
+                text: "Recalculating project schedule...",
+                expire: 500
+            });
             return true;
         });
         gantt.attachEvent("onAfterTaskAutoSchedule", function(task, new_date, constraint, predecessor){
@@ -135,10 +193,6 @@
 
         gantt.init("ganttContainer"); // initialize gantt
         gantt.load("/ProjectScheduleVersions/GetGanttData/" + @Model.ProjectScheduleVersion.ID, "json"); // load Gantt data
-
-        // enable dataProcessor for automatic saving
-        var dp = new dataProcessor("/ProjectScheduleVersions/Save/" + @Model.ProjectScheduleVersion.ID + "?projectId=" + @Model.ID);
-        dp.init(gantt);
 
         // configure pop-up menu
         (function addContentMenu() {

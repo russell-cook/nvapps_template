@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.ModuleName - @ViewBag.Title - AdminApps</title>
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("headLevel", required: false)
     @Styles.Render("~/Content/css")
 
@@ -22,12 +24,18 @@
     </style>
 
 </head>
-@*<body>*@
-@RenderSection("bodyTagOpen", required: true)
+@*allow override of opening body tag*@
+@if (IsSectionDefined("bodyTagOpen"))
+{
+    @RenderSection("bodyTagOpen")
+}
+else
+{
+    @:<body>
+}
+
     @RenderSection("topLevel", required: false)
     @RenderBody()
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>
 </html>

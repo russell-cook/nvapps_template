@@ -611,6 +611,14 @@
     <Content Include="Views\UserProjects\Help.cshtml" />
     <Content Include="Views\UserProjects\_ArchivedScheduleVersions.cshtml" />
     <Content Include="Views\UserProjects\_ArchivedScheduleVersions.js.cshtml" />
+    <Content Include="Views\UserProjects\DisplayTemplates\ProjectScheduleVersion.cshtml" />
+    <Content Include="Views\UserProjects\_NotifyUserAbandonedScheduleVersion.js.cshtml" />
+    <Content Include="Views\UserProjects\_NotifyUserAbandonedScheduleVersion.Modal.cshtml" />
+    <Content Include="Views\UserProjects\_ConfirmRestoreArchivedScheduleVersion.Modal.cshtml" />
+    <Content Include="Views\UserProjects\_ConfirmNoRevisionNotes.Modal.cshtml" />
+    <Content Include="Views\UserProjects\_ConfirmNoRevisionNotes.js.cshtml" />
+    <Content Include="Views\UserProjects\_GanttToolbar.cshtml" />
+    <Content Include="Views\DhtmlxGantt\_dhtmlxGanttEditFunctions.js.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -799,6 +807,10 @@
     <Compile Include="Migrations\201508200125526_AddSavedAtDateAndCommentsToProjectScheduleVersion.Designer.cs">
       <DependentUpon>201508200125526_AddSavedAtDateAndCommentsToProjectScheduleVersion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201509032318201_AddOpenToGanttTask.cs" />
+    <Compile Include="Migrations\201509032318201_AddOpenToGanttTask.Designer.cs">
+      <DependentUpon>201509032318201_AddOpenToGanttTask.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
@@ -881,6 +893,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201508200125526_AddSavedAtDateAndCommentsToProjectScheduleVersion.resx">
       <DependentUpon>201508200125526_AddSavedAtDateAndCommentsToProjectScheduleVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509032318201_AddOpenToGanttTask.resx">
+      <DependentUpon>201509032318201_AddOpenToGanttTask.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

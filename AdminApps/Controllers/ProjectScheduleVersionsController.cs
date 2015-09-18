@@ -28,6 +28,7 @@ namespace AdminApps.Controllers
                 data = (
                     from t in db.GanttTasks.AsEnumerable()
                     where t.ProjectScheduleVersionID == id
+                    orderby t.SortOrder
                     select new
                     {
                         id = t.GanttTaskId,
@@ -36,11 +37,12 @@ namespace AdminApps.Controllers
                         duration = t.Duration,
                         order = t.SortOrder,
                         progress = t.Progress,
-                        open = true,
+                        open = t.Open,
                         parent = t.ParentId,
                         type = (t.Type != null) ? t.Type : String.Empty,
                         planned_start = (t.PlannedStartDate == null ? String.Empty : t.PlannedStartDate.Value.ToString("u")),
-                        planned_end = (t.PlannedEndDate == null ? String.Empty : t.PlannedEndDate.Value.ToString("u"))
+                        planned_end = (t.PlannedEndDate == null ? String.Empty : t.PlannedEndDate.Value.ToString("u")),
+                        reorder = false // reorder flag is used only on client side during syncSortOrder, to prevent updates from being fired when tasks are opened/closed during syncSortOrder operation
                     }
                 ).ToArray(),
                 // create links array
@@ -63,7 +65,6 @@ namespace AdminApps.Controllers
         public ContentResult Save(int id, int projectId, FormCollection form)
         {
             var dataActions = GanttRequest.Parse(form, Request.QueryString["gantt_mode"]);
-            //var projectId = db.ProjectScheduleVersions.Where(s => s.ID == id).FirstOrDefault().ProjectID;
             try
             {
                 foreach (var ganttData in dataActions)
@@ -107,6 +108,7 @@ namespace AdminApps.Controllers
                     // remove gantt tasks
                     db.GanttTasks.Remove(db.GanttTasks.Find(ganttData.SourceId));
                     break;
+                case GanttAction.Order:
                 case GanttAction.Updated:
                     // set ProjectID and ProjectScheduleVersionID
                     ganttData.UpdatedTask.ProjectID = projectID;
@@ -169,6 +171,7 @@ namespace AdminApps.Controllers
                 {
                     action.SetAttributeValue("tid", (ganttData.Mode == GanttMode.Tasks) ? ganttData.UpdatedTask.GanttTaskId : ganttData.UpdatedLink.GanttLinkId);
                 }
+                action.SetAttributeValue("mode", (ganttData.Mode == GanttMode.Tasks) ? "tasks" : "links"); // set 'mode' flag for use by onAfterUpdate javascript event listener
                 actions.Add(action);
             }
 

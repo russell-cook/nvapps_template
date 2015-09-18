@@ -118,7 +118,7 @@ namespace AdminApps.Controllers
                 UserProjectsRepository repo = new UserProjectsRepository();
                 int newProjectID = await repo.CreateNewProject(viewModel);
 
-                Success("New Project Created Successfully");
+                Success("New Project Created Successfully", true);
                 return RedirectToAction("Details", new { id = newProjectID });
             }
 
@@ -207,7 +207,11 @@ namespace AdminApps.Controllers
             if (viewModel.ApplicationUserID == user.Id)
             {
                 ProjectScheduleVersionsRepository scheduleRepo = new ProjectScheduleVersionsRepository();
-                Tuple<ProjectScheduleVersion, bool> newSchedule = await scheduleRepo.CloneProjectScheduleVersionForEdit(viewModel.ID, deleteAbandonedSchedule);
+                Tuple<ProjectScheduleVersion, bool> newSchedule = await scheduleRepo.CloneProjectScheduleVersionForEdit(viewModel.ID);
+                if (deleteAbandonedSchedule)
+                {
+                    return RedirectToAction("RemoveProjectScheduleVersion", new { id = newSchedule.Item1.ID });
+                }
                 viewModel.ProjectScheduleVersion = newSchedule.Item1;
                 viewModel.FullScreen = true;
                 viewModel.ReadOnly = false;
@@ -221,19 +225,55 @@ namespace AdminApps.Controllers
             }
         }
 
+        public async Task<ActionResult> RemoveProjectScheduleVersion(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            // load schedule from db, confirm that it's not null
+            ProjectScheduleVersionsRepository schedulesRepo = new ProjectScheduleVersionsRepository();
+            var schedule = await schedulesRepo.FindProjectScheduleVersion(id.Value);
+            if (schedule == null)
+            {
+                return HttpNotFound();
+            }
+
+            // load project from db, confirm that it's not null
+            UserProjectsRepository projectsRepo = new UserProjectsRepository();
+            UserProjectViewModel project = await projectsRepo.GetUserProject(schedule.ProjectID);
+            if (project == null)
+            {
+                return HttpNotFound();
+            }
+
+            // authorize user
+            ApplicationUser user = await ReturnCurrentUserAsync();
+            if (project.ApplicationUserID == user.Id)
+            {
+                if (await schedulesRepo.RemoveProjectScheduleVersion(id.Value))
+                {
+                    return RedirectToAction("EditScheduleFS", new { id = project.ID });
+                }
+            }
+            Danger("Error: Unable to abandon unsaved changes.");
+            return RedirectToAction("Details", new { id = project.ID });
+        }
+
         // POST: UserProjects/EditScheduleFS/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditScheduleFS(int id)
+        public async Task<ActionResult> EditScheduleFS(UserProjectViewModel viewModel)
         {
             ProjectScheduleVersionsRepository repo = new ProjectScheduleVersionsRepository();
-            if (await repo.SaveClonedProjectScheduleVersion(id))
+            if (await repo.SaveClonedProjectScheduleVersion(viewModel.ProjectScheduleVersion))
             {
                 Success("Project schedule updated successfully.", true);
-                return RedirectToAction("Details", new { id = id });
+                return RedirectToAction("Details", new { id = viewModel.ID });
             }
             Warning("Update failed.", true);
-            return RedirectToAction("Details", new { id = id });
+            return RedirectToAction("Details", new { id = viewModel.ID });
         }
 
         // GET: UserProjects/Delete/5

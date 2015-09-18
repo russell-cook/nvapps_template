@@ -1,0 +1,18 @@
+﻿
+<div class="modal fade" id="confirmRestoreArchivedScheduleVersionModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="deleteLabel">Confirm: Restore Archived Schedule Version</h4>
+            </div>
+            <div class="modal-body">
+                <p>You have selected to restore an archived version of this project's schedule. Restoring an archived schedule version will not result in the loss of any data. The existing version of this project's schedule will be moved to the "Archived Schedule Versions" tab.</p>
+                <p>Would you like to restore this version as the Current Project Schedule?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
+                @Html.ActionLink("Restore Archived Project Schedule", "RestoreProjectScheduleVersionToCurrent", new { id = Model.ProjectScheduleVersion.ID }, new { @class = "btn btn-danger" })
+            </div>
+        </div>
+    </div>
+</div>

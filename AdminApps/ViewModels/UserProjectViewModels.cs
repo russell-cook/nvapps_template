@@ -47,6 +47,45 @@ namespace AdminApps.ViewModels
 
         public virtual ApplicationUser CreatedByUser { get; set; }
 
+        public string TruncName
+        {
+            get
+            {
+                if (this.Name.Length > 25)
+                {
+                    return this.Name.Substring(0, 25) + "...";
+                }
+                else
+                {
+                    return this.Name;
+                }
+            }
+        }
+
+
+        public string TruncComments
+        {
+            get
+            {
+                if (this.Comments.Length > 50)
+                {
+                    return this.Comments.Substring(0, 50) + "...";
+                }
+                else
+                {
+                    return this.Comments;
+                }
+            }
+        }
+
+        public string TruncDateCreated
+        {
+            get
+            {
+                return this.CreatedAt.ToShortDateString();
+            }
+        }
+
     }
 
     public class CreateUserProjectViewModel : UserProjectViewModel

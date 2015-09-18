@@ -15,7 +15,16 @@ namespace AdminApps.DAL.ProjectManagement
     {
         const int ProjectScheduleVersionBackupCount = 10;
 
-        internal async Task<int> GetProjectScheduleVersion(int projectId, int versionNum)
+        internal async Task<ProjectScheduleVersion> FindProjectScheduleVersion(int id)
+        {
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                var projectScheduleVersion = await db.ProjectScheduleVersions.FindAsync(id);
+                return projectScheduleVersion;
+            }
+        }
+
+        internal async Task<int> GetProjectScheduleVersionId(int projectId, int versionNum)
         {
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
@@ -24,7 +33,7 @@ namespace AdminApps.DAL.ProjectManagement
             }
         }
 
-        internal async Task<Tuple<ProjectScheduleVersion, bool>> CloneProjectScheduleVersionForEdit(int projectId, bool deleteAbandonedSchedule)
+        internal async Task<Tuple<ProjectScheduleVersion, bool>> CloneProjectScheduleVersionForEdit(int projectId)
         {
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
@@ -32,12 +41,7 @@ namespace AdminApps.DAL.ProjectManagement
                 var abandonedSchedule = await db.ProjectScheduleVersions.Where(s => s.ProjectID == projectId && s.VersionNum == 0).FirstOrDefaultAsync();
                 if (abandonedSchedule != null)
                 {
-                    if (!deleteAbandonedSchedule)
-                    {
-                        return Tuple.Create(abandonedSchedule, true); // set AbandonedSchedule flag to true
-                    }
-                    db.ProjectScheduleVersions.Remove(abandonedSchedule);
-                    await db.SaveChangesAsync();
+                    return Tuple.Create(abandonedSchedule, true); // set AbandonedSchedule flag to true
                 }
 
                 // create new ProjectScheduleVersion for use during editing
@@ -55,9 +59,8 @@ namespace AdminApps.DAL.ProjectManagement
                 // initialize dictionary, used to crosswalk ParentId, SourceGanttTask, and TargetGanttTask values after cloning
                 Dictionary<int, int> taskIdDictionary = new Dictionary<int, int>();
 
-                // identify current ProjectScheduleVersion (VersionNum = 1) ->
-                // clone GanttLinks and GanttTasks
-                int currentScheduleId = await GetProjectScheduleVersion(projectId, 1);
+                // identify current ProjectScheduleVersion (VersionNum = 1), then clone GanttLinks and GanttTasks
+                int currentScheduleId = await GetProjectScheduleVersionId(projectId, 1);
                 var existingGanttTasks = await db.GanttTasks.Where(t => t.ProjectScheduleVersionID == currentScheduleId).ToListAsync();
                 foreach (GanttTask t in existingGanttTasks)
                 {
@@ -108,13 +111,29 @@ namespace AdminApps.DAL.ProjectManagement
             }
         }
 
-        internal async Task<bool> SaveClonedProjectScheduleVersion(int projectId)
+        internal async Task<bool> RemoveProjectScheduleVersion(int id)
+        {
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                // confirm ProjectScheduleVersion's existence before removal
+                var abandonedSchedule = await db.ProjectScheduleVersions.FindAsync(id);
+                if (abandonedSchedule != null)
+                {
+                    db.ProjectScheduleVersions.Remove(abandonedSchedule);
+                    await db.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        internal async Task<bool> SaveClonedProjectScheduleVersion(ProjectScheduleVersion model)
         {
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
                 // remove oldest backup ProjectScheduleVersion
-                // foreach loop is used to allow for changes to ProjectScheduleVersionBackupCount
-                var backupVersionsToDelete = await db.ProjectScheduleVersions.Where(v => v.ProjectID == projectId && v.VersionNum >= ProjectScheduleVersionBackupCount).ToListAsync();
+                // foreach loop is used to allow for changes to ProjectScheduleVersionBackupCount, i.e. multiple records might be returned from query
+                var backupVersionsToDelete = await db.ProjectScheduleVersions.Where(v => v.ProjectID == model.ProjectID && v.VersionNum >= ProjectScheduleVersionBackupCount).ToListAsync();
                 foreach (ProjectScheduleVersion v in backupVersionsToDelete)
                 {
                     db.ProjectScheduleVersions.Remove(v);
@@ -122,8 +141,9 @@ namespace AdminApps.DAL.ProjectManagement
                 await db.SaveChangesAsync();
 
                 // increment VersionNum of exsting ProjectScheduleVersions
-                var existingVersionsToIncrement = await db.ProjectScheduleVersions.Where(v => v.ProjectID == projectId).OrderBy(v => v.VersionNum).ToListAsync();
+                var existingVersionsToIncrement = await db.ProjectScheduleVersions.Where(v => v.ProjectID == model.ProjectID).OrderBy(v => v.VersionNum).ToListAsync();
                 existingVersionsToIncrement.First().SavedAt = DateTime.Now;
+                existingVersionsToIncrement.First().Comments = model.Comments;
                 foreach (ProjectScheduleVersion v in existingVersionsToIncrement)
                 {
                     v.VersionNum++;

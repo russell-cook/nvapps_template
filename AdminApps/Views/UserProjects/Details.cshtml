@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Project Details";
     ViewBag.ModuleName = "User Projects";
+    ViewBag.ProjectID = Model.ID;
 }
 
 @section headLevel{
@@ -11,6 +12,7 @@
 
 @section topLevel{
     @{ Html.RenderPartial("~/Views/DhtmlxGantt/_dhtmlxGanttTopSection.cshtml"); }
+    @{ Html.RenderPartial("_ConfirmRestoreArchivedScheduleVersion.Modal"); }
 }
 
 @section scripts{
@@ -19,6 +21,19 @@
 }
 
 <h2><strong>@Html.DisplayFor(model => model.Name)</strong></h2>
+<div class="row">
+    <div class="col-md-6">
+        <strong>@Html.DisplayNameFor(model => model.ProjectStatus.Description):</strong>
+        @Html.DisplayFor(model => model.ProjectStatus.Description)
+    </div>
+    <div class="col-md-6">
+        <p class="text-right">
+            @Html.ActionLink("Edit Project Details", "Edit", new { id = Model.ID }) |
+            @Html.ActionLink("Back to My Projects list", "Index")
+        </p>
+    </div>
+</div>
+
 
 <hr />
 <div class="row">
@@ -31,7 +46,11 @@
             <dd>
                 @Html.DisplayFor(model => model.Description)
             </dd>
+        </dl>
+    </div>
 
+    <div class="col col-md-6">
+        <dl class="dl-horizontal">
             <dt>
                 @Html.DisplayNameFor(model => model.Comments)
             </dt>
@@ -41,48 +60,6 @@
             </dd>
         </dl>
     </div>
-
-    <div class="col col-md-6">
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.CreatedAt)
-            </dd>
-
-            <dt>
-                @Html.DisplayNameFor(model => model.ModifiedAt)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.ModifiedAt)
-            </dd>
-
-            <dt>
-                @Html.DisplayNameFor(model => model.ProjectStatus.Description)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.ProjectStatus.Description)
-            </dd>
-        </dl>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <p>
-            @Html.ActionLink("Edit Project Details", "Edit", new { id = Model.ID }) |
-            @Html.ActionLink("Back to My Projects list", "Index")
-        </p>
-    </div>
-    <div class="col-md-6">
-        <p class="text-right">
-            @Html.ActionLink("Enter Full Screen", "EditScheduleFS", new { id = Model.ID })
-        </p>
-    </div>
 </div>
 
 @*tab panel*@
@@ -90,32 +67,19 @@
 
     @*nav tabs*@
     <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a href="#currentScheduleVersion" aria-controls="Current Schedule Versions" role="tab"><strong>Current Project Schedule</strong></a></li>
+        <li role="presentation" class="active"><a href="#projectSchedule" aria-controls="Project Schedule" role="tab"><strong>Project Schedule</strong></a></li>
         <li role="presentation"><a href="#archivedScheduleVersions" aria-controls="Archived Schedule Versions" role="tab">Archived Schedule Versions</a></li>
     </ul>
 
     @*begin tab content*@
     <div class="tab-content">
 
-        <div role="tabpanel" class="tab-pane active" style="margin-top: 10px;" id="currentScheduleVersion">
-            @*disclaimer for previous schedule version*@
-            @if (Model.ProjectScheduleVersion.VersionNum != 1)
-            {
-                <div class="panel panel-warning">
-                    <div class="panel-heading">
-                        <h4>NOTE: You are currently viewing an archived schedule for this project.</h4>
-                    </div>
-                    <div class="panel-body">
-                        To restore this version as the Current Project Schedule click @Html.ActionLink("Restore Archived Project Schedule", "RestoreProjectScheduleVersionToCurrent", new { id = Model.ProjectScheduleVersion.ID})
-                    </div>
-                </div>
-            }
-            @*gantt container*@
-            <div id="ganttContainer" style="width: 100%; height: 400px;"></div>
+        <div role="tabpanel" class="tab-pane active" style="margin-top: 10px;" id="projectSchedule">
+            @Html.DisplayFor(model => model.ProjectScheduleVersion)
         </div>
 
         <div role="tabpanel" class="tab-pane fade" style="margin-top: 10px;" id="archivedScheduleVersions">
-            @*list of previous schedule versions, loaded by jquery ajax call from _PreviousScheduleVersions.js*@
+            @*list of previous schedule versions, loaded by jquery ajax call from _ArchivedScheduleVersions.js*@
         </div>
 
     </div>

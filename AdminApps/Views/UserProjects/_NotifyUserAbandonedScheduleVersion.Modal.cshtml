@@ -1,0 +1,19 @@
+﻿
+<div class="modal fade" id="notifyUserAbandonedScheduleVersionModal" tabindex="-1" role="dialog" aria-labelledby="deleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="unsavedChangesLabel">Unsaved Changes Detected</h4>
+            </div>
+            <div class="modal-body">
+                <p>Unsaved changes to this project schedule were located in the database. To avoid this messagein the future be sure to click the 'Save Changes' button when you're finished editing.</p>
+                <p>To proceed working with these unsaved changes click "Keep Unsaved Changes."</p>
+                <p>To abandon these unsaved changes and continue editing the most recently saved version of the schedule click "Abandon Unsaved Changes." NOTE: Abandoning unsaved changes cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Continue Working With Unsaved Changes</button>
+                @Html.ActionLink("Abandon Unsaved Changes", "EditScheduleFS", new { id = Model.ID, deleteAbandonedSchedule = true }, new { @class = "btn btn-danger" })
+            </div>
+        </div>
+    </div>
+</div>

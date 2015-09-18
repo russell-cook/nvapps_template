@@ -42,6 +42,21 @@
 /*! full-screen header styles*/
 .fullScreenHeader {
     color: white;
-    margin-left: 10px;
-    margin-right: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.fullScreenHeaderForm {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    float: right;
+}
+
+.gantt-toolbar {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    border-left: 15px solid #ffffff;
+    border-right: 15px solid #ffffff;
+    background: #aaaaaa;
+    color: white;
 }
