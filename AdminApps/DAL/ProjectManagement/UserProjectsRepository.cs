@@ -13,7 +13,7 @@ namespace AdminApps.DAL.ProjectManagement
 {
     public class UserProjectsRepository
     {
-        internal async Task<List<UserProjectViewModel>> GetUserProjectList(string applicationUserID)
+        internal async Task<IEnumerable<UserProjectViewModel>> GetUserProjectList(string applicationUserID)
         {
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
@@ -77,6 +77,7 @@ namespace AdminApps.DAL.ProjectManagement
                 schedule.VersionNum = 1;
                 schedule.CreatedAt = userProject.CreatedAt;
                 schedule.SavedAt = userProject.CreatedAt;
+                schedule.Comments = "[initialize project schedule]";
                 db.ProjectScheduleVersions.Add(schedule);
                 await db.SaveChangesAsync();
 

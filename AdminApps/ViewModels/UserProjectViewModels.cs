@@ -19,8 +19,10 @@ namespace AdminApps.ViewModels
 
         public int ID { get; set; }
         public int ProjectStatusID { get; set; }
+        [Required]
         [Display(Name = "Project Name")]
         public string Name { get; set; }
+        [Required]
         public string Description { get; set; }
         public string Comments { get; set; }
         [Display(Name = "Date Created")]
@@ -63,17 +65,17 @@ namespace AdminApps.ViewModels
         }
 
 
-        public string TruncComments
+        public string TruncDescription
         {
             get
             {
-                if (this.Comments.Length > 50)
+                if (this.Description != null && this.Description.Length > 50)
                 {
-                    return this.Comments.Substring(0, 50) + "...";
+                    return this.Description.Substring(0, 50) + "...";
                 }
                 else
                 {
-                    return this.Comments;
+                    return this.Description;
                 }
             }
         }
@@ -83,6 +85,14 @@ namespace AdminApps.ViewModels
             get
             {
                 return this.CreatedAt.ToShortDateString();
+            }
+        }
+
+        public string TruncDateModified
+        {
+            get
+            {
+                return this.ModifiedAt.ToShortDateString();
             }
         }
 

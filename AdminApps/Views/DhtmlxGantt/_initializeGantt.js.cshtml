@@ -5,6 +5,7 @@
     $( document ).ready(function () {
         $('#btnOutdent').prop('disabled', true);
         $('#btnIndent').prop('disabled', true);
+        $('#btnAutoSchedulePlannedDates').prop('disabled', @Convert.ToString(Model.ReadOnly).ToLower());
     })
 
 

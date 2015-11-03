@@ -14,7 +14,9 @@ namespace AdminApps.Models
     {
         public int ID { get; set; }
         public int ProjectStatusID { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Description { get; set; }
         public string Comments { get; set; }
         public DateTime CreatedAt { get; set; }

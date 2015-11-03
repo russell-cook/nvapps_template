@@ -3,9 +3,10 @@ using AdminApps.DAL.ProjectManagement;
 using AdminApps.Models;
 using AdminApps.ViewModels;
 using Omu.ValueInjecter;
+using PagedList;
 using System;
 using System.Collections.Generic;
-using System.Data;
+//using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -32,9 +33,11 @@ namespace AdminApps.Controllers
         public async Task<ActionResult> Index(string sortOrder, string currentFilter, string searchString, int? page, int pageSize = 10)
         {
             ViewBag.CurrentSort = sortOrder;
-            ViewBag.BillSortParm = String.IsNullOrEmpty(sortOrder) ? "num_desc" : "";
-            ViewBag.SummarySortParm = sortOrder == "Summary" ? "summary_desc" : "Summary";
-            ViewBag.ReviewsSortParm = sortOrder == "Reviews" ? "reviews_desc" : "Reviews";
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DescriptionSortParm = sortOrder == "Description" ? "description_desc" : "Description";
+            ViewBag.CreatedSortParm = sortOrder == "Created" ? "created_desc" : "Created";
+            ViewBag.ModifiedSortParm = sortOrder == "Modified" ? "modified_desc" : "Modified";
+            ViewBag.StatusSortParm = sortOrder == "Status" ? "status_desc" : "Status";
 
             if (searchString != null)
             {
@@ -51,11 +54,53 @@ namespace AdminApps.Controllers
             ApplicationUser user = await ReturnCurrentUserAsync();
             UserProjectsRepository repo = new UserProjectsRepository();
             var userProjects = await repo.GetUserProjectList(user.Id);
-            return View(userProjects);
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                userProjects = userProjects.Where(p => p.Name.ToUpper().Contains(searchString.Trim().ToUpper())
+                                || p.Description.ToUpper().Contains(searchString.Trim().ToUpper()));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    userProjects = userProjects.OrderByDescending(p => p.Name);
+                    break;
+                case "Description":
+                    userProjects = userProjects.OrderBy(p => p.Description);
+                    break;
+                case "description_desc":
+                    userProjects = userProjects.OrderByDescending(p => p.Description);
+                    break;
+                case "Created":
+                    userProjects = userProjects.OrderBy(p => p.CreatedAt);
+                    break;
+                case "created_desc":
+                    userProjects = userProjects.OrderByDescending(p => p.CreatedAt);
+                    break;
+                case "Modified":
+                    userProjects = userProjects.OrderBy(p => p.ModifiedAt);
+                    break;
+                case "modified_desc":
+                     userProjects = userProjects.OrderByDescending(p => p.ModifiedAt);
+                   break;
+                case "Status":
+                    userProjects = userProjects.OrderBy(p => p.ProjectStatus.Description);
+                    break;
+                case "status_desc":
+                    userProjects = userProjects.OrderByDescending(p => p.ProjectStatus.Description);
+                    break;
+                default:
+                    userProjects = userProjects.OrderBy(p => p.Name);
+                    break;
+            }
+
+            int pageNumber = (page ?? 1);
+            return View(userProjects.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: UserProjects/Details/5
-        public async Task<ActionResult> Details(int? id, int scheduleVersion = 1)
+        public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -64,7 +109,7 @@ namespace AdminApps.Controllers
 
             // load project from db, confirm that it's not null
             UserProjectsRepository repo = new UserProjectsRepository();
-            UserProjectViewModel viewModel = await repo.GetUserProjectWithSchedule(id, scheduleVersion);
+            UserProjectViewModel viewModel = await repo.GetUserProjectWithSchedule(id, 1); // VersionNum = 1 for current schedule version
 
             if (viewModel == null)
             {
@@ -94,7 +139,34 @@ namespace AdminApps.Controllers
                 return new HttpNotFoundResult();
             }
 
-            return PartialView("_ArchivedScheduleVersions", archivedScheduleVersions);
+            return PartialView("_ArchivedScheduleVersions.Tab", archivedScheduleVersions);
+        }
+
+        public async Task<ActionResult> GetArchivedScheduleVersionModal(int? id, int scheduleVersion = 1)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            // load project from db, confirm that it's not null
+            UserProjectsRepository repo = new UserProjectsRepository();
+            UserProjectViewModel viewModel = await repo.GetUserProjectWithSchedule(id, scheduleVersion);
+
+            if (viewModel == null)
+            {
+                return HttpNotFound();
+            }
+
+            // authorize user
+            ApplicationUser user = await ReturnCurrentUserAsync();
+            if (viewModel.ApplicationUserID == user.Id)
+            {
+                return PartialView("_ArchivedScheduleVersion.Modal.GanttContainer", viewModel);
+            }
+
+            Danger(unauthorizedAccessMessage, true);
+            return RedirectToAction("Index");
         }
 
         public async Task<ActionResult> Create()
@@ -121,7 +193,7 @@ namespace AdminApps.Controllers
                 Success("New Project Created Successfully", true);
                 return RedirectToAction("Details", new { id = newProjectID });
             }
-
+            ViewBag.ProjectStatusID = new SelectList(await db.ProjectStatuses.ToListAsync(), "ID", "Description");
             return View(viewModel);
         }
 
@@ -341,7 +413,7 @@ namespace AdminApps.Controllers
                 ProjectScheduleVersionsRepository repo = new ProjectScheduleVersionsRepository();
                 if (await repo.RestoreArchivedProjectScheduleVersionToCurrent(parentUserProject.ID, targetScheduleVersion.VersionNum))
                 {
-                    Success("Archived Project Schedule has been restored as Current Project Schedule.", true);
+                    Success("Archived Project Schedule (Revision date: " + targetScheduleVersion.SavedAt + ") has been restored as Current Project Schedule.", true);
                     return RedirectToAction("Details", new { id = parentUserProject.ID });
                 }
             }

@@ -14,7 +14,7 @@ namespace AdminApps.Models
         public bool BrowserRemembered { get; set; }
         public int AppModuleID { get; set; }
 
-        [Display(Name = "Default Module")]
+        [Display(Name = "User Home Page")]
         public System.Web.Mvc.SelectList UserDefaultAppModuleList { get; set; }
     }
 

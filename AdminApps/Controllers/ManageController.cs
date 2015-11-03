@@ -90,7 +90,7 @@ namespace AdminApps.Controllers
                 ApplicationUser userRecord = db.Users.Where(u => u.Id == user.Id).Single();
                 userRecord.AppModuleID = model.AppModuleID;
                 await db.SaveChangesAsync();
-                Success("Default Application Module setting saved");
+                Success("Changes saved successfully");
                 return RedirectToAction("Index");
             }
             Danger("Error saving settings");

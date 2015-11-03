@@ -12,12 +12,14 @@
 
 @section topLevel{
     @{ Html.RenderPartial("~/Views/DhtmlxGantt/_dhtmlxGanttTopSection.cshtml"); }
+    @{ Html.RenderPartial("_ArchivedScheduleVersion.Modal"); }
     @{ Html.RenderPartial("_ConfirmRestoreArchivedScheduleVersion.Modal"); }
 }
 
 @section scripts{
     @{ Html.RenderPartial("~/Views/DhtmlxGantt/_initializeGantt.js.cshtml"); }
-    @{ Html.RenderPartial("_ArchivedScheduleVersions.js"); }
+    @{ Html.RenderPartial("_ArchivedScheduleVersions.Tab.js"); }
+    @{ Html.RenderPartial("_ArchivedScheduleVersion.Modal.js"); }
 }
 
 <h2><strong>@Html.DisplayFor(model => model.Name)</strong></h2>
@@ -35,53 +37,73 @@
 </div>
 
 
-<hr />
-<div class="row">
-    <div class="col col-md-6">
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Description)
-            </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Description)
-            </dd>
-        </dl>
-    </div>
-
-    <div class="col col-md-6">
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Comments)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.Comments)
-            </dd>
-        </dl>
-    </div>
-</div>
 
 @*tab panel*@
 <div role="tabpanel">
 
     @*nav tabs*@
     <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a href="#projectSchedule" aria-controls="Project Schedule" role="tab"><strong>Project Schedule</strong></a></li>
-        <li role="presentation"><a href="#archivedScheduleVersions" aria-controls="Archived Schedule Versions" role="tab">Archived Schedule Versions</a></li>
+        <li role="presentation" class="active"><a href="#tabProjectSchedule" aria-controls="Project Schedule" role="tab"><strong>Project Schedule</strong></a></li>
+        <li role="presentation"><a href="#tabProjectDetails" aria-controls="Project Details" role="tab">Project Details</a></li>
+        <li role="presentation"><a href="#tabArchivedScheduleVersions" aria-controls="Archived Schedule Versions" role="tab">Archived Schedule Versions</a></li>
     </ul>
 
     @*begin tab content*@
     <div class="tab-content">
 
-        <div role="tabpanel" class="tab-pane active" style="margin-top: 10px;" id="projectSchedule">
+        <div role="tabpanel" class="tab-pane active" style="margin-top: 10px;" id="tabProjectSchedule">
             @Html.DisplayFor(model => model.ProjectScheduleVersion)
         </div>
 
-        <div role="tabpanel" class="tab-pane fade" style="margin-top: 10px;" id="archivedScheduleVersions">
+        <div role="tabpanel" class="tab-pane fade" style="margin-top: 10px;" id="tabArchivedScheduleVersions">
             @*list of previous schedule versions, loaded by jquery ajax call from _ArchivedScheduleVersions.js*@
         </div>
+
+        <div role="tabpanel" class="tab-pane fade" style="margin-top: 10px;" id="tabProjectDetails">
+            <div class="row">
+                <div class="col col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Description)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Description)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Comments)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Comments)
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="col col-md-6">
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.CreatedAt)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.CreatedAt)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.ModifiedAt)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.ModifiedAt)
+                        </dd>
+                    </dl>
+                </div>
+            </div>        </div>
 
     </div>
 
 </div>
+

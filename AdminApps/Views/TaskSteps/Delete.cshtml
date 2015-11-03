@@ -1,0 +1,29 @@
+@model AdminApps.Models.TaskStep
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<fieldset>
+    <legend>TaskStep</legend>
+
+    <div class="display-label">Name</div>
+    <div class="display-field">@Model.Name</div>
+
+    <div class="display-label">Instructions</div>
+    <div class="display-field">@Model.Instructions</div>
+
+    <div class="display-label">DeskManualTask</div>
+    <div class="display-field">@(Model.DeskManualTask == null ? "None" : Model.DeskManualTask.Name)</div>
+</fieldset>
+@using (Html.BeginForm()) {
+    <p>
+        <input type="submit" value="Delete" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+}
+
+

@@ -13,12 +13,13 @@
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-primary">
-                <div class="panel-heading"><strong>Re-Direct After Login</strong></div>
+                <div class="panel-heading"><strong>User Home Page</strong></div>
                 <div class="panel-body">
                     <p>
-                        The "Re-Direct After Login" setting determines where you will be re-directed after logging in to the AdminApps website.
+                        The "User Home Page" setting determines where you will be re-directed after logging in.
                         The default setting directs you to this page ("Manage User Account") after login,
-                        but you may choose any module that you have been assigned access to (such as the "Bill Tracking" module).
+                        but you may choose any module to which you have been granted access. The dropdown menu (below) will list all available modules.
+                        Click 'Save Changes' when you have made your selection.
                     </p>
                     <div class="form-group">
                         @Html.LabelFor(model => model.UserDefaultAppModuleList, htmlAttributes: new { @class = "control-label col-md-2" })

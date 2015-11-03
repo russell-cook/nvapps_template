@@ -12,7 +12,7 @@ using System.Web;
 
 namespace AdminApps.DAL
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
             : base("AdminApps_SQLServerExpress", throwIfV1Schema: false)
@@ -64,7 +64,7 @@ namespace AdminApps.DAL
         public DbSet<BillsAlsrReport> BillsAlsrReports { get; set; }
         public DbSet<AlsrBillReviewSnapshot> AlsrBillReviewSnapshots { get; set; }
 
-        // Project Management Demo
+        // Project Management
         public DbSet<GanttTask> GanttTasks { get; set; }
         public DbSet<GanttLink> GanttLinks { get; set; }
         public DbSet<ProjectStatus> ProjectStatuses { get; set; }
@@ -73,6 +73,9 @@ namespace AdminApps.DAL
         public DbSet<ITProject> ITProjects { get; set; }
         public DbSet<BudgetProject> BudgetProjects { get; set; }
         public DbSet<UserProject> UserProjects { get; set; }
+
+        // Office Manuals
+        //public DbSet<TaskStep> TaskSteps { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

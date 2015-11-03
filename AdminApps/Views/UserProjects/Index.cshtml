@@ -1,11 +1,25 @@
-﻿@model IEnumerable<AdminApps.ViewModels.UserProjectViewModel>
+﻿@model PagedList<AdminApps.ViewModels.UserProjectViewModel>
 
 @{
     ViewBag.Title = "My Projects";
     ViewBag.ModuleName = "User Projects";
 }
 
-<h2>My Projects</h2>
+<div class="row">
+    <div class="col col-md-6">
+        <h2>My Projects</h2>
+    </div>
+    <div class="col col-md-6">
+        @using (Html.BeginForm("Index", "UserProjects", FormMethod.Get))
+        {
+            <div style="float: right;">
+                <button type="button" class="btn btn-default btn-xs btn-help-left" data-toggle="modal" data-target="#modalSearchHelp"><strong>?</strong></button>
+                Search: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+                <input type="submit" value="Search" /><br />
+            </div>
+        }
+    </div>
+</div>
 
 <p>
     @Html.ActionLink("Create New Project", "Create")
@@ -13,52 +27,68 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.ActionLink("Project Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Description)
+            @Html.ActionLink("Description", "Index", new { sortOrder = ViewBag.DescriptionSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
-        @*<th>
-            @Html.DisplayNameFor(model => model.Comments)
-        </th>*@
         <th>
-            @Html.DisplayNameFor(model => model.CreatedAt)
+            @Html.ActionLink("Date Created", "Index", new { sortOrder = ViewBag.CreatedSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
-        @*<th>
-            @Html.DisplayNameFor(model => model.ModifiedAt)
-        </th>*@
         <th>
-            @Html.DisplayNameFor(model => model.ProjectStatus.Description)
+            @Html.ActionLink("Date Modified", "Index", new { sortOrder = ViewBag.ModifiedSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Status", "Index", new { sortOrder = ViewBag.StatusSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.TruncName)
-        </td>
-        @*<td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>*@
-        <td>
-            @Html.DisplayFor(modelItem => item.TruncComments)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TruncDateCreated)
-        </td>
-        @*<td>
-            @Html.DisplayFor(modelItem => item.ModifiedAt)
-        </td>*@
-        <td>
-            @Html.DisplayFor(modelItem => item.ProjectStatus.Description)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TruncName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TruncDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TruncDateCreated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TruncDateModified)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProjectStatus.Description)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
 
 </table>
+
+<div>
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, pageSize = Model.PageSize }))
+    Showing @Model.FirstItemOnPage to @Model.LastItemOnPage of @Model.TotalItemCount Projects
+</div>
+
+<!--help modal: Approved Review-->
+<div class="modal fade" id="modalSearchHelp" tabindex="-1" role="dialog" aria-labelledby="modalSearchHelpLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" id="modalSearchHelpLabel">Help: <strong>Search 'My Projects'</strong></h3>
+            </div>
+            <div class="modal-body">
+                <p>Search function applies to "Project Name" and "Description" fields.</p>
+            </div>
+        </div>
+    </div>
+</div>
+

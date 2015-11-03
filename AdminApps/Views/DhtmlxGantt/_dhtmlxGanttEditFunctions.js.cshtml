@@ -151,6 +151,43 @@
         syncSortOrder();
     }
 
+    // auto-create 'Planned' start/end dates
+    function populatePlannedDates () {
+        dp.setUpdateMode("off"); // temporarily disable auto-saving via dp
+        var tasks = gantt.getTaskByTime(); // get all GanttTasks
+        for(var i = 0; i < tasks.length; i++){
+            var task = tasks[i];
+            if (task.type == "task") {
+                task.planned_start = task.start_date;
+                task.planned_end = task.end_date;
+                gantt.updateTask(task.id);
+            }
+        }
+        dp.sendData();
+        gantt.render();
+        dp.setUpdateMode("cell"); // re-enable auto-saving via dp
+    }
+
+    gantt.attachEvent("onBeforeTaskUpdate", function(id, new_item) {
+        if (new_item.type == "project") 
+        {
+            if (new_item.planned_start) // if a 'task' with 'Planned' dates is converted to a 'project'...
+            {
+                new_item.planned_start = null;
+                new_item.planned_end = null; // ...clear 'Planned' dates...
+            }
+            var links = gantt.getLinks();
+            for(var i = 0; i < links.length; i++){ // delete any associated links--'projects' should not have any dependencies
+                var link = links[i];
+                if (link.source == id || link.target == id)
+                {
+                    gantt.deleteLink(link.id);
+                }
+            }
+        }
+        return true;
+    })
+
     // configure onAfterUpdate functions, which evaluate the 'mode' flag from the server side
     dp.attachEvent("onAfterUpdate", function(id, action, tid, response){
         switch(action) {

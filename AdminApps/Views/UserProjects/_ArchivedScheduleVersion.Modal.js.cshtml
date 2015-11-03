@@ -1,0 +1,132 @@
+﻿<script type="text/javascript">
+    var getArchivedScheduleVersionModalUrl = '@Url.Action("GetArchivedScheduleVersionModal")';
+    var confirmRestoreArchivedScheduleVersionUrl = '@Url.Action("RestoreProjectScheduleVersionToCurrent")'
+    var modal = $('#archivedScheduleVersionModal');
+    var container = $('#containerArchivedScheduleVersionModal');
+    var versionId = null;
+
+    function fireArchivedScheduleVersionModal(projectId, versionNum, projectScheduleVersionId) {
+        versionId = projectScheduleVersionId;
+        container.html('<p>Loading schedule...</p>');
+        container.load(getArchivedScheduleVersionModalUrl, { id: projectId, scheduleVersion: versionNum });
+        modal.modal('show');
+    }
+    
+    function fireConfirmRestoreArchivedScheduleVersionModal() {
+        modal.modal('hide');
+        $('#confirmRestoreArchivedScheduleVersionModal').modal('show');
+    }
+
+    function confirmRestoreArchivedScheduleVersion() {
+        window.location.href = confirmRestoreArchivedScheduleVersionUrl + "/" + versionId;
+    }
+
+    var archivedGantt = Gantt.getGanttInstance();
+    archivedGantt.config.readonly = true;
+    archivedGantt.config.xml_date = "%Y-%m-%d %H:%i:%s"; // format of dates in XML
+    archivedGantt.config.task_height = 16;
+    archivedGantt.config.row_height = 40;
+    archivedGantt.config.grid_resize = true;
+    archivedGantt.config.work_time = true;
+    archivedGantt.config.correct_work_time = true;
+    archivedGantt.config.auto_scheduling = true;
+    archivedGantt.config.auto_scheduling_strict = true;
+    archivedGantt.config.drag_progress = false;
+    archivedGantt.config.scale_unit = "day";
+    archivedGantt.config.duration_unit = "day";
+    archivedGantt.config.date_scale = "%d";
+
+
+    archivedGantt.config.subscales = [
+        { unit: "month", step: 1, date: "%F, %Y" }
+    ];
+    archivedGantt.config.scale_height = 50;
+    archivedGantt.config.min_column_width = 30;
+
+    archivedGantt.templates.date_scale = function (date) {
+        var dateToStr = archivedGantt.date.date_to_str("%d %M");
+        var endDate = archivedGantt.date.add(archivedGantt.date.add(date, 1, "week"), -1, "day");
+        return dateToStr(date) + " - " + dateToStr(endDate);
+    };
+
+    // display 'Planned' values in grid
+    archivedGantt.addTaskLayer(function draw_planned(task) {
+        if (task.planned_start && task.planned_end) {
+            var sizes = archivedGantt.getTaskPosition(task, task.planned_start, task.planned_end);
+            var el = document.createElement('div');
+            el.className = 'baseline';
+            el.style.left = sizes.left + 'px';
+            el.style.width = sizes.width + 'px';
+            el.style.top = sizes.top + archivedGantt.config.task_height + 13 + 'px';
+            return el;
+        }
+        return false;
+    });
+
+    // calculate overdue status
+    archivedGantt.templates.task_class = function (start, end, task) {
+        if (task.planned_end) {
+            var classes = ['has-baseline'];
+            if (end.getTime() > task.planned_end.getTime()) {
+                classes.push('overdue');
+            }
+            return classes.join(' ');
+        }
+    };
+
+    // configure milestone description and overdue message
+    archivedGantt.templates.rightside_text = function (start, end, task) {
+        if (task.type == archivedGantt.config.types.milestone) {
+            return task.text;
+        }
+        if (task.planned_end) {
+            if (end.getTime() > task.planned_end.getTime()) {
+                var overdue = Math.ceil(Math.abs((end.getTime() - task.planned_end.getTime()) / (24 * 60 * 60 * 1000)));
+                var text = "<b>Overdue: " + overdue + " days</b>";
+                return text;
+            }
+        }
+        return "";
+    };
+
+    // configure shading of weekend days
+    archivedGantt.templates.scale_cell_class = function (date) {
+        if (date.getDay() == 0 || date.getDay() == 6) {
+            return "weekend";
+        }
+    };
+    archivedGantt.templates.task_cell_class = function (item, date) {
+        if (date.getDay() == 0 || date.getDay() == 6) {
+            return "weekend";
+        }
+    };
+
+    // configure columns
+    archivedGantt.config.columns = [
+        { name: "text", label: "Task name", width: 150, tree: true, resize: true },
+        { name: "start_time", label: "Start Date", template: function (obj) { return archivedGantt.templates.date_grid(obj.start_date); }, align: "center", width: 85, resize: true },
+        { name: "duration", label: "Duration", align: "center", width: 60, resize: true },
+        { name: "planned_start", label: "Planned Start", template: function (obj) { if (obj.planned_start) return archivedGantt.templates.date_grid(obj.planned_start); return ""; }, align: "center", width: 85, resize: true, hide: @(Model.FullScreen ? "false" : "true") },
+        { name: "planned_end", label: "Planned End", template: function (obj) { if (obj.planned_start) return archivedGantt.templates.date_grid(obj.planned_end); return ""; }, align: "center", width: 85, resize: true, hide: @(Model.FullScreen ? "false" : "true") },
+        { name: "add", label: "", width: 44, hide: @(Model.FullScreen ? "false" : "true") }
+    ];
+
+    // parse 'Planned' date values
+    archivedGantt.attachEvent("onTaskLoading", function (task) {
+        task.planned_start = archivedGantt.date.parseDate(task.planned_start, "xml_date");
+        task.planned_end = archivedGantt.date.parseDate(task.planned_end, "xml_date");
+        return true;
+    });
+
+
+    modal.on('shown.bs.modal', function () {
+        archivedGantt.init("archivedGanttContainer"); // initialize gantt
+        archivedGantt.load("/ProjectScheduleVersions/GetGanttData/" + versionId, "json"); // load Gantt data
+    })
+
+    modal.on('hidden.bs.modal', function () {
+        archivedGantt.clearAll(); // clear Gantt data
+        container.html(''); // clear HTML from DIV element
+    })
+
+</script>

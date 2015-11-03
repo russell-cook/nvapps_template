@@ -11,7 +11,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
-                @Html.ActionLink("Restore Archived Project Schedule", "RestoreProjectScheduleVersionToCurrent", new { id = Model.ProjectScheduleVersion.ID }, new { @class = "btn btn-danger" })
+                <button type="button" class="btn btn-danger" onclick="confirmRestoreArchivedScheduleVersion()">Restore Archived Project Schedule</button>
             </div>
         </div>
     </div>

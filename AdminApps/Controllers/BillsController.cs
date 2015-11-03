@@ -7,7 +7,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Omu.ValueInjecter;
 using System;
 using System.Collections.Generic;
-using System.Data;
+//using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -852,7 +852,7 @@ namespace AdminApps.Controllers
 
                     return RedirectToAction("Index");
                 }
-                catch (DataException /* dex */)
+                catch (System.Data.DataException /* dex */)
                 {
                     //Log the error (uncomment dex variable name and add a line here to write a log.
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
