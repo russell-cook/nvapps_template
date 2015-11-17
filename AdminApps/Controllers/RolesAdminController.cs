@@ -1,4 +1,4 @@
-﻿using AdminApps.Models;
+﻿using NVApps.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -9,7 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Collections.Generic;
 
-namespace AdminApps.Controllers
+namespace NVApps.Controllers
 {
     [Authorize(Roles = "GlobalAdmin, RolesAdmin")]
     public class RolesAdminController : Controller

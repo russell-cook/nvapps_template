@@ -1,5 +1,5 @@
-﻿using AdminApps.DAL;
-using AdminApps.Models;
+﻿using NVApps.DAL;
+using NVApps.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace AdminApps.Controllers
+namespace NVApps.Controllers
 {
     [Authorize]
     public class ManageController : BaseController
@@ -18,24 +18,6 @@ namespace AdminApps.Controllers
 
         public ManageController()
         {
-        }
-
-        public ManageController(ApplicationUserManager userManager)
-        {
-            UserManager = userManager;
-        }
-
-        private ApplicationUserManager _userManager;
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
         }
 
         //

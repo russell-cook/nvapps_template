@@ -2,12 +2,12 @@
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
-using AdminApps.Models;
+using NVApps.Models;
 using Owin;
 using System;
-using AdminApps.DAL;
+using NVApps.DAL;
 
-namespace AdminApps
+namespace NVApps
 {
     public partial class Startup
     {

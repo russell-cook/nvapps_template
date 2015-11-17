@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Data.Entity;
 
-namespace AdminApps.DAL
+namespace NVApps.DAL
 {
 
     // This class is meant to prevent the entity framework from issuing "create" commands to external databases (i.e. the NEBS Oracle db, etc.).

@@ -1,7 +1,7 @@
 ﻿// This initializer is disabled to prevent the ApplicationDbContext database from being dropped unintentionally.
 // The initializer was originally called from the ApplicationDbContext, but is currently commented out.
 
-using AdminApps.Models;
+using NVApps.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Data.Entity;
 using System.Web;
 
 
-namespace AdminApps.DAL
+namespace NVApps.DAL
 {
     // This is useful if you do not want to tear down the database each time you run the application.
     // public class ApplicationDbInitializer : DropCreateDatabaseAlways<ApplicationDbContext>

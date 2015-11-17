@@ -1,6 +1,6 @@
 ﻿using System.Web.Optimization;
 
-namespace AdminApps
+namespace NVApps
 {
     public class BundleConfig
     {

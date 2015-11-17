@@ -1,6 +1,6 @@
 ﻿using Owin;
 
-namespace AdminApps
+namespace NVApps
 {
     public partial class Startup
     {

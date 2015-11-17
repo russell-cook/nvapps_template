@@ -1,4 +1,4 @@
-﻿using AdminApps.DAL;
+﻿using NVApps.DAL;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace AdminApps.ScheduledTasks
+namespace NVApps.ScheduledTasks
 {
     public class PollSqlServerExpress : IJob
     {

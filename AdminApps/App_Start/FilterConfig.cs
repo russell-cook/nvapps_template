@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace AdminApps
+namespace NVApps
 {
     public class FilterConfig
     {

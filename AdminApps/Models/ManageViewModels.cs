@@ -3,7 +3,7 @@ using Microsoft.Owin.Security;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace AdminApps.Models
+namespace NVApps.Models
 {
     public class IndexViewModel
     {

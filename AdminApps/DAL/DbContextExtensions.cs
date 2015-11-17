@@ -5,7 +5,7 @@ using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 
-namespace AdminApps.DAL
+namespace NVApps.DAL
 {
     public static class DbContextExtensions
     {

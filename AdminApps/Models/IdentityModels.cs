@@ -8,7 +8,7 @@ using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace AdminApps.Models
+namespace NVApps.Models
 {
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public partial class ApplicationUser : IdentityUser
@@ -33,9 +33,6 @@ namespace AdminApps.Models
         // Add extended properties here:
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Title { get; set; }
-        public decimal DivID { get; set; }
-        public decimal DeptID { get; set; }
         public bool IsActive { get; set; }
         public bool AutoPwdReplaced { get; set; }
 
@@ -44,9 +41,9 @@ namespace AdminApps.Models
         public int AppModuleID { get; set; }
 
         // Add extended navigation properties here:
-        public virtual Div Div { get; set; }
-        public virtual Dept Dept { get; set; }
         public virtual AppModule DefaultAppModule { get; set; }
+
+
 
         // calculated properties
         [Display(Name = "Name")]
@@ -81,22 +78,6 @@ namespace AdminApps.Models
             }
         }
 
-
-        // Bill Tracking Module navigation properties
-        public virtual ICollection<Bill> CreatedBills { get; set; }
-        public virtual ICollection<BillReview> CreatedBillReviews { get; set; }
-        public virtual ICollection<BillReview> CreatedOverrideOfBillReviews { get; set; }
-        public virtual ICollection<BillReviewNotification> BillReviewNotificationsRead { get; set; }
-        public virtual ICollection<BillReviewApproval> BillReviewApprovals { get; set; }
-        public virtual ICollection<BillReviewRequest> BillReviewRequestsBy { get; set; }
-        public virtual ICollection<BillReviewRequest> BillReviewRequestsTo { get; set; }
-        public virtual ICollection<BillRecordRequest> BillRecordRequestsBy { get; set; }
-        public virtual ICollection<BillRecordRequest> BillRecordRequestsFulfilledBy { get; set; }
-        public virtual ICollection<UserAccountRequest> UserAccountRequestsBy { get; set; }
-        public virtual ICollection<UserAccountRequest> UserAccountRequestsFulfilledBy { get; set; }
-        public virtual ICollection<Bill> BillsOfInterest { get; set; }
-        public virtual ICollection<BillsAlsrReport> BillsAlsrReports { get; set; }
-
     }
 
     // Custom class for extensible User Role management per http://typecastexception.com/post/2014/06/22/ASPNET-Identity-20-Customizing-Users-and-Roles.aspx
@@ -117,56 +98,6 @@ namespace AdminApps.Models
 
         // navigation properties
         public virtual AppModule AppModule { get; set; }
-    }
-
-    public class UserAccountRequest
-    {
-        public int ID { get; set; }
-        public decimal DivID { get; set; }
-        public decimal DeptID { get; set; }
-        [Required]
-        public string FirstName { get; set; }
-        [Required]
-        public string LastName { get; set; }
-        [Required]
-        [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
-        [Required]
-        public string Title { get; set; }
-        [ForeignKey("RequestedByUser")]
-        [Display(Name = "Requested By")]
-        public string RequestedByUserID { get; set; }
-        public DateTime RequestedAt { get; set; }
-        [Index]
-        public bool Fulfilled { get; set; }
-        [ForeignKey("FulfilledByUser")]
-        public string FullfilledByUserID { get; set; }
-        public DateTime? FullfilledAt { get; set; }
-
-        // navigation properties
-        [InverseProperty("UserAccountRequestsBy")]
-        public virtual ApplicationUser RequestedByUser { get; set; }
-        [InverseProperty("UserAccountRequestsFulfilledBy")]
-        public virtual ApplicationUser FulfilledByUser { get; set; }
-        public virtual Dept Dept { get; set; }
-        public virtual Div Div { get; set; }
-
-        // calculated properties
-        [Display(Name = "Name")]
-        public string FullName
-        {
-            get
-            {
-                if (FirstName != null && LastName != null)
-                {
-                    return FirstName + " " + LastName;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
 
     }
 

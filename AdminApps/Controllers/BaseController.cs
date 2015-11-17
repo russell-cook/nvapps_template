@@ -1,6 +1,6 @@
-﻿using AdminApps.DAL;
-using AdminApps.Helpers;
-using AdminApps.Models;
+﻿using NVApps.DAL;
+using NVApps.Helpers;
+using NVApps.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace AdminApps.Controllers
+namespace NVApps.Controllers
 {
     public class BaseController : Controller
     {
@@ -101,25 +101,6 @@ namespace AdminApps.Controllers
             return user;
         }
 
-        public async Task<int> ReturnUserModuleApprovalLevelAsync(ApplicationUser user, int appModuleID)
-        {
-            var roleNames = await UserManager.GetRolesAsync(user.Id);
-            var roles = new List<ApplicationRole>();
-            foreach (string roleName in roleNames)
-            {
-                ApplicationRole role = await RoleManager.FindByNameAsync(roleName);
-                roles.Add(role);
-            }
-            if (roles.Where(r => r.AppModuleID == appModuleID).Count() == 0)
-            {
-                return(0);
-            }
-            else
-            {
-                return (roles.Where(r => r.AppModuleID == appModuleID).OrderBy(r => r.AppModuleApprovalLevel).FirstOrDefault().AppModuleApprovalLevel);
-            }
-        }
-
         public List<ApplicationUser> GetUsersInRole(string roleName)
         {
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext()));
@@ -129,21 +110,6 @@ namespace AdminApps.Controllers
             var store = new UserStore<ApplicationUser>(new ApplicationDbContext());
             var userManager = new UserManager<ApplicationUser>(store);
             var usersInRole = userManager.Users.Where(u => u.Roles.Select(r => r.RoleId).Contains(role.RoleId)).ToList();
-            store.Dispose();
-            store.Dispose();
-
-            return usersInRole;
-        }
-
-        public List<ApplicationUser> GetUsersInRoleAndDept(string roleName, decimal deptId)
-        {
-            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new ApplicationDbContext()));
-            var role = roleManager.FindByName(roleName).Users.First();
-            roleManager.Dispose();
-
-            var store = new UserStore<ApplicationUser>(new ApplicationDbContext());
-            var userManager = new UserManager<ApplicationUser>(store);
-            var usersInRole = userManager.Users.Where(u => u.Roles.Select(r => r.RoleId).Contains(role.RoleId) && u.DeptID == deptId).ToList();
             store.Dispose();
             store.Dispose();
 

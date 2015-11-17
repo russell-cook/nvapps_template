@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Web.WebPages.Html;
 
-namespace AdminApps.Models
+namespace NVApps.Models
 {
     public class ExternalLoginConfirmationViewModel
     {
@@ -90,13 +90,6 @@ namespace AdminApps.Models
 
         public int? BillsUserAccountRequestID { get; set; }
 
-        // navigation properties
-        public virtual Dept Dept { get; set; }
-        public virtual Div Div { get; set; }
-
-        // select lists
-        public System.Web.Mvc.SelectList DeptsList { get; set; }
-        public System.Web.Mvc.SelectList DivsList { get; set; }
     }
 
     public class ResetPasswordViewModel

@@ -1,5 +1,5 @@
-﻿using AdminApps.DAL;
-using AdminApps.Models;
+﻿using NVApps.DAL;
+using NVApps.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace AdminApps.Controllers
+namespace NVApps.Controllers
 {
     [Authorize(Roles = "GlobalAdmin, RolesAdmin, UsersAdmin")]
     public class UsersAdminController : BaseController
@@ -25,38 +25,6 @@ namespace AdminApps.Controllers
         }
 
         private ApplicationDbContext db = new ApplicationDbContext();
-
-        public UsersAdminController(ApplicationUserManager userManager, ApplicationRoleManager roleManager)
-        {
-            UserManager = userManager;
-            RoleManager = roleManager;
-        }
-
-        private ApplicationUserManager _userManager;
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
-
-        private ApplicationRoleManager _roleManager;
-        public ApplicationRoleManager RoleManager
-        {
-            get
-            {
-                return _roleManager ?? HttpContext.GetOwinContext().Get<ApplicationRoleManager>();
-            }
-            private set
-            {
-                _roleManager = value;
-            }
-        }
 
         //
         // GET: /Users/
@@ -84,27 +52,11 @@ namespace AdminApps.Controllers
         // GET: /Users/Create
         public async Task<ActionResult> Create(int? billsUserAccountRequestID)
         {
-            var globalBudgetPeriod = (await db.AppGlobalSettings.FirstOrDefaultAsync()).BudgetPeriodID;
             RegisterViewModel viewModel = new RegisterViewModel();
-
-            if (billsUserAccountRequestID != null)
-            {
-                var request = await db.BillsUserAccountRequests
-                                        .Where(r => r.ID == billsUserAccountRequestID)
-                                        .Include(r => r.Dept)
-                                        .Include(r => r.Div)
-                                        .FirstOrDefaultAsync();
-                viewModel.InjectFrom(request);
-                viewModel.BillsUserAccountRequestID = billsUserAccountRequestID;
-                Warning(string.Format("User account is being created in response to a request. Requested approval level: {0}. Dept: {1} Div: {2}", request.RequestedApprovalLevel, viewModel.Dept.CompositeDeptName, viewModel.Div.CompositeDivName));
-            }
 
             //Get the list of Roles
             ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
             
-            // populate Dept/Div dropdowns
-            viewModel.DeptsList = new SelectList(await db.Depts.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDeptName");
-            viewModel.DivsList = new SelectList(await db.Divs.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDivName");
             return View(viewModel);
         }
 
@@ -113,7 +65,6 @@ namespace AdminApps.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(RegisterViewModel userViewModel, params string[] selectedRoles)
         {
-            var globalBudgetPeriod = (await db.AppGlobalSettings.FirstOrDefaultAsync()).BudgetPeriodID;
             RegisterViewModel viewModel = new RegisterViewModel();
 
             if (ModelState.IsValid)
@@ -122,14 +73,11 @@ namespace AdminApps.Controllers
                     {
                         FirstName = userViewModel.FirstName,
                         LastName = userViewModel.LastName,
-                        Title = userViewModel.Title,
                         UserName = userViewModel.Email,
                         Email = userViewModel.Email,
-                        AppModuleID = 1,
-                        DeptID = userViewModel.DeptID,
-                        DivID = userViewModel.DivID,
                         IsActive = true
                     };
+
                 // if password was not manually entered, generate random password and initialize account verification process
                 string password;
                 if (userViewModel.Password == null)
@@ -159,7 +107,7 @@ namespace AdminApps.Controllers
                         var code = await UserManager.GenerateEmailConfirmationTokenAsync(newUser.Id);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = newUser.Id, code = code }, protocol: Request.Url.Scheme);
                         string messageBody = string.Format(body, callbackUrl, newUser.UserName, password);
-                        await UserManager.SendEmailAsync(newUser.Id, "Your AdminApps user account has been created. Please confirm your email address.", messageBody);
+                        await UserManager.SendEmailAsync(newUser.Id, "Your NVApps user account has been created. Please confirm your email address.", messageBody);
                     }
 
                     //Add User to the selected Roles 
@@ -170,49 +118,15 @@ namespace AdminApps.Controllers
                         {
                             ModelState.AddModelError("", result.Errors.First());
                             ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
-                            // populate Dept/Div dropdowns
-                            viewModel.DeptsList = new SelectList(await db.Depts.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDeptName");
-                            viewModel.DivsList = new SelectList(await db.Divs.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDivName");
 
                             return View(viewModel);
                         }
-                    }
-
-                    // if user was created in response to a request, mark the request fulfilled and send confirmation email to requester
-                    if (userViewModel.BillsUserAccountRequestID.HasValue)
-                    {
-                        // load current user
-                        var user = await ReturnCurrentUserAsync();
-
-                        // mark request fulfilled
-                        var request = await db.BillsUserAccountRequests
-                                                .Where(r => r.ID == userViewModel.BillsUserAccountRequestID)
-                                                .Include(r => r.RequestedByUser)
-                                                .FirstOrDefaultAsync();
-                        request.Fulfilled = true;
-                        request.FullfilledByUserID = user.Id;
-                        request.FullfilledAt = DateTime.Now;
-                        await db.SaveChangesAsync();
-
-                        // send confirmation email
-                        string body;
-                        using (var sr = new StreamReader(Server.MapPath("\\Templates\\") + "BillsUserAccountRequestFulfilledConfirmation.html"))
-                        {
-                            body = await sr.ReadToEndAsync();
-                        }
-                        string messageBody = string.Format(body, request.RequestedByUser.FirstName, newUser.FullName);
-                        await UserManager.SendEmailAsync(request.RequestedByUserID, "Your AdminApps User Account Request has been fulfilled", messageBody);
-
-                        requestMessage = string.Format("Requester: {0} has been notified of the fulfilled request.", request.RequestedByUser.FullName);
                     }
                 }
                 else
                 {
                     ModelState.AddModelError("", adminresult.Errors.First());
                     ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
-                    // populate Dept/Div dropdowns
-                    viewModel.DeptsList = new SelectList(await db.Depts.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDeptName");
-                    viewModel.DivsList = new SelectList(await db.Divs.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDivName");
                     return View(viewModel);
 
                 }
@@ -220,9 +134,6 @@ namespace AdminApps.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
-            // populate Dept/Div dropdowns
-            viewModel.DeptsList = new SelectList(await db.Depts.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDeptName");
-            viewModel.DivsList = new SelectList(await db.Divs.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDivName");
             return View(viewModel);
         }
 
@@ -245,8 +156,6 @@ namespace AdminApps.Controllers
             EditUserViewModel viewModel = new EditUserViewModel();
 
             viewModel.InjectFrom(user);
-            viewModel.DeptsList = new SelectList(await db.Depts.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDeptName");
-            viewModel.DivsList = new SelectList(await db.Divs.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDivName");
             viewModel.RolesList = RoleManager.Roles.OrderBy(i => i.Id).ToList().Select(x => new SelectListItem()
                 {
                     Selected = userRoles.Contains(x.Name),

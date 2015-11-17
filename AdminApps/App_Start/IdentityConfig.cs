@@ -10,13 +10,13 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Web;
-using AdminApps.DAL;
+using NVApps.DAL;
 using System.Data.Entity.ModelConfiguration;
 using System.Security.Cryptography;
 using System.Text;
 using System.Configuration;
 
-namespace AdminApps.Models
+namespace NVApps.Models
 {
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
 
@@ -148,7 +148,7 @@ namespace AdminApps.Models
 
             // Credentials:
             var credentialUserName = ConfigurationManager.AppSettings["MAIL_USER"];
-            var sentFrom = "AdminApps@sendgrid.com";
+            var sentFrom = "NVApps@sendgrid.com";
             var pwd = ConfigurationManager.AppSettings["MAIL_PASSWORD"];
 
             // Configure the client:

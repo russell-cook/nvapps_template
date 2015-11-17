@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace AdminApps.Controllers
+namespace NVApps.Controllers
 {
     public class HomeController : BaseController
     {

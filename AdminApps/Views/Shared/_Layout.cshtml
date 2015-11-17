@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.ModuleName - @ViewBag.Title - AdminApps</title>
+    <title>@ViewBag.ModuleName - @ViewBag.Title - NVApps</title>
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
@@ -31,7 +31,7 @@ else
                         <span class="icon-bar"></span>
                     </button>
                     <img src="~/Content/img/nv_state_seal_for_intranet.png" width="40" height="50" style="float: left" />
-                    @Html.ActionLink("AdminApps", "Index", "Home", null, new { @class = "navbar-brand" })
+                    @Html.ActionLink("NVApps", "Index", "Home", null, new { @class = "navbar-brand" })
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -78,10 +78,10 @@ else
             <hr />
             <footer>
                 @*<span style="float: right;">
-                        <small>Assembly version: @typeof(AdminApps.MvcApplication).Assembly.GetName().Version</small>
+                        <small>Assembly version: @typeof(NVApps.MvcApplication).Assembly.GetName().Version</small>
                     </span>*@
                 <small>
-                    For technical support with this site please email <a href="mailto:rcook@admin.nv.gov?subject=AdminApps Support">rcook@admin.nv.gov</a><br />
+                    For technical support with this site please email <a href="mailto:rcook@admin.nv.gov?subject=NVApps Support">rcook@admin.nv.gov</a><br />
                     Maintained by the Nevada <a href="http://admin.nv.gov" target="_blank">Department of Administration</a>
                 </small>
             </footer>

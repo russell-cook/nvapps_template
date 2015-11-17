@@ -2,7 +2,7 @@
 using Quartz.Impl;
 using System;
 
-namespace AdminApps.ScheduledTasks
+namespace NVApps.ScheduledTasks
 {
     public class JobScheduler
     {

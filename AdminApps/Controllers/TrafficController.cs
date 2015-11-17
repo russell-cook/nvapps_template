@@ -1,5 +1,5 @@
-﻿using AdminApps.DAL;
-using AdminApps.Models;
+﻿using NVApps.DAL;
+using NVApps.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
-namespace AdminApps.Controllers
+namespace NVApps.Controllers
 {
     public class TrafficController : BaseController
     {
