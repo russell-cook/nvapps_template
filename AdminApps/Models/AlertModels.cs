@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace NVApps.Helpers
+namespace NVApps.Models
 {
     public class Alert
     {
@@ -21,4 +21,5 @@ namespace NVApps.Helpers
         public const string Warning = "warning";
         public const string Danger = "danger";
     }
+
 }

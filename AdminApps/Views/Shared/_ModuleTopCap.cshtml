@@ -1,6 +1,6 @@
 ﻿@{
     string trimmedModuleName = ViewBag.ModuleName.Replace(" ", "");
-    string menuPath = string.Format("~/Views/{0}/_{1}Menu.cshtml", trimmedModuleName, trimmedModuleName);
+    string menuPath = string.Format("~/Areas/{0}/Views/Shared/_SidebarMenu.cshtml", trimmedModuleName);
 }
 
 <div class="row">

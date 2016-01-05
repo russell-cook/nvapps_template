@@ -9,12 +9,15 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using NVApps.DAL.Repositories;
 
 namespace NVApps.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
+        private UnitOfWork _unitOfWork = new UnitOfWork();
+
         public AccountController()
         {
         }
@@ -144,12 +147,18 @@ namespace NVApps.Controllers
         //
         // GET: /Account/Register
         [AllowAnonymous]
-        public ActionResult Register()
+        public async Task<ActionResult> Register()
         {
             // disable Register action; users can only be manually created by IdentityManager or UserManager roles
-            return RedirectToAction("Index", "Home");
+            //return RedirectToAction("Index", "Home");
+            RegisterViewModel viewModel = new RegisterViewModel();
 
-            //return View();
+            // populate Dept/Div dropdowns
+            AppGlobalSetting appGlobalSetting = await _unitOfWork.AppGlobalSettingRepository.GetFirstOrDefaultAsync();
+            viewModel.DeptsList = new SelectList(await _unitOfWork.DeptRepository.GetAsync(d => d.BudgetPeriodID == appGlobalSetting.BudgetPeriodID, q => q.OrderBy(d => d.Code)), "ID", "CompositeDeptName");
+            viewModel.DivsList = new SelectList(await _unitOfWork.DivRepository.GetAsync(d => d.BudgetPeriodID == appGlobalSetting.BudgetPeriodID, q => q.OrderBy(d => d.Code)), "ID", "CompositeDivName");
+
+            return View(viewModel);
         }
 
         //
@@ -158,28 +167,41 @@ namespace NVApps.Controllers
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         // original action was async, but the action was made synchronous because the 'await' operator was commented out below
-        public ActionResult Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(RegisterViewModel model)
         {
             // disable Register action; users can only be manually created by IdentityManager or UserManager roles
-            return RedirectToAction("Index", "Home");
+            //return RedirectToAction("Index", "Home");
 
-            //if (ModelState.IsValid)
-            //{
-            //    var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-            //    var result = await UserManager.CreateAsync(user, model.Password);
-            //    if (result.Succeeded)
-            //    {
-            //        var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-            //        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-            //        await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
-            //        ViewBag.Link = callbackUrl;
-            //        return View("DisplayEmail");
-            //    }
-            //    AddErrors(result);
-            //}
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { FirstName = model.FirstName, LastName = model.LastName, DeptID = model.DeptID, DivID = model.DivID, UserName = model.Email, Email = model.Email, AppModuleID = 1, IsActive = true };
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    var rolesForUser = UserManager.GetRoles(user.Id);
+                    if (!rolesForUser.Contains("CIPUser"))
+                    {
+                        // add user to CIPUser role
+                        UserManager.AddToRole(user.Id, "CIPUser");
+                    }
 
-            //// If we got this far, something failed, redisplay form
-            //return View(model);
+                    var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                    ViewBag.Link = callbackUrl;
+                    return View("DisplayEmail");
+                }
+                AddErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+
+            // populate Dept/Div dropdowns
+            AppGlobalSetting appGlobalSetting = await _unitOfWork.AppGlobalSettingRepository.GetFirstOrDefaultAsync();
+            model.DeptsList = new SelectList(await _unitOfWork.DeptRepository.GetAsync(d => d.BudgetPeriodID == appGlobalSetting.BudgetPeriodID, q => q.OrderBy(d => d.Code)), "ID", "CompositeDeptName");
+            model.DivsList = new SelectList(await _unitOfWork.DivRepository.GetAsync(d => d.BudgetPeriodID == appGlobalSetting.BudgetPeriodID, q => q.OrderBy(d => d.Code)), "ID", "CompositeDivName");
+
+            return View(model);
         }
 
         //

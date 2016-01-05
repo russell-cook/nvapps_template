@@ -79,17 +79,26 @@ namespace NVApps.Models
         public string ConfirmPassword { get; set; }
 
         [Required]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; }
         [Required]
+        [Display(Name = "Last Name")]
         public string LastName { get; set; }
         public string Title { get; set; }
         [Required]
+        [Display(Name = "Department")]
         public decimal DeptID { get; set; }
         [Required]
+        [Display(Name = "Division")]
         public decimal DivID { get; set; }
 
-        public int? BillsUserAccountRequestID { get; set; }
+        // navigation properties
+        public virtual Dept Dept { get; set; }
+        public virtual Div Div { get; set; }
 
+        // select lists
+        public System.Web.Mvc.SelectList DeptsList { get; set; }
+        public System.Web.Mvc.SelectList DivsList { get; set; }
     }
 
     public class ResetPasswordViewModel

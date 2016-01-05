@@ -29,6 +29,13 @@ namespace NVApps.Migrations
                     new BudgetPeriod { ID = 8, Description = "2017-2019 Biennium (FY18-19)", ActualYear = "2016", WorkProgramYear = "2017", BeginYear = "2018", EndYear = "2019" }
                 );
 
+            context.Depts.AddOrUpdate(i => i.ID,
+                    new Dept { ID = 212516, BudgetPeriodID = 7, Code = "08", Description = "DEPARTMENT OF ADMINISTRATION" }
+                );
+
+            context.Divs.AddOrUpdate(i => i.ID,
+                    new Div { ID = 212568, BudgetPeriodID = 7, DeptID = 212516, Code = "080", Description = "ADMIN - DIRECTOR'S OFFICE", SortOrder = 0 }
+                );
 
             // Initialize AppGlobalSettings values. There should never be more than a single record in this table.
             // In the production app this can be configured via the GlobalSettingsController.
@@ -39,9 +46,10 @@ namespace NVApps.Migrations
             // Initialize list of AppModules
             context.AppModules.AddOrUpdate(i => i.ID,
                     new AppModule { ID = 1, Title = "Manage User Account", DefaultController = "Manage", DefaultAction = "Index" },
-                    new AppModule { ID = 2, Title = "Global App Settings", DefaultController = "Home", DefaultAction = "Index" },
+                    new AppModule { ID = 2, Title = "Global App Settings", DefaultController = "GlobalSettings", DefaultAction = "Index" },
                     new AppModule { ID = 3, Title = "Role Administration", DefaultController = "RolesAdmin", DefaultAction = "Index" },
-                    new AppModule { ID = 4, Title = "User Administration", DefaultController = "UsersAdmin", DefaultAction = "Index" }
+                    new AppModule { ID = 4, Title = "User Administration", DefaultController = "UsersAdmin", DefaultAction = "Index" },
+                    new AppModule { ID = 5, Title = "CIP Application", DefaultController = "CIP/Home", DefaultAction = "Index" }
                 );
 
             // Initialize Identity data. This routine has been adapted from ApplicationDbInitializer; it was relocated here so that it would run as part of the update-database migration command.
@@ -57,7 +65,9 @@ namespace NVApps.Migrations
                 // first role in list is default Administration Role for default user, used by function below when selecting initRoles[0].Name
                 new ApplicationRole(){Name = "GlobalAdmin", AppModuleID = 2, AppModuleApprovalLevel = 1, AppModuleApprovalTitle = "GlobalAdmin", Description = "Highest level of administration; allows configuration of Global App Settings" },
                 new ApplicationRole(){Name = "RolesAdmin",  AppModuleID = 3, AppModuleApprovalLevel = 1, AppModuleApprovalTitle = "RolesAdmin", Description = "Allows for User/Role administration" },
-                new ApplicationRole(){Name = "UsersAdmin",  AppModuleID = 4, AppModuleApprovalLevel = 1, AppModuleApprovalTitle = "UsersAdmin", Description = "Allows for User administration, but not Role administration"}
+                new ApplicationRole(){Name = "UsersAdmin",  AppModuleID = 4, AppModuleApprovalLevel = 1, AppModuleApprovalTitle = "UsersAdmin", Description = "Allows for User administration, but not Role administration"},
+                new ApplicationRole(){Name = "CIPAdmin",  AppModuleID = 5, AppModuleApprovalLevel = 1, AppModuleApprovalTitle = "CIPAdmin", Description = "Allows for CIP Application administration"},
+                new ApplicationRole(){Name = "CIPUser",  AppModuleID = 5, AppModuleApprovalLevel = 1, AppModuleApprovalTitle = "CIPUser", Description = "End-user role for CIP; allows for submission of CIP Application"}
             };
 
             //Create ApplicationRole for each roleNames if it does not exist
@@ -78,7 +88,7 @@ namespace NVApps.Migrations
             var user = userManager.FindByName(name);
             if (user == null)
             {
-                user = new ApplicationUser { UserName = name, Email = name, FirstName = "Russell", LastName = "Cook", AppModuleID = 1, IsActive = true, AutoPwdReplaced = true };
+                user = new ApplicationUser { UserName = name, Email = name, FirstName = "Russell", LastName = "Cook", AppModuleID = 1, DeptID = 212516, DivID = 212568, IsActive = true, AutoPwdReplaced = true };
                 var result = userManager.Create(user, password);
                 result = userManager.SetLockoutEnabled(user.Id, false);
             }

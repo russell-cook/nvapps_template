@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using NVApps.Areas.CIP.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -31,8 +32,15 @@ namespace NVApps.Models
         // Create Method, Edit Method (including [Post] override and white list parameters) in (UserAdminController)
 
         // Add extended properties here:
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
+        public string Title { get; set; }
+        [Display(Name = "Division")]
+        public decimal DivID { get; set; }
+        [Display(Name = "Department")]
+        public decimal DeptID { get; set; }
         public bool IsActive { get; set; }
         public bool AutoPwdReplaced { get; set; }
 
@@ -41,9 +49,11 @@ namespace NVApps.Models
         public int AppModuleID { get; set; }
 
         // Add extended navigation properties here:
+        public virtual Div Div { get; set; }
+        public virtual Dept Dept { get; set; }
         public virtual AppModule DefaultAppModule { get; set; }
-
-
+        public virtual ICollection<CIPApplication> CreatedCIPApplications { get; set; }
+        public virtual ICollection<CIPApplication> ApprovedCIPApplications { get; set; }
 
         // calculated properties
         [Display(Name = "Name")]

@@ -15,22 +15,23 @@ namespace NVApps.Controllers
     {
         public async Task<ActionResult> DefaultModule()
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                ApplicationUser user = await ReturnCurrentUserAsync();
-                if (user.AutoPwdReplaced)
-                {
-                    return RedirectToAction(user.DefaultAppModule.DefaultAction, user.DefaultAppModule.DefaultController);
-                }
-                else
-                {
-                    return RedirectToAction("ChangePassword", "Manage", new { replaceAutoPwd = true });
-                }
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            //if (User.Identity.IsAuthenticated)
+            //{
+            //    ApplicationUser user = await ReturnCurrentUserAsync();
+            //    if (user.AutoPwdReplaced)
+            //    {
+            //        return RedirectToAction(user.DefaultAppModule.DefaultAction, user.DefaultAppModule.DefaultController);
+            //    }
+            //    else
+            //    {
+            //        return RedirectToAction("ChangePassword", "Manage", new { replaceAutoPwd = true });
+            //    }
+            //}
+            //else
+            //{
+            //    return RedirectToAction("Index", "Home");
+            //}
+            return RedirectToAction("Index", "Home");
         }
 
     }

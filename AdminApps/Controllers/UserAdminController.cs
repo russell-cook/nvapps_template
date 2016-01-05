@@ -20,13 +20,8 @@ namespace NVApps.Controllers
     [Authorize(Roles = "GlobalAdmin, RolesAdmin, UsersAdmin")]
     public class UsersAdminController : BaseController
     {
-        public UsersAdminController()
-        {
-        }
-
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        //
         // GET: /Users/
         public async Task<ActionResult> Index()
         {
@@ -50,13 +45,17 @@ namespace NVApps.Controllers
 
         //
         // GET: /Users/Create
-        public async Task<ActionResult> Create(int? billsUserAccountRequestID)
+        public async Task<ActionResult> Create()
         {
+            var globalBudgetPeriod = (await db.AppGlobalSettings.FirstOrDefaultAsync()).BudgetPeriodID;
             RegisterViewModel viewModel = new RegisterViewModel();
 
             //Get the list of Roles
             ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
-            
+
+            // populate Dept/Div dropdowns
+            viewModel.DeptsList = new SelectList(await db.Depts.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDeptName");
+            viewModel.DivsList = new SelectList(await db.Divs.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDivName");
             return View(viewModel);
         }
 
@@ -65,19 +64,23 @@ namespace NVApps.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(RegisterViewModel userViewModel, params string[] selectedRoles)
         {
+            var globalBudgetPeriod = (await db.AppGlobalSettings.FirstOrDefaultAsync()).BudgetPeriodID;
             RegisterViewModel viewModel = new RegisterViewModel();
 
             if (ModelState.IsValid)
             {
                 var newUser = new ApplicationUser
-                    {
-                        FirstName = userViewModel.FirstName,
-                        LastName = userViewModel.LastName,
-                        UserName = userViewModel.Email,
-                        Email = userViewModel.Email,
-                        IsActive = true
-                    };
-
+                {
+                    FirstName = userViewModel.FirstName,
+                    LastName = userViewModel.LastName,
+                    Title = userViewModel.Title,
+                    UserName = userViewModel.Email,
+                    Email = userViewModel.Email,
+                    AppModuleID = 1,
+                    DeptID = userViewModel.DeptID,
+                    DivID = userViewModel.DivID,
+                    IsActive = true
+                };
                 // if password was not manually entered, generate random password and initialize account verification process
                 string password;
                 if (userViewModel.Password == null)
@@ -107,7 +110,7 @@ namespace NVApps.Controllers
                         var code = await UserManager.GenerateEmailConfirmationTokenAsync(newUser.Id);
                         var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = newUser.Id, code = code }, protocol: Request.Url.Scheme);
                         string messageBody = string.Format(body, callbackUrl, newUser.UserName, password);
-                        await UserManager.SendEmailAsync(newUser.Id, "Your NVApps user account has been created. Please confirm your email address.", messageBody);
+                        await UserManager.SendEmailAsync(newUser.Id, "Your AdminApps user account has been created. Please confirm your email address.", messageBody);
                     }
 
                     //Add User to the selected Roles 
@@ -118,6 +121,9 @@ namespace NVApps.Controllers
                         {
                             ModelState.AddModelError("", result.Errors.First());
                             ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
+                            // populate Dept/Div dropdowns
+                            viewModel.DeptsList = new SelectList(await db.Depts.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDeptName");
+                            viewModel.DivsList = new SelectList(await db.Divs.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDivName");
 
                             return View(viewModel);
                         }
@@ -127,6 +133,9 @@ namespace NVApps.Controllers
                 {
                     ModelState.AddModelError("", adminresult.Errors.First());
                     ViewBag.RoleId = new SelectList(await RoleManager.Roles.ToListAsync(), "Name", "Name");
+                    // populate Dept/Div dropdowns
+                    viewModel.DeptsList = new SelectList(await db.Depts.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDeptName");
+                    viewModel.DivsList = new SelectList(await db.Divs.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDivName");
                     return View(viewModel);
 
                 }
@@ -134,6 +143,9 @@ namespace NVApps.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.RoleId = new SelectList(RoleManager.Roles, "Name", "Name");
+            // populate Dept/Div dropdowns
+            viewModel.DeptsList = new SelectList(await db.Depts.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDeptName");
+            viewModel.DivsList = new SelectList(await db.Divs.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDivName");
             return View(viewModel);
         }
 
@@ -156,12 +168,14 @@ namespace NVApps.Controllers
             EditUserViewModel viewModel = new EditUserViewModel();
 
             viewModel.InjectFrom(user);
+            viewModel.DeptsList = new SelectList(await db.Depts.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDeptName");
+            viewModel.DivsList = new SelectList(await db.Divs.Where(b => b.BudgetPeriodID == globalBudgetPeriod).OrderBy(c => c.Code).ToListAsync(), "ID", "CompositeDivName");
             viewModel.RolesList = RoleManager.Roles.OrderBy(i => i.Id).ToList().Select(x => new SelectListItem()
-                {
-                    Selected = userRoles.Contains(x.Name),
-                    Text = x.Name,
-                    Value = x.Name
-                });
+            {
+                Selected = userRoles.Contains(x.Name),
+                Text = x.Name,
+                Value = x.Name
+            });
 
             return View(viewModel);
         }

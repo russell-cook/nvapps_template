@@ -11,7 +11,6 @@
     @Html.AntiForgeryToken()
     <h4>Create a new user account.</h4>
     <hr />
-    @Html.HiddenFor(m => m.BillsUserAccountRequestID)
     @Html.ValidationSummary("", new { @class = "text-error" })
     <div class="form-group">
         @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })

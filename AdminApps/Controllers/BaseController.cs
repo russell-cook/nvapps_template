@@ -1,5 +1,4 @@
 ﻿using NVApps.DAL;
-using NVApps.Helpers;
 using NVApps.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -27,6 +26,8 @@ namespace NVApps.Controllers
         }
 
         private ApplicationUserManager _userManager;
+        private ApplicationRoleManager _roleManager;
+
         public ApplicationUserManager UserManager
         {
             get
@@ -39,7 +40,6 @@ namespace NVApps.Controllers
             }
         }
 
-        private ApplicationRoleManager _roleManager;
         public ApplicationRoleManager RoleManager
         {
             get
