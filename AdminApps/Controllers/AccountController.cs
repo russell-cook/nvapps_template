@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using NVApps.DAL.Repositories;
+using System.IO;
 
 namespace NVApps.Controllers
 {
@@ -187,7 +188,13 @@ namespace NVApps.Controllers
 
                     var code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                    string body;
+                    using (var sr = new StreamReader(Server.MapPath("~/Templates/") + "NewUserRegistrationConfirmation.html"))
+                    {
+                        body = await sr.ReadToEndAsync();
+                    }
+                    string messageBody = string.Format(body, callbackUrl);
+                    await UserManager.SendEmailAsync(user.Id, "Welcome New User", messageBody);
                     ViewBag.Link = callbackUrl;
                     return View("DisplayEmail");
                 }
